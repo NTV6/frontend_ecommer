@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '../store/categorySlice';
 
 function Categories() {
-  const categories = useSelector((state) => state.category.categories);
+  const dispatch = useDispatch();
+  const { categories } = useSelector((state) => state.categories);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {categories.map((category) => (
         <Link
           key={category.id}
-          to={`/danh-muc/${category.slug}`}
+          to={`/danh-muc/${category.id}`} state={{ category }}
           className="relative overflow-hidden group"
         >
           <img

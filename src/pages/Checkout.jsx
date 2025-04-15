@@ -8,7 +8,7 @@ function Checkout() {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user);
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: user?.email || '',
@@ -37,10 +37,10 @@ function Checkout() {
     try {
       // Mô phỏng API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Xóa giỏ hàng
       dispatch(clearCart());
-      
+
       // Chuyển hướng đến trang xác nhận
       navigate('/thanh-toan/thanh-cong', {
         state: {
@@ -78,7 +78,7 @@ function Checkout() {
   return (
     <div className="container mx-auto px-4 py-8 mt-[74px]">
       <h1 className="text-3xl font-bold mb-8 dark:text-white">Thanh toán</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
           <h2 className="text-xl font-semibold mb-4 dark:text-white">Thông tin giao hàng</h2>
@@ -96,7 +96,7 @@ function Checkout() {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Email
@@ -110,7 +110,7 @@ function Checkout() {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Số điện thoại
@@ -124,7 +124,7 @@ function Checkout() {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Địa chỉ
@@ -138,7 +138,7 @@ function Checkout() {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Thành phố
@@ -152,7 +152,7 @@ function Checkout() {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Phương thức thanh toán
@@ -177,7 +177,7 @@ function Checkout() {
             </button>
           </form>
         </div>
-        
+
         <div>
           <h2 className="text-xl font-semibold mb-4 dark:text-white">Đơn hàng của bạn</h2>
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -185,7 +185,7 @@ function Checkout() {
               <div key={item.id} className="flex justify-between items-center py-2 border-b dark:border-gray-700">
                 <div className="flex items-center">
                   <img
-                    src={item.image}
+                    src={item.image_url}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded"
                   />
@@ -199,7 +199,7 @@ function Checkout() {
                 </p>
               </div>
             ))}
-            
+
             <div className="mt-4 space-y-2">
               <div className="flex justify-between dark:text-white">
                 <span>Tạm tính</span>

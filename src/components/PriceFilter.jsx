@@ -4,7 +4,7 @@ import { setSelectedPriceRange } from '../store/categorySlice';
 
 function PriceFilter() {
   const dispatch = useDispatch();
-  const { priceRanges, selectedPriceRange } = useSelector((state) => state.category);
+  const { priceRanges, selectedPriceRange } = useSelector((state) => state.categories);
 
   const handlePriceRangeChange = (range) => {
     dispatch(setSelectedPriceRange(selectedPriceRange?.id === range.id ? null : range));
@@ -12,7 +12,7 @@ function PriceFilter() {
 
   return (
     <div className="mb-8">
-      <h3 className="text-lg font-semibold mb-4">Lọc theo giá</h3>
+      <h3 className="text-lg font-semibold mb-4">Giá</h3>
       <div className="space-y-2">
         {priceRanges.map((range) => (
           <label key={range.id} className="flex items-center space-x-2 cursor-pointer">

@@ -13,18 +13,6 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
-export const deleteProduct = createAsyncThunk(
-  'products/deleteProduct',
-  async (id, { rejectWithValue }) => {
-    try {
-      await productService.deleteProduct(id);
-      return id;
-    } catch (error) {
-      return rejectWithValue(error.response.data.message);
-    }
-  }
-);
-
 export const addProduct = createAsyncThunk(
   'products/addProduct',
   async (productData, { rejectWithValue }) => {
@@ -49,6 +37,26 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+export const deleteProduct = createAsyncThunk(
+  'products/deleteProduct',
+  async (id, { rejectWithValue }) => {
+    try {
+      await productService.deleteProduct(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const fetchProductsByCategory = createAsyncThunk(
+  'products/fetchByCategory',
+  async (categoryId) => {
+    const response = await productService.getProductsByCategory(categoryId);
+    return response.data.data.products;
+  }
+);
+
 const productSlice = createSlice({
   name: 'products',
   initialState: {
@@ -68,21 +76,6 @@ const productSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
-        state.error = action.payload;
-        state.loading = false;
-      })
-
-      .addCase(deleteProduct.pending, (state) => {
-        console.log('Delete pending');
-        state.loading = true;
-      })
-      .addCase(deleteProduct.fulfilled, (state, action) => {
-        console.log('Delete fulfilled:', action.payload);
-        state.products = state.products.filter(p => p.id !== action.payload);
-        state.loading = false;
-      })
-      .addCase(deleteProduct.rejected, (state, action) => {
-        console.log('Delete rejected:', action.payload);
         state.error = action.payload;
         state.loading = false;
       })
@@ -114,6 +107,34 @@ const productSlice = createSlice({
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(deleteProduct.pending, (state) => {
+        console.log('Delete pending');
+        state.loading = true;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        console.log('Delete fulfilled:', action.payload);
+        state.products = state.products.filter(p => p.id !== action.payload);
+        state.loading = false;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        console.log('Delete rejected:', action.payload);
+        state.error = action.payload;
+        state.loading = false;
+      })
+
+      .addCase(fetchProductsByCategory.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
+      })
+      .addCase(fetchProductsByCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   }
 });

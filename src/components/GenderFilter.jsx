@@ -4,7 +4,7 @@ import { setSelectedGender } from '../store/categorySlice';
 
 function GenderFilter() {
   const dispatch = useDispatch();
-  const { genderCategories, selectedGender } = useSelector((state) => state.category);
+  const { genderCategories, selectedGender } = useSelector((state) => state.categories);
 
   const handleGenderChange = (gender) => {
     dispatch(setSelectedGender(selectedGender?.id === gender.id ? null : gender));

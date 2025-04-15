@@ -17,7 +17,7 @@ import SearchResults from './pages/SearchResults';
 import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
 import CheckoutSuccess from './pages/CheckoutSuccess';
-import Admin from './pages/Admin';
+import Admin from './pages/Admin/HomeAdmin';
 import AdminRoute from './components/AdminRoute';
 
 function App() {
@@ -76,7 +76,7 @@ function App() {
                     <Route path="/lien-he" element={<Contact />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/tim-kiem" element={<SearchResults />} />
-                    <Route path="/danh-muc/:slug" element={<CategoryProducts />} />
+                    <Route path="/danh-muc/:id" element={<CategoryProducts />} />
                     <Route path="/thanh-toan" element={<Checkout />} />
                     <Route path="/thanh-toan/thanh-cong" element={<CheckoutSuccess />} />
                   </Routes>

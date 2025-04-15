@@ -25,11 +25,11 @@ api.interceptors.request.use(
 // Service cho sản phẩm
 export const productService = {
   getAllProducts: () => api.get('/products'),
-  getProduct: (id) => api.get(`/products/${id}`),
+  // getProduct: (id) => api.get(`/products/${id}`),
   getProductsByCategory: (categoryId) => api.get(`/products/category/${categoryId}`),
-  deleteProduct: (productId) => api.delete(`/products/${productId}`),
   addProduct: (productData) => api.post('/products', productData),
   updateProduct: (id, productData) => api.patch(`/products/${id}`, productData),
+  deleteProduct: (productId) => api.delete(`/products/${productId}`),
 };
 
 // Service cho user
@@ -47,7 +47,12 @@ export const orderService = {
 
 // Service cho danh mục
 export const categoryService = {
-  getAllCategories: () => api.get('/categories')
+  getAllCategories: () => api.get('/categories'),
+  // getCategories: (id) => api.get(`/categories/${id}`),
+  // getProductsByCategory: (categoryId) => api.get(`/products/category/${categoryId}`),
+  addCategory: (categoryData) => api.post('/categories', categoryData),
+  updateCategory: (id, categoryData) => api.patch(`/categories/${id}`, categoryData),
+  deleteCategory: (categoryId) => api.delete(`/categories/${categoryId}`),
 };
 
 export default api;

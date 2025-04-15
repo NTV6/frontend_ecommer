@@ -1,49 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import axios from 'axios';
 
-import { addProduct, updateProduct, fetchProducts } from '../store/productSlice';
-
-function ProductModal({ isOpen, onClose, product, mode, categories }) {
+function CategoryModal({ isOpen, onClose, category, onSubmit }) {
     const [imageFile, setImageFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const dispatch = useDispatch();
-
     const [formData, setFormData] = useState({
         name: '',
-        price: '',
-        stock: '',
-        image_url: '',
-        image_public_id: '', // Thêm trường image_public_id
         description: '',
-        category_id: ''
+        image: '',
+        image_public_id: '' // Thêm trường image_public_id
     });
 
     useEffect(() => {
-        if (product && mode === 'edit') {
+        if (category) {
             setFormData({
-                name: product.name || '',
-                price: product.price || '',
-                stock: product.stock || '',
-                image_url: product.image_url || '',
-                image_public_id: product.image_public_id || '', // Thêm trường image_public_id
-                description: product.description || '',
-                category_id: product.category_id || ''
+                name: category.name || '',
+                description: category.description || '',
+                image: category.image || '',
+                image_public_id: category.image_public_id || '' // Lấy image_public_id từ category
             });
         } else {
             setFormData({
                 name: '',
-                price: '',
-                stock: '',
-                image_url: '',
-                image_public_id: '', // Thêm trường image_public_id
                 description: '',
-                category_id: ''
+                image: '',
+                image_public_id: '' // Đặt lại khi thêm mới
             });
         }
-    }, [product, mode, isOpen]);
+    }, [category, isOpen]);
 
     // Thêm hàm deleteImage
     const deleteImage = async (publicId) => {
@@ -88,44 +74,30 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
         if (isSubmitting) return;
         try {
             setIsSubmitting(true); // Bắt đầu submit
-            let imageUrl = formData.image_url;
+            let imageUrl = formData.image;
             let publicId = formData.image_public_id;
 
             if (imageFile) {
                 // Nếu đang ở chế độ edit và có ảnh cũ, xóa ảnh cũ trước
-                if (mode === 'edit' && product.image_public_id) {
-                    await deleteImage(product.image_public_id);
+                if (category && category.image_public_id) {
+                    await deleteImage(category.image_public_id);
                 }
 
-                // Upload ảnh mới
                 const uploadResult = await uploadImage(imageFile);
                 imageUrl = uploadResult.url;
                 publicId = uploadResult.public_id;
             }
             const actionData = {
                 ...formData,
-                price: Number(formData.price),
-                stock: Number(formData.stock),
-                image_url: imageUrl,
+                image: imageUrl,
                 image_public_id: publicId
             };
-            // console.log('Data being sent:', actionData);
-
-            if (mode === 'add') {
-                await dispatch(addProduct(actionData)).unwrap();
-                alert('Thêm sản phẩm thành công');
-            } else {
-                await dispatch(updateProduct({ id: product.id, ...actionData })).unwrap();
-                alert('Cập nhật sản phẩm thành công');
-            }
-
-            dispatch(fetchProducts());
+            await onSubmit(actionData);
             onClose();
         } catch (error) {
             alert(error.message || 'Có lỗi xảy ra');
-        }
-        finally {
-            setIsSubmitting(false); // Kết thúc submit
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -135,92 +107,20 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
                 <h2 className="text-xl font-bold mb-4 dark:text-white">
-                    {mode === 'add' ? 'Thêm sản phẩm mới' : 'Sửa sản phẩm'}
+                    {!category ? 'Thêm danh mục mới' : 'Sửa danh mục'}
                 </h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block mb-2 text-sm font-medium dark:text-white">
-                            Tên sản phẩm
+                            Tên danh mục
                         </label>
                         <input
                             type="text"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                            required
-                        />
-                    </div>
 
-                    <div className="mb-4">
-                        <label className="block mb-2 text-sm font-medium dark:text-white">
-                            Giá
-                        </label>
-                        <input
-                            type="number"
-                            value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                            required
-                            min="0"
                         />
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block mb-2 text-sm font-medium dark:text-white">
-                            Số lượng tồn kho
-                        </label>
-                        <input
-                            type="number"
-                            value={formData.stock}
-                            onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                            required
-                            min="0"
-                        />
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block mb-2 text-sm font-medium dark:text-white">
-                            Hình ảnh sản phẩm
-                        </label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                                const file = e.target.files[0];
-                                setImageFile(file);
-                                // Tạo URL preview
-                                const previewUrl = URL.createObjectURL(file);
-                                setFormData({ ...formData, image_url: previewUrl });
-                            }}
-                            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        {formData.image_url && (
-                            <img
-                                src={formData.image_url}
-                                alt="Preview"
-                                className="mt-2 w-32 h-32 object-cover rounded"
-                            />
-                        )}
-                        {uploading && <p className="mt-2 text-sm text-gray-500">Đang tải ảnh lên...</p>}
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block mb-2 text-sm font-medium dark:text-white">
-                            Loại sản phẩm
-                        </label>
-                        <select
-                            value={formData.category_id || ''}
-                            onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                        >
-                            <option value="">Chưa có loại</option>
-                            {categories?.map((category) => (
-                                <option key={category.id} value={category.id}>
-                                    {category.name}
-                                </option>
-                            ))}
-                        </select>
                     </div>
 
                     <div className="mb-4">
@@ -232,8 +132,33 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                             rows="3"
-                            required
                         />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block mb-2 text-sm font-medium dark:text-white">
+                            Hình ảnh danh mục
+                        </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                setImageFile(file);
+                                // Tạo URL preview
+                                const previewUrl = URL.createObjectURL(file);
+                                setFormData({ ...formData, image: previewUrl });
+                            }}
+                            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        {formData.image && (
+                            <img
+                                src={formData.image}
+                                alt="Preview"
+                                className="mt-2 w-32 h-32 object-cover rounded"
+                            />
+                        )}
+                        {uploading && <p className="mt-2 text-sm text-gray-500">Đang tải ảnh lên...</p>}
                     </div>
 
                     <div className="flex justify-end gap-2">
@@ -254,9 +179,9 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                         >
                             {isSubmitting || uploading
                                 ? 'Đang xử lý...'
-                                : mode === 'add'
-                                    ? 'Thêm'
-                                    : 'Lưu'
+                                : category
+                                    ? 'Lưu'
+                                    : 'Thêm'
                             }
                         </button>
                     </div>
@@ -266,4 +191,4 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
     );
 }
 
-export default ProductModal;
+export default CategoryModal;
