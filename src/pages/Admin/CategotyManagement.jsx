@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../store/categorySlice';
+
 import CategoryModal from '../../components/CategoryModal';
+import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../store/categorySlice';
 
 function CategoryManagement() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,13 +42,12 @@ function CategoryManagement() {
             });
     };
 
-    const handleDelete = async (category) => {
-        console.log('category', category)
+    const handleDelete = (category) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
             try {
-                await dispatch(deleteCategory(category.id)).unwrap();
-                alert('Xóa danh mục thành công');
+                dispatch(deleteCategory(category.id)).unwrap();
                 dispatch(fetchCategories());
+                alert('Xóa danh mục thành công');
             } catch (error) {
                 console.error('Chi tiết lỗi:', error);
                 alert(`Lỗi khi xóa danh mục: ${error.message}`);
@@ -69,15 +69,19 @@ function CategoryManagement() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categories.map((category) => (
-                    <div key={category.id} className="border rounded p-4">
+                    <div
+                        key={`category-${category.id}`}
+                        className="border rounded p-4"
+                    >
                         <img
                             src={category.image}
                             alt={category.name}
-                            className="w-full h-48 object-cover mb-2"
+                            className="w-full h-80 object-cover mb-2"
                         />
                         <h3 className="font-bold">{category.name}</h3>
                         <div className="mt-2 flex gap-2">
                             <button
+                                key={`edit-${category.id}`}
                                 onClick={() => {
                                     setSelectedCategory(category);
                                     setIsModalOpen(true);
@@ -87,6 +91,7 @@ function CategoryManagement() {
                                 Sửa
                             </button>
                             <button
+                                key={`delete-${category.id}`}
                                 onClick={() => handleDelete(category)}
                                 className="text-red-500"
                             >

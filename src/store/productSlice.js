@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
 import { productService } from '../services/api';
 
 export const fetchProducts = createAsyncThunk(
@@ -10,6 +11,26 @@ export const fetchProducts = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
+  }
+);
+
+export const getProduct = createAsyncThunk(
+  'products/getProduct',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await productService.getProduct(id);
+      return response.data.data.product;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const fetchProductsByCategory = createAsyncThunk(
+  'products/fetchByCategory',
+  async (categoryId) => {
+    const response = await productService.getProductsByCategory(categoryId);
+    return response.data.data.products;
   }
 );
 
@@ -49,14 +70,6 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
-export const fetchProductsByCategory = createAsyncThunk(
-  'products/fetchByCategory',
-  async (categoryId) => {
-    const response = await productService.getProductsByCategory(categoryId);
-    return response.data.data.products;
-  }
-);
-
 const productSlice = createSlice({
   name: 'products',
   initialState: {
@@ -78,6 +91,19 @@ const productSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
+      })
+
+      .addCase(getProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProduct = action.payload;
+      })
+      .addCase(getProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
 
       .addCase(addProduct.pending, (state) => {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function CheckoutSuccess() {
   const location = useLocation();

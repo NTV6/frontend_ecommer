@@ -4,8 +4,8 @@ import { format, parseISO } from 'date-fns';
 import { vi } from 'date-fns/locale';
 
 import ProductModal from '../../components/ProductModal';
-import { fetchProducts, deleteProduct } from '../../store/productSlice';
 import { fetchCategories } from '../../store/categorySlice';
+import { fetchProducts, deleteProduct } from '../../store/productSlice';
 
 function ProductManagement() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,8 +37,8 @@ function ProductManagement() {
         if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
             try {
                 await dispatch(deleteProduct(product.id)).unwrap();
-                alert('Xóa sản phẩm thành công');
                 dispatch(fetchProducts()); // Refresh danh sách sau khi xóa
+                alert('Xóa sản phẩm thành công');
             } catch (error) {
                 console.error('Lỗi khi xóa sản phẩm:', error);
                 alert('Có lỗi xảy ra khi xóa sản phẩm');
@@ -71,8 +71,9 @@ function ProductManagement() {
                         <tr>
                             <th className="px-6 py-3">Sản phẩm</th>
                             <th className="px-6 py-3">Loại sản phẩm</th>
-                            <th className="px-6 py-3">Giá</th>
-                            <th className="px-6 py-3">Tồn kho</th>
+                            <th className="px-6 py-3">Biến thể</th>
+                            <th className="px-6 py-3">Giá thấp nhất</th>
+                            <th className="px-6 py-3">Tổng tồn kho</th>
                             <th className="px-6 py-3">Trạng thái</th>
                             <th className="px-6 py-3">Mô tả</th>
                             <th className="px-6 py-3">Ngày tạo</th>
@@ -80,71 +81,86 @@ function ProductManagement() {
                         </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        {[...products].reverse().map((product) => (
-                            <tr key={`product-${product.id}`}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <img
-                                            src={product.image_url}
-                                            alt={product.name}
-                                            className="w-10 h-10 rounded-md object-cover mr-3"
-                                        />
-                                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                            {product.name}
+                        {[...products].reverse().map((product) => {
+                            // Calculate product statistics from variants
+                            const totalStock = product.variants?.reduce((sum, v) => sum + v.stock, 0) || 0;
+                            const lowestPrice = product.variants?.length > 0
+                                ? Math.min(...product.variants.map(v => v.price))
+                                : 0;
+                            const thumbnailImage = product.variants?.[0]?.images?.find(img => img.is_thumbnail)?.image
+                                || product.variants?.[0]?.images?.[0]?.image;
+
+                            return (
+                                <tr key={`product-${product.id}`}>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <img
+                                                src={thumbnailImage}
+                                                alt={product.name}
+                                                className="w-10 h-10 rounded-md object-cover mr-3"
+                                            />
+                                            <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                {product.name}
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                                        {categories.find(cat => cat.id === product.category_id)?.name || 'Chưa có loại'}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                                        {Number(product.price)?.toLocaleString()}₫
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                                        {product.stock}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.stock > 0
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-red-100 text-red-800"
-                                        }`}>
-                                        {product.stock > 0 ? "Còn hàng" : "Hết hàng"}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                                        {product.description}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                                        {product.created_at
-                                            ? format(parseISO(product.created_at), 'dd/MM/yyyy - HH:mm', { locale: vi })
-                                            : 'Chưa có ngày tạo'}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button
-                                        onClick={() => handleEditProduct(product)}
-                                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
-                                    >
-                                        Sửa
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteProduct(product)}
-                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                    >
-                                        Xóa
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500 dark:text-gray-300">
+                                            {categories.find(cat => cat.id === product.category_id)?.name || 'Chưa có loại'}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500 dark:text-gray-300">
+                                            {product.variants?.length || 0} biến thể
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500 dark:text-gray-300">
+                                            {Number(lowestPrice).toLocaleString()}₫
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500 dark:text-gray-300">
+                                            {totalStock}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${totalStock > 0
+                                            ? "bg-green-100 text-green-800"
+                                            : "bg-red-100 text-red-800"
+                                            }`}>
+                                            {totalStock > 0 ? "Còn hàng" : "Hết hàng"}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500 dark:text-gray-300">
+                                            {product.description}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500 dark:text-gray-300">
+                                            {product.created_at
+                                                ? format(parseISO(product.created_at), 'dd/MM/yyyy - HH:mm', { locale: vi })
+                                                : 'Chưa có ngày tạo'}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button
+                                            onClick={() => handleEditProduct(product)}
+                                            className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
+                                        >
+                                            Sửa
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteProduct(product)}
+                                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                        >
+                                            Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>

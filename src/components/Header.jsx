@@ -1,11 +1,12 @@
-import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
-import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import { signOut } from 'firebase/auth';
+
+import ThemeToggle from './ThemeToggle';
 import { auth } from '../lib/firebase';
 import { clearUser } from '../store/authSlice';
-import ThemeToggle from './ThemeToggle';
 
 function Header() {
   const dispatch = useDispatch();

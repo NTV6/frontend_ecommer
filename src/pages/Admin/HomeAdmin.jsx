@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaBox, FaShoppingBag, FaUsers, FaChartBar } from 'react-icons/fa';
+import { FaBox, FaShoppingBag, FaUsers, FaChartBar, FaFolder } from 'react-icons/fa';
 
 import ThemeToggle from '../../components/ThemeToggle';
 import ProductManagement from './ProductManagement';
@@ -40,7 +40,7 @@ function Dashboard() {
                             <p className="text-gray-500 dark:text-gray-400">Danh mục</p>
                             <h3 className="text-2xl font-bold dark:text-white">{categories.length}</h3>
                         </div>
-                        <FaBox className="text-3xl text-green-500" />
+                        <FaFolder className="text-3xl text-green-500" />
                     </div>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -163,7 +163,7 @@ function Admin() {
 
     const tabs = [
         { id: 'dashboard', name: 'Tổng quan', icon: FaChartBar },
-        { id: 'categories', name: 'Danh mục', icon: FaChartBar },
+        { id: 'categories', name: 'Danh mục', icon: FaFolder },
         { id: 'products', name: 'Sản phẩm', icon: FaBox },
         { id: 'orders', name: 'Đơn hàng', icon: FaShoppingBag },
     ];

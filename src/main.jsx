@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
+
 import { ThemeProvider } from './contexts/ThemeContext'
 import store from './store/store'
 import App from './App.jsx'

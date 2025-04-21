@@ -31,19 +31,6 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
         }
     }, [category, isOpen]);
 
-    // Thêm hàm deleteImage
-    const deleteImage = async (publicId) => {
-        try {
-            if (!publicId) return;
-            await axios.delete(import.meta.env.VITE_API_DELETE_IMAGE_CLOUDINARY, {
-                data: { public_id: publicId }
-            });
-        } catch (error) {
-            console.error('Error deleting image:', error);
-            throw new Error('Lỗi khi xóa ảnh');
-        }
-    };
-
     const uploadImage = async (file) => {
         try {
             setUploading(true);
@@ -66,6 +53,19 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
             throw new Error('Lỗi khi tải ảnh lên');
         } finally {
             setUploading(false);
+        }
+    };
+
+    // Thêm hàm deleteImage
+    const deleteImage = async (publicId) => {
+        try {
+            if (!publicId) return;
+            await axios.delete(import.meta.env.VITE_API_DELETE_IMAGE_CLOUDINARY, {
+                data: { public_id: publicId }
+            });
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            throw new Error('Lỗi khi xóa ảnh');
         }
     };
 

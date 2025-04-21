@@ -1,49 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, Link } from 'react-router-dom';
-import { productService } from '../services/api';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams, useLocation, Link } from 'react-router-dom';
+
+import { addToCart } from '../store/cartSlice';
+import Pagination from '../components/Pagination';
 import PriceFilter from '../components/PriceFilter';
 import GenderFilter from '../components/GenderFilter';
-import Pagination from '../components/Pagination';
-import { addToCart } from '../store/cartSlice';
-// import { setSelectedPriceRange, setSelectedGender } from '../store/categorySlice';
+import { fetchProductsByCategory } from '../store/productSlice';
+import { getThumbnailImage, getLowestPrice } from '../utils/product';
+
 
 function CategoryProducts() {
   const { id } = useParams();
   const location = useLocation();
   const category = location.state?.category;
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
-
   const dispatch = useDispatch();
 
+  // Get data from Redux store
+  const { products, loading, error } = useSelector((state) => state.products);
   const selectedPriceRange = useSelector((state) => state.categories.selectedPriceRange);
   const selectedGender = useSelector((state) => state.categories.selectedGender);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await productService.getProductsByCategory(id);
-        setProducts(response.data.data.products || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchProducts();
-    }
-  }, [id]);
-
   const filteredProducts = products.filter(product => {
+    // Lấy giá thấp nhất từ các variants để so sánh
+    const minPrice = Math.min(...(product.variants?.map(v => Number(v.price)) || [0]));
+
     const matchesPrice = !selectedPriceRange ||
-      (product.price >= selectedPriceRange.min && product.price <= selectedPriceRange.max);
+      (minPrice >= selectedPriceRange.min && minPrice <= selectedPriceRange.max);
     const matchesGender = !selectedGender || product.gender === selectedGender.value;
     return matchesPrice && matchesGender;
   });
@@ -51,6 +36,12 @@ function CategoryProducts() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProductsByCategory(id));
+    }
+  }, [dispatch, id]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -62,9 +53,15 @@ function CategoryProducts() {
     alert('Đã thêm sản phẩm vào giỏ hàng!');
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!category) return <div className="container mx-auto px-4 py-8">
+  if (loading) return <div className="container mx-auto px-4 py-8 mt-[74px]">
+    <p className="text-center text-gray-500">Đang tải...</p>
+  </div>;
+
+  if (error) return <div className="container mx-auto px-4 py-8 mt-[74px]">
+    <p className="text-center text-red-500">Lỗi: {error}</p>
+  </div>;
+
+  if (!category) return <div className="container mx-auto px-4 py-8 mt-[74px]">
     <p className="text-center text-gray-500">Không tìm thấy danh mục</p>
   </div>;
 
@@ -88,7 +85,7 @@ function CategoryProducts() {
                   <div key={product.id} className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
                     <Link to={`/san-pham/${product.id}`} state={{ product }}>
                       <img
-                        src={product.image_url}
+                        src={getThumbnailImage(product)}
                         alt={product.name}
                         className="w-full h-[300px] object-cover hover:opacity-90 transition-opacity"
                       />
@@ -100,7 +97,7 @@ function CategoryProducts() {
                         </h3>
                       </Link>
                       <p className="text-gray-600 dark:text-gray-300 mb-2">
-                        {Number(product.price).toLocaleString()}₫
+                        {getLowestPrice(product)}₫
                       </p>
                       <button
                         onClick={() => handleAddToCart(product)}

@@ -1,7 +1,9 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { removeFromCart, updateQuantity } from '../store/cartSlice';
+import { getThumbnailImage, getLowestPrice } from '../utils/product';
 
 function Cart() {
   const dispatch = useDispatch();
@@ -9,7 +11,9 @@ function Cart() {
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user);
 
-  const totalAmount = cartItems.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+  const totalAmount = cartItems.reduce((total, item) => {
+    return total + (getLowestPrice(item) * (item.quantity || 1));
+  }, 0);
 
   const handleRemoveFromCart = (productId) => {
     dispatch(removeFromCart(productId));
@@ -44,10 +48,16 @@ function Cart() {
               <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <img src={item.image_url} alt={item.name} className="w-20 h-20 object-cover rounded" />
+                    <img
+                      src={getThumbnailImage(item)}
+
+                      alt={item.name}
+                      className="w-20 h-20 object-cover rounded"
+                    />
+
                     <div>
                       <h3 className="font-semibold dark:text-white">{item.name}</h3>
-                      <p className="text-gray-600 dark:text-gray-300">{Number(item.price).toLocaleString()}₫</p>
+                      <p className="text-gray-600 dark:text-gray-300">{getLowestPrice(item)}₫</p>
                       <div className="flex items-center space-x-2 mt-2">
                         <button
                           onClick={() => handleQuantityChange(item.id, (item.quantity || 1) - 1)}
@@ -73,7 +83,7 @@ function Cart() {
                       Xóa
                     </button>
                     <p className="font-semibold mt-2 dark:text-white">
-                      {((item.quantity || 1) * item.price).toLocaleString()}₫
+                      {((item.quantity || 1) * getLowestPrice(item))}₫
                     </p>
                   </div>
                 </div>

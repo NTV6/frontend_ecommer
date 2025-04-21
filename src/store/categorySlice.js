@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
 import { categoryService } from '../services/api';
 
 const priceRanges = [

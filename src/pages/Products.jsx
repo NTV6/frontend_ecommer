@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
 import { addToCart } from '../store/cartSlice';
 import { fetchProducts } from '../store/productSlice';
 import PriceFilter from '../components/PriceFilter';
 import GenderFilter from '../components/GenderFilter';
+import { getThumbnailImage, getLowestPrice } from '../utils/product';
 
 function Products() {
   const dispatch = useDispatch();
@@ -23,8 +25,11 @@ function Products() {
 
   // Filter products based on selected filters
   const filteredProducts = products.filter(product => {
+    // Lấy giá thấp nhất từ các variants để so sánh
+    const minPrice = Math.min(...(product.variants?.map(v => Number(v.price)) || [0]));
+
     const matchesPrice = !selectedPriceRange ||
-      (product.price >= selectedPriceRange.min && product.price <= selectedPriceRange.max);
+      (minPrice >= selectedPriceRange.min && minPrice <= selectedPriceRange.max);
     const matchesGender = !selectedGender || product.gender === selectedGender.value;
     return matchesPrice && matchesGender;
   });
@@ -51,7 +56,7 @@ function Products() {
                 <div key={product.id} className="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
                   <Link to={`/san-pham/${product.id}`} state={{ product }}>
                     <img
-                      src={product.image_url}
+                      src={getThumbnailImage(product)}
                       alt={product.name}
                       className="w-full h-[300px] object-cover hover:opacity-90 transition-opacity"
                     />
@@ -63,7 +68,7 @@ function Products() {
                       </h3>
                     </Link>
                     <p className="text-gray-600 dark:text-gray-100 mb-2">
-                      {Number(product.price).toLocaleString()}₫
+                      {getLowestPrice(product)}₫
                     </p>
                     <button
                       onClick={() => handleAddToCart(product)}

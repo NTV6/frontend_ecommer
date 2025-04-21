@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { addToCart } from '../store/cartSlice';
-import { fetchProducts } from '../store/productSlice';
-import Categories from '../components/Categories';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
+import { addToCart } from '../store/cartSlice';
+import Categories from '../components/Categories';
+import { fetchProducts } from '../store/productSlice';
+import { getThumbnailImage, getLowestPrice } from '../utils/product';
+
 
 function Home() {
   const dispatch = useDispatch();
@@ -78,13 +81,21 @@ function Home() {
             {[...products].reverse().slice(0, 4).map((product) => (
               <div key={product.id} className="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
                 <Link to={`/san-pham/${product.id}`} state={{ product }}>
-                  <img src={product.image_url} alt={product.name} className="w-full h-[300px] object-cover hover:opacity-90 transition-opacity" />
+                  <img
+                    src={getThumbnailImage(product)}
+                    alt={product.name}
+                    className="w-full h-[300px] object-cover hover:opacity-90 transition-opacity"
+                  />
                 </Link>
                 <div className="p-4">
                   <Link to={`/san-pham/${product.id}`} state={{ product }}>
-                    <h3 className="text-lg font-semibold mb-2 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white">{product.name}</h3>
+                    <h3 className="text-lg font-semibold mb-2 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white">
+                      {product.name}
+                    </h3>
                   </Link>
-                  <p className="text-gray-600 dark:text-gray-100 mb-2">{Number(product.price).toLocaleString()}₫</p>
+                  <p className="text-gray-600 dark:text-gray-100 mb-2">
+                    {getLowestPrice(product).toLocaleString()}₫
+                  </p>
                   <button
                     onClick={() => handleAddToCart(product)}
                     className="w-full bg-gray-900 text-white py-2 rounded hover:bg-gray-800"
