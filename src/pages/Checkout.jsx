@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { clearCart } from '../store/cartSlice';
+import { getThumbnailImage, getLowestPrice } from '../utils/product';
 
 function Checkout() {
   const navigate = useNavigate();
@@ -21,7 +22,9 @@ function Checkout() {
 
   const [loading, setLoading] = useState(false);
 
-  const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalAmount = cartItems.reduce((total, item) => {
+    return total + (getLowestPrice(item) * (item.quantity || 1));
+  }, 0);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -186,17 +189,22 @@ function Checkout() {
               <div key={item.id} className="flex justify-between items-center py-2 border-b dark:border-gray-700">
                 <div className="flex items-center">
                   <img
-                    src={item.image_url}
+                    src={getThumbnailImage(item)}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded"
                   />
                   <div className="ml-4">
                     <h3 className="font-medium dark:text-white">{item.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Số lượng: {item.quantity}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      Số lượng: {item.quantity || 1}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      Đơn giá: {getLowestPrice(item)}₫
+                    </p>
                   </div>
                 </div>
                 <p className="font-medium dark:text-white">
-                  {(item.price * item.quantity).toLocaleString()}₫
+                  {((item.quantity || 1) * Number(getLowestPrice(item).replace(/,/g, ''))).toLocaleString()}₫
                 </p>
               </div>
             ))}

@@ -2,6 +2,8 @@ import React from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { getThumbnailImage, getLowestPrice } from '../utils/product';
+
 function CheckoutSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -54,17 +56,22 @@ function CheckoutSuccess() {
                 <div key={item.id} className="flex justify-between items-center py-2 border-b dark:border-gray-700">
                   <div className="flex items-center">
                     <img
-                      src={item.image}
+                      src={getThumbnailImage(item)}
                       alt={item.name}
                       className="w-16 h-16 object-cover rounded"
                     />
                     <div className="ml-4">
                       <p className="font-medium dark:text-white">{item.name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Số lượng: {item.quantity}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        Số lượng: {item.quantity || 1}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        Đơn giá: {getLowestPrice(item)}₫
+                      </p>
                     </div>
                   </div>
                   <p className="font-medium dark:text-white">
-                    {(item.price * item.quantity).toLocaleString()}₫
+                    {((item.quantity || 1) * Number(getLowestPrice(item)))}₫
                   </p>
                 </div>
               ))}
