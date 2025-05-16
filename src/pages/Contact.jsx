@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Contact() {
   return (
     <div className="container mx-auto px-4 py-8 mt-[74px]">
@@ -19,7 +17,7 @@ function Contact() {
             </p>
           </div>
         </div>
-        
+
         <div>
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Gửi tin nhắn cho chúng tôi</h2>
           <form className="space-y-4">

@@ -20,6 +20,7 @@ import Checkout from './pages/Checkout';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import Admin from './pages/Admin/HomeAdmin';
 import AdminRoute from './components/AdminRoute';
+import Profile from './pages/Profile';
 
 function App() {
   const dispatch = useDispatch();
@@ -80,6 +81,7 @@ function App() {
                     <Route path="/danh-muc/:id" element={<CategoryProducts />} />
                     <Route path="/thanh-toan" element={<Checkout />} />
                     <Route path="/thanh-toan/thanh-cong" element={<CheckoutSuccess />} />
+                    <Route path="/profile" element={<Profile />} />
                   </Routes>
                 </main>
                 <Footer />

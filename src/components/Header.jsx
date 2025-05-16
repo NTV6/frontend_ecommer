@@ -104,20 +104,37 @@ function Header() {
                     {getInitials(user.email)}
                   </div>
                 </button>
-                <div className="absolute right-0 mt-0 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 hidden group-hover:block z-10">
-                  <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 border-b dark:border-gray-600">
-                    {user.email}
+                {/* Added pt-2 for hover space and changed transition */}
+                <div className="absolute right-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 
+      group-hover:visible transition-all duration-300 ease-in-out z-10">
+                  <div className="bg-white dark:bg-gray-700 rounded-md shadow-lg py-1">
+                    <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 border-b dark:border-gray-600">
+                      {user.email}
+                    </div>
+
+                    <Link
+                      to="/profile"
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 
+            hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
+                    >
+                      Tài khoản của tôi
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 
+            hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
+                    >
+                      Đăng xuất
+                    </button>
                   </div>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                  >
-                    Đăng xuất
-                  </button>
                 </div>
               </div>
             ) : (
-              <Link to="/auth" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+              <Link
+                to="/auth"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
                 <FaUser size={20} />
               </Link>
             )}

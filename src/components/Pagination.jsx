@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Pagination({ currentPage, totalPages, onPageChange }) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -12,21 +10,20 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
       >
         Trước
       </button>
-      
+
       {pages.map(page => (
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-4 py-2 border rounded-md ${
-            currentPage === page
+          className={`px-4 py-2 border rounded-md ${currentPage === page
               ? 'bg-gray-500 text-white'
               : 'hover:bg-gray-100 hover:text-black'
-          }`}
+            }`}
         >
           {page}
         </button>
       ))}
-      
+
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}

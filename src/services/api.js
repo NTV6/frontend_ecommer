@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { auth } from '../lib/firebase';
 // Cấu hình axios instance
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -8,14 +8,20 @@ const api = axios.create({
   }
 });
 
-// Thêm interceptor để thêm token vào header
+// Cập nhật interceptor để sử dụng Firebase token
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+  async (config) => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const token = await user.getIdToken();
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+      return config;
+    } catch (error) {
+      console.error('Error getting Firebase token:', error);
+      return Promise.reject(error);
     }
-    return config;
   },
   (error) => {
     return Promise.reject(error);

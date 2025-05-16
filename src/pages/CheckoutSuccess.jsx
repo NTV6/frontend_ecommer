@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
