@@ -21,6 +21,7 @@ function Header() {
     try {
       await signOut(auth);
       dispatch(clearUser());
+      navigate('/auth');
     } catch (error) {
       console.error('Lỗi đăng xuất:', error);
     }

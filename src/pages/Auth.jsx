@@ -48,15 +48,19 @@ function Auth() {
           profile_picture: ''
         });
       }
+      const response = await authService.getProfile();
+      const userRole = response.data.data.role;
+      console.log(" handleAuth userRole", userRole)
 
       dispatch(setUser({
         uid: user.uid,
         email: user.email,
-        isAdmin: user.email === 'admin@example.com'
+        role: userRole,
+        isAdmin: userRole === 'admin'
       }));
 
       // Redirect to the page they were trying to access, or admin panel for admin users
-      if (user.email === 'admin@example.com') {
+      if (userRole === 'admin') {
         navigate('/admin');
       } else {
         navigate(from);

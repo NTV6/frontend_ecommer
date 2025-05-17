@@ -4,16 +4,21 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
-    loading: true,
+    isAuthenticated: false,
   },
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload;
-      state.loading = false;
+      state.user = {
+        uid: action.payload.uid,
+        email: action.payload.email,
+        role: action.payload.role, // Thêm role
+        isAdmin: action.payload.role === 'admin'
+      };
+      state.isAuthenticated = true;
     },
     clearUser: (state) => {
       state.user = null;
-      state.loading = false;
+      state.isAuthenticated = false;
     },
   },
 });

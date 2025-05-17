@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 
 import { auth } from './lib/firebase';
+import { authService } from './services/api';
 import { setUser, clearUser } from './store/authSlice';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -27,13 +28,23 @@ function App() {
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        dispatch(setUser({
-          uid: user.uid,
-          email: user.email,
-          isAdmin: user.email === 'admin@example.com'
-        }));
+        try {
+          // Lấy thông tin profile để có role
+          const response = await authService.getProfile();
+          const userRole = response.data.data.role;
+
+          dispatch(setUser({
+            uid: user.uid,
+            email: user.email,
+            role: userRole,
+            isAdmin: userRole === 'admin'
+          }));
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+          dispatch(clearUser());
+        }
       } else {
         dispatch(clearUser());
       }
