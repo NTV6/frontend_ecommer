@@ -11,7 +11,7 @@ const authSlice = createSlice({
       state.user = {
         uid: action.payload.uid,
         email: action.payload.email,
-        role: action.payload.role, // Thêm role
+        role: action.payload.role,
         isAdmin: action.payload.role === 'admin'
       };
       state.isAuthenticated = true;

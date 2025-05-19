@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -7,23 +7,47 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-import { addToCart } from '../store/cartSlice';
 import Categories from '../components/Categories';
+import { auth } from '../lib/firebase';
+import { addToCart } from '../store/cartSlice';
 import { fetchProducts } from '../store/productSlice';
 import { getThumbnailImage, getLowestPrice } from '../utils/product';
 
 
 function Home() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { products, loading, error } = useSelector((state) => state.products);
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
-    alert('Đã thêm sản phẩm vào giỏ hàng!');
+  const handleAddToCart = async (product) => {
+    if (!auth.currentUser) {
+      alert('Vui lòng đăng nhập để thêm vào giỏ hàng!');
+      navigate('/auth');
+      return;
+    }
+
+    if (!product.variants || product.variants.length === 0) {
+      alert('Sản phẩm không có biến thể!');
+      return;
+    }
+
+    try {
+      const defaultVariant = product.variants[0];
+      await dispatch(addToCart({
+        productId: product.id,
+        variantId: defaultVariant.id,
+        quantity: 1
+      })).unwrap();
+
+      alert('Đã thêm sản phẩm vào giỏ hàng!');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert(error.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng!');
+    }
   };
 
   return (

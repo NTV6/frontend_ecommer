@@ -23,7 +23,7 @@ function Products() {
     alert('Đã thêm sản phẩm vào giỏ hàng!');
   };
 
-  // Filter products based on selected filters
+  // Lọc sản phẩm dựa trên các bộ lọc đã chọn
   const filteredProducts = products.filter(product => {
     // Lấy giá thấp nhất từ các variants để so sánh
     const minPrice = Math.min(...(product.variants?.map(v => Number(v.price)) || [0]));

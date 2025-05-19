@@ -19,7 +19,6 @@ function ProductDetail() {
   const imageRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Fetch product data using Redux action
   useEffect(() => {
     dispatch(getProduct(id));
   }, [dispatch, id]);
@@ -40,7 +39,7 @@ function ProductDetail() {
     }
   }, [selectedVariant]);
 
-  // Update selected variant when color or size changes
+  // Cập nhật biến thể đã chọn khi màu sắc hoặc kích thước thay đổi
   useEffect(() => {
     if (selectedColor && selectedSize && productData?.variants) {
       const variant = productData.variants.find(
@@ -50,7 +49,7 @@ function ProductDetail() {
     }
   }, [selectedColor, selectedSize, productData]);
 
-  // Get unique colors and sizes
+  // Nhận màu sắc và kích thước độc đáo
   const availableColors = [...new Set(productData?.variants?.map(v => v.color) || [])];
   const availableSizes = [...new Set(productData?.variants
     ?.filter(v => v.color === selectedColor) // Chỉ lấy các variant có màu đã chọn

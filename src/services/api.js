@@ -57,14 +57,10 @@ export const categoryService = {
 
 export const cartService = {
   getCart: () => api.get('/carts'),
-  addToCart: (productId, variantId, quantity) => api.post('/carts/add', {
-    productId: parseInt(productId),
-    variantId: parseInt(variantId),
-    quantity: parseInt(quantity)
-  }),
-  // updateQuantity: (productId, quantity) => api.patch('/carts/update', { productId, quantity }),
-  // removeFromCart: (productId) => api.delete(`/carts/remove/${productId}`),
-  // clearCart: () => api.delete('/carts/clear')
+  addToCart: (productId, variantId, quantity) => api.post('/carts/add', { productId, variantId, quantity }),
+  updateQuantity: (productId, variantId, quantity) => api.patch('/carts/update', { productId, variantId, quantity }),
+  removeFromCart: (productId, variantId) => api.delete(`/carts/remove/${productId}/${variantId}`),
+  clearCart: () => api.delete('/carts/clear')
 };
 
 // Service cho đơn hàng

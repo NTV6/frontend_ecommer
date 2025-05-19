@@ -18,7 +18,7 @@ function CategoryProducts() {
   const productsPerPage = 6;
   const dispatch = useDispatch();
 
-  // Get data from Redux store
+  // Lấy dữ liệu từ kho lưu trữ Redux
   const { products, loading, error } = useSelector((state) => state.products);
   const selectedPriceRange = useSelector((state) => state.categories.selectedPriceRange);
   const selectedGender = useSelector((state) => state.categories.selectedGender);

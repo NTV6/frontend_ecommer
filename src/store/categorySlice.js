@@ -52,10 +52,10 @@ const categorySlice = createSlice({
     status: 'idle',
     error: null,
     priceRanges,
-    selectedPriceRange: null,  // Thêm này
+    selectedPriceRange: null,
     genderCategories,
     selectedGender: null,
-    selectedCategory: null    // Thêm này
+    selectedCategory: null
   },
   reducers: {
     setSelectedCategory: (state, action) => {

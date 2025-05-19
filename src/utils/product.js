@@ -1,7 +1,7 @@
 export const getThumbnailImage = (product) => {
     if (!product?.variants?.length) return '';
 
-    // Find variant with lowest price
+    // Tìm biến thể có giá thấp nhất
     const lowestPriceVariant = product.variants.reduce((lowest, current) => {
         if (!lowest || Number(current.price) < Number(lowest.price)) {
             return current;
@@ -11,11 +11,11 @@ export const getThumbnailImage = (product) => {
 
     if (!lowestPriceVariant?.images?.length) return '';
 
-    // Find thumbnail image in lowest price variant
+    // Tìm hình ảnh thu nhỏ ở mức giá thấp nhất
     const thumbnail = lowestPriceVariant.images.find(img => img.is_thumbnail);
     if (thumbnail) return thumbnail.image;
 
-    // If no thumbnail, return first image
+    // Nếu không có hình thu nhỏ, trả về hình ảnh đầu tiên
     return lowestPriceVariant.images[0].image;
 };
 

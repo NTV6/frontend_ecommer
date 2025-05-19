@@ -4,7 +4,7 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(() => {
-    // Check local storage or system preference
+    // Kiểm tra bộ nhớ cục bộ hoặc tùy chọn hệ thống
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme === 'dark';
@@ -13,7 +13,7 @@ export function ThemeProvider({ children }) {
   });
 
   useEffect(() => {
-    // Update document class and local storage when theme changes
+    // Cập nhật lớp tài liệu và bộ nhớ cục bộ khi chủ đề thay đổi
     if (darkMode) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
