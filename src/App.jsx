@@ -20,7 +20,6 @@ import CategoryProducts from './pages/CategoryProducts';
 import Checkout from './pages/Checkout';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import Admin from './pages/Admin/HomeAdmin';
-import AdminRoute from './components/AdminRoute';
 import Profile from './pages/Profile';
 
 function App() {
@@ -66,38 +65,29 @@ function App() {
     <Router>
       <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 transition-colors">
         <Routes>
-          <Route
-            path="/admin/*"
-            element={
-              <AdminRoute>
-                <Admin />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/*"
-            element={
-              <>
-                <Header />
-                <main className="flex-grow">
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/san-pham" element={<Products />} />
-                    <Route path="/san-pham/:id" element={<ProductDetail />} />
-                    <Route path="/gio-hang" element={<Cart />} />
-                    <Route path="/gioi-thieu" element={<About />} />
-                    <Route path="/lien-he" element={<Contact />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/tim-kiem" element={<SearchResults />} />
-                    <Route path="/danh-muc/:id" element={<CategoryProducts />} />
-                    <Route path="/thanh-toan" element={<Checkout />} />
-                    <Route path="/thanh-toan/thanh-cong" element={<CheckoutSuccess />} />
-                    <Route path="/profile" element={<Profile />} />
-                  </Routes>
-                </main>
-                <Footer />
-              </>
-            }
+          <Route path="/admin/*" element={<Admin />} />
+          <Route path="/*" element={
+            <>
+              <Header />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/san-pham" element={<Products />} />
+                  <Route path="/san-pham/:id" element={<ProductDetail />} />
+                  <Route path="/gio-hang" element={<Cart />} />
+                  <Route path="/gioi-thieu" element={<About />} />
+                  <Route path="/lien-he" element={<Contact />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/tim-kiem" element={<SearchResults />} />
+                  <Route path="/danh-muc/:id" element={<CategoryProducts />} />
+                  <Route path="/thanh-toan" element={<Checkout />} />
+                  <Route path="/thanh-toan/thanh-cong" element={<CheckoutSuccess />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Routes>
+              </main>
+              <Footer />
+            </>
+          }
           />
         </Routes>
       </div>

@@ -12,7 +12,7 @@ function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const cartItems = useSelector((state) => state.cart.items);
+  const cartItems = useSelector((state) => state.carts.items);
   const { user } = useSelector((state) => state.auth);
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const inputRef = useRef(null);

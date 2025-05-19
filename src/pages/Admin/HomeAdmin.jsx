@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaBox, FaShoppingBag, FaUsers, FaChartBar, FaFolder } from 'react-icons/fa';
 
-import ThemeToggle from '../../components/ThemeToggle';
 import ProductManagement from './ProductManagement';
 import CategoryManagement from './CategotyManagement';
+import ThemeToggle from '../../components/ThemeToggle';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { clearUser } from '../../store/authSlice';
@@ -169,11 +169,13 @@ function Admin() {
     ];
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
             await signOut(auth);
             dispatch(clearUser());
+            navigate('/auth');
         } catch (error) {
             console.error('Lỗi đăng xuất:', error);
         }

@@ -15,6 +15,7 @@ api.interceptors.request.use(
       const user = auth.currentUser;
       if (user) {
         const token = await user.getIdToken();
+        console.log('Token:', token);
         config.headers['Authorization'] = `Bearer ${token}`;
       }
       return config;
@@ -28,16 +29,6 @@ api.interceptors.request.use(
   }
 );
 
-// Service cho sản phẩm
-export const productService = {
-  getAllProducts: () => api.get('/products'),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getProductsByCategory: (categoryId) => api.get(`/products/category/${categoryId}`),
-  addProduct: (productData) => api.post('/products', productData),
-  updateProduct: (id, productData) => api.patch(`/products/${id}`, productData),
-  deleteProduct: (productId) => api.delete(`/products/${productId}`),
-};
-
 // Service cho user
 export const authService = {
   login: (credentials) => api.post('/users/login', credentials),
@@ -45,10 +36,14 @@ export const authService = {
   getProfile: () => api.get('/users/profile')
 };
 
-// Service cho đơn hàng
-export const orderService = {
-  createOrder: (orderData) => api.post('/orders', orderData),
-  getUserOrders: () => api.get('/orders')
+// Service cho sản phẩm
+export const productService = {
+  getAllProducts: () => api.get('/products'),
+  getProduct: (id) => api.get(`/products/${id}`),
+  getProductsByCategory: (categoryId) => api.get(`/products/category/${categoryId}`),
+  addProduct: (productData) => api.post('/products', productData),
+  updateProduct: (id, productData) => api.patch(`/products/${id}`, productData),
+  deleteProduct: (productId) => api.delete(`/products/${productId}`)
 };
 
 // Service cho danh mục
@@ -57,7 +52,24 @@ export const categoryService = {
   // getCategories: (id) => api.get(`/categories/${id}`),
   addCategory: (categoryData) => api.post('/categories', categoryData),
   updateCategory: (id, categoryData) => api.patch(`/categories/${id}`, categoryData),
-  deleteCategory: (categoryId) => api.delete(`/categories/${categoryId}`),
+  deleteCategory: (categoryId) => api.delete(`/categories/${categoryId}`)
 };
 
+export const cartService = {
+  getCart: () => api.get('/carts'),
+  addToCart: (productId, variantId, quantity) => api.post('/carts/add', {
+    productId: parseInt(productId),
+    variantId: parseInt(variantId),
+    quantity: parseInt(quantity)
+  }),
+  // updateQuantity: (productId, quantity) => api.patch('/carts/update', { productId, quantity }),
+  // removeFromCart: (productId) => api.delete(`/carts/remove/${productId}`),
+  // clearCart: () => api.delete('/carts/clear')
+};
+
+// Service cho đơn hàng
+export const orderService = {
+  createOrder: (orderData) => api.post('/orders', orderData),
+  getUserOrders: () => api.get('/orders')
+};
 export default api;
