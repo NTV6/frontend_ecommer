@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -8,47 +7,16 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import Categories from '../components/Categories';
-import { auth } from '../lib/firebase';
-import { addToCart } from '../store/cartSlice';
+import ProductItem from '../components/ProductItem';
 import { fetchProducts } from '../store/productSlice';
-import { getThumbnailImage, getLowestPrice } from '../utils/product';
-
 
 function Home() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { products, loading, error } = useSelector((state) => state.products);
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
-
-  const handleAddToCart = async (product) => {
-    if (!auth.currentUser) {
-      alert('Vui lòng đăng nhập để thêm vào giỏ hàng!');
-      navigate('/auth');
-      return;
-    }
-
-    if (!product.variants || product.variants.length === 0) {
-      alert('Sản phẩm không có biến thể!');
-      return;
-    }
-
-    try {
-      const defaultVariant = product.variants[0];
-      await dispatch(addToCart({
-        productId: product.id,
-        variantId: defaultVariant.id,
-        quantity: 1
-      })).unwrap();
-
-      alert('Đã thêm sản phẩm vào giỏ hàng!');
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-      alert(error.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng!');
-    }
-  };
 
   return (
     <div className='mt-[74px]'>
@@ -59,7 +27,7 @@ function Home() {
         slidesPerView={1}
         pagination={{ clickable: true }}
         autoplay={{ delay: 3000 }}
-        className="h-[500px]"
+        className="h-[835px]"
       >
         <SwiperSlide>
           <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80')] bg-cover bg-center">
@@ -103,31 +71,10 @@ function Home() {
           <h2 className="text-3xl font-bold text-center mb-12">SẢN PHẨM MỚI</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[...products].reverse().slice(0, 4).map((product) => (
-              <div key={product.id} className="bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
-                <Link to={`/san-pham/${product.id}`} state={{ product }}>
-                  <img
-                    src={getThumbnailImage(product)}
-                    alt={product.name}
-                    className="w-full h-[300px] object-cover hover:opacity-90 transition-opacity"
-                  />
-                </Link>
-                <div className="p-4">
-                  <Link to={`/san-pham/${product.id}`} state={{ product }}>
-                    <h3 className="text-lg font-semibold mb-2 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white">
-                      {product.name}
-                    </h3>
-                  </Link>
-                  <p className="text-gray-600 dark:text-gray-100 mb-2">
-                    {getLowestPrice(product).toLocaleString()}₫
-                  </p>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="w-full bg-gray-900 text-white py-2 rounded hover:bg-gray-800"
-                  >
-                    Thêm vào giỏ
-                  </button>
-                </div>
-              </div>
+              <ProductItem
+                key={product.id}
+                product={product}
+              />
             ))}
           </div>
         </div>

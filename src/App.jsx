@@ -72,16 +72,16 @@ function App() {
               <main className="flex-grow">
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/san-pham" element={<Products />} />
-                  <Route path="/san-pham/:id" element={<ProductDetail />} />
-                  <Route path="/gio-hang" element={<Cart />} />
-                  <Route path="/gioi-thieu" element={<About />} />
-                  <Route path="/lien-he" element={<Contact />} />
+                  <Route path="/product" element={<Products />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/tim-kiem" element={<SearchResults />} />
-                  <Route path="/danh-muc/:id" element={<CategoryProducts />} />
-                  <Route path="/thanh-toan" element={<Checkout />} />
-                  <Route path="/thanh-toan/thanh-cong" element={<CheckoutSuccess />} />
+                  <Route path="/search" element={<SearchResults />} />
+                  <Route path="/category/:id" element={<CategoryProducts />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/checkout/success" element={<CheckoutSuccess />} />
                   <Route path="/profile" element={<Profile />} />
                 </Routes>
               </main>

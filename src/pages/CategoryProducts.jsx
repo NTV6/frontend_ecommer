@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
-import { addToCart } from '../store/cartSlice';
 import Pagination from '../components/Pagination';
 import PriceFilter from '../components/PriceFilter';
 import GenderFilter from '../components/GenderFilter';
+import ProductItem from '../components/ProductItem';
 import { fetchProductsByCategory } from '../store/productSlice';
-import { getThumbnailImage, getLowestPrice } from '../utils/product';
 
 
 function CategoryProducts() {
@@ -48,11 +47,6 @@ function CategoryProducts() {
     window.scrollTo(0, 0);
   };
 
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
-    alert('Đã thêm sản phẩm vào giỏ hàng!');
-  };
-
   if (loading) return <div className="container mx-auto px-4 py-8 mt-[74px]">
     <p className="text-center text-gray-500">Đang tải...</p>
   </div>;
@@ -82,31 +76,10 @@ function CategoryProducts() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {paginatedProducts.map((product) => (
-                  <div key={product.id} className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
-                    <Link to={`/san-pham/${product.id}`} state={{ product }}>
-                      <img
-                        src={getThumbnailImage(product)}
-                        alt={product.name}
-                        className="w-full h-[300px] object-cover hover:opacity-90 transition-opacity"
-                      />
-                    </Link>
-                    <div className="p-4">
-                      <Link to={`/san-pham/${product.id}`} state={{ product }}>
-                        <h3 className="text-lg font-semibold mb-2 hover:text-gray-600 dark:text-white dark:hover:text-gray-300">
-                          {product.name}
-                        </h3>
-                      </Link>
-                      <p className="text-gray-600 dark:text-gray-300 mb-2">
-                        {getLowestPrice(product)}₫
-                      </p>
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        className="w-full bg-gray-900 dark:bg-gray-700 text-white py-2 rounded hover:bg-gray-800 dark:hover:bg-gray-600"
-                      >
-                        Thêm vào giỏ
-                      </button>
-                    </div>
-                  </div>
+                  <ProductItem
+                    key={product.id}
+                    product={product}
+                  />
                 ))}
               </div>
               {totalPages > 1 && (

@@ -57,7 +57,7 @@ function Cart() {
       return;
     }
 
-    navigate('/thanh-toan');
+    navigate('/checkout');
   };
 
   return (
@@ -77,11 +77,15 @@ function Cart() {
                     <img
                       src={item.image_url}
                       alt={item.product_name}
-                      className="w-20 h-20 object-cover rounded"
+                      className="w-28 h-28 object-cover rounded"
                     />
 
                     <div>
                       <h3 className="font-semibold dark:text-white">{item.product_name}</h3>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                        <span className="mr-2">Màu: {item.color} ,</span>
+                        <span>Size: {item.size}</span>
+                      </div>
                       <p className="text-gray-600 dark:text-gray-300">{Number(item.price).toLocaleString()} ₫</p>
                       <div className="flex items-center space-x-2 mt-2">
                         <button

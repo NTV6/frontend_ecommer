@@ -30,7 +30,7 @@ function Header() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/tim-kiem?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
       inputRef.current.focus();
     }
@@ -53,13 +53,13 @@ function Header() {
             <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               Trang chủ
             </Link>
-            <Link to="/san-pham" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            <Link to="/product" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               Sản phẩm
             </Link>
-            <Link to="/gioi-thieu" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            <Link to="/about" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               Giới thiệu
             </Link>
-            <Link to="/lien-he" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            <Link to="/contact" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               Liên hệ
             </Link>
           </nav>
@@ -89,7 +89,7 @@ function Header() {
 
             <ThemeToggle />
 
-            <Link to="/gio-hang" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white relative">
+            <Link to="/cart" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white relative">
               <FaShoppingCart size={20} />
               {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">

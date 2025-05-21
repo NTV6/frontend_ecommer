@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 
+import { uploadService } from '../services/api';
 import { addProduct, updateProduct, fetchProducts } from '../store/productSlice';
 
 function ProductModal({ isOpen, onClose, product, mode, categories }) {
@@ -168,21 +169,24 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
             const variant = formData.variants[variantIndex];
             const imageToDelete = variant.images[imgIndex];
 
-            // Nếu ảnh đã được upload lên Cloudinary, xóa nó
             if (imageToDelete.image_public_id) {
-                await axios.delete(import.meta.env.VITE_API_DELETE_IMAGE_CLOUDINARY, {
-                    data: { public_id: imageToDelete.image_public_id }
-                });
+                await uploadService.deleteImage(imageToDelete.image_public_id);
             }
 
             // Cập nhật state để xóa ảnh khỏi UI
             const newVariants = [...formData.variants];
             newVariants[variantIndex].images = variant.images.filter((_, i) => i !== imgIndex);
+
+            // Nếu xóa ảnh thumbnail, set ảnh đầu tiên còn lại làm thumbnail
+            if (imageToDelete.is_thumbnail && newVariants[variantIndex].images.length > 0) {
+                newVariants[variantIndex].images[0].is_thumbnail = 1;
+            }
+
             setFormData({ ...formData, variants: newVariants });
 
         } catch (error) {
             console.error('Error removing image:', error);
-            alert('Có lỗi khi xóa ảnh');
+            alert('Có lỗi khi xóa ảnh: ' + error.message);
         }
     };
 
@@ -226,9 +230,6 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                     }))
                 }))
             };
-
-            // console.log('Mode:', mode);
-            // console.log('Submitting data:', JSON.stringify(processedData, null, 2));
 
             let result;
             if (mode === 'edit' && product?.id) {

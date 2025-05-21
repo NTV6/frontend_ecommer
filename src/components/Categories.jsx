@@ -17,7 +17,7 @@ function Categories() {
       {categories.map((category) => (
         <Link
           key={category.id}
-          to={`/danh-muc/${category.id}`} state={{ category }}
+          to={`/category/${category.id}`} state={{ category }}
           className="relative overflow-hidden group"
         >
           <img

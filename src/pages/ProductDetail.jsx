@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
+import { auth } from '../lib/firebase';
 import { addToCart } from '../store/cartSlice';
 import { getProduct } from '../store/productSlice';
+
 
 function ProductDetail() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { selectedProduct: productData, loading, error } = useSelector(state => state.products);
 
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -71,20 +74,31 @@ function ProductDetail() {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (!auth.currentUser) {
+      alert('Vui lòng đăng nhập để thêm vào giỏ hàng!');
+      navigate('/auth');
+      return;
+    }
+
     if (!selectedVariant) {
       alert('Vui lòng chọn màu sắc và kích thước');
       return;
     }
-    dispatch(addToCart({
-      ...productData,
-      variant: selectedVariant,
-      quantity,
-      selectedColor,
-      selectedSize
-    }));
-    alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
-    setQuantity(1);
+
+    try {
+      await dispatch(addToCart({
+        productId: productData.id,
+        variantId: selectedVariant.id,
+        quantity
+      })).unwrap();
+
+      alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
+      setQuantity(1);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert(error.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+    }
   };
 
   const sortImages = (images) => {

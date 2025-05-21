@@ -2,28 +2,25 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { auth } from '../lib/firebase';
 import { clearCart } from '../store/cartSlice';
-import { getThumbnailImage, getLowestPrice } from '../utils/product';
 
 function Checkout() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.items);
-  const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
+  const { items, loading, error } = useSelector((state) => state.carts);
 
   const [formData, setFormData] = useState({
     fullName: '',
-    email: user?.email || '',
+    email: auth.currentUser.email || '',
     phone: '',
     address: '',
     city: '',
     paymentMethod: 'cod'
   });
 
-  const [loading, setLoading] = useState(false);
-
-  const totalAmount = cartItems.reduce((total, item) => {
-    return total + (getLowestPrice(item) * (item.quantity || 1));
+  const totalAmount = items.reduce((total, item) => {
+    return total + (Number(item.price) * (item.quantity || 1));
   }, 0);
 
   const handleInputChange = (e) => {
@@ -49,7 +46,7 @@ function Checkout() {
       navigate('/thanh-toan/thanh-cong', {
         state: {
           orderDetails: {
-            items: cartItems,
+            items,
             total: totalAmount,
             shippingInfo: formData
           }
@@ -63,7 +60,7 @@ function Checkout() {
     }
   };
 
-  if (cartItems.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
@@ -185,12 +182,12 @@ function Checkout() {
         <div>
           <h2 className="text-xl font-semibold mb-4 dark:text-white">Đơn hàng của bạn</h2>
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            {cartItems.map((item) => (
+            {items.map((item) => (
               <div key={item.id} className="flex justify-between items-center py-2 border-b dark:border-gray-700">
                 <div className="flex items-center">
                   <img
-                    src={getThumbnailImage(item)}
-                    alt={item.name}
+                    src={item.image_url}
+                    alt={item.product_name}
                     className="w-16 h-16 object-cover rounded"
                   />
                   <div className="ml-4">
@@ -199,12 +196,12 @@ function Checkout() {
                       Số lượng: {item.quantity || 1}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      Đơn giá: {getLowestPrice(item)}₫
+                      Đơn giá: {Number(item.price).toLocaleString()}₫
                     </p>
                   </div>
                 </div>
                 <p className="font-medium dark:text-white">
-                  {((item.quantity || 1) * Number(getLowestPrice(item).replace(/,/g, ''))).toLocaleString()}₫
+                  {((item.quantity || 1) * Number((item.price).replace(/,/g, ''))).toLocaleString()}₫
                 </p>
               </div>
             ))}

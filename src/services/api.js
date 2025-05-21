@@ -55,12 +55,18 @@ export const categoryService = {
   deleteCategory: (categoryId) => api.delete(`/categories/${categoryId}`)
 };
 
+// Service cho giỏ hàng
 export const cartService = {
   getCart: () => api.get('/carts'),
   addToCart: (productId, variantId, quantity) => api.post('/carts/add', { productId, variantId, quantity }),
   updateQuantity: (productId, variantId, quantity) => api.patch('/carts/update', { productId, variantId, quantity }),
   removeFromCart: (productId, variantId) => api.delete(`/carts/remove/${productId}/${variantId}`),
   clearCart: () => api.delete('/carts/clear')
+};
+
+// Service cho upload hình ảnh
+export const uploadService = {
+  deleteImage: (public_id) => api.delete('/upload', { data: { public_id } })
 };
 
 // Service cho đơn hàng
