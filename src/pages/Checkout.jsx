@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-
-import { auth } from '../lib/firebase';
 import { clearCart } from '../store/cartSlice';
+import { orderService } from '../services/api';
 
 function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, loading, error } = useSelector((state) => state.carts);
+  const { items } = useSelector((state) => state.carts);
 
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
-    email: auth.currentUser.email || '',
     phone: '',
     address: '',
     city: '',
@@ -36,25 +35,47 @@ function Checkout() {
     setLoading(true);
 
     try {
-      // Mô phỏng API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Chuẩn bị dữ liệu đơn hàng
+      const orderData = {
+        shipping_address: `${formData.address}, ${formData.city}`,
+        phone_number: formData.phone,
+        total_amount: totalAmount
+      };
 
-      // Xóa giỏ hàng
-      dispatch(clearCart());
+      if (formData.paymentMethod === 'cod') {
+        // Xử lý thanh toán COD
+        const response = await orderService.createCodOrder(orderData);
 
-      // Chuyển hướng đến trang xác nhận
-      navigate('/thanh-toan/thanh-cong', {
-        state: {
-          orderDetails: {
+        if (response.data.status === 'success') {
+          dispatch(clearCart());
+          navigate('/checkout/success', {
+            state: {
+              orderDetails: {
+                items,
+                total: totalAmount,
+                shippingInfo: formData
+              }
+            }
+          });
+        }
+      } else if (formData.paymentMethod === 'vnpay') {
+        // Xử lý thanh toán VNPay
+        const response = await orderService.createVnpayOrder(orderData);
+
+        if (response.data?.data?.paymentUrl) {
+          // Lưu chi tiết đơn hàng vào localStorage trước khi chuyển hướng
+          localStorage.setItem('pendingOrder', JSON.stringify({
             items,
             total: totalAmount,
             shippingInfo: formData
-          }
+          }));
+
+          // Chuyển hướng đến trang thanh toán VNPay
+          window.location.href = response.data.data.paymentUrl;
         }
-      });
+      }
     } catch (error) {
-      console.error('Lỗi khi xử lý đơn hàng:', error);
-      alert('Có lỗi xảy ra khi xử lý đơn hàng. Vui lòng thử lại.');
+      console.error('Error creating order:', error);
     } finally {
       setLoading(false);
     }
@@ -62,11 +83,11 @@ function Checkout() {
 
   if (items.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 mt-[74px]">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4 dark:text-white">Giỏ hàng trống</h2>
           <button
-            onClick={() => navigate('/san-pham')}
+            onClick={() => navigate('/product')}
             className="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
           >
             Tiếp tục mua sắm
@@ -81,6 +102,7 @@ function Checkout() {
       <h1 className="text-3xl font-bold mb-8 dark:text-white">Thanh toán</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Form thông tin vận chuyển*/}
         <div>
           <h2 className="text-xl font-semibold mb-4 dark:text-white">Thông tin giao hàng</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,20 +114,6 @@ function Checkout() {
                 type="text"
                 name="fullName"
                 value={formData.fullName}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
                 onChange={handleInputChange}
                 required
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -165,7 +173,7 @@ function Checkout() {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
                 <option value="cod">Thanh toán khi nhận hàng (COD)</option>
-                <option value="bank">Chuyển khoản ngân hàng</option>
+                <option value="vnpay">Thanh toán qua VNPay</option>
               </select>
             </div>
 
@@ -179,6 +187,7 @@ function Checkout() {
           </form>
         </div>
 
+        {/* Bảng tóm tắt Đơn hàng */}
         <div>
           <h2 className="text-xl font-semibold mb-4 dark:text-white">Đơn hàng của bạn</h2>
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -191,9 +200,9 @@ function Checkout() {
                     className="w-16 h-16 object-cover rounded"
                   />
                   <div className="ml-4">
-                    <h3 className="font-medium dark:text-white">{item.name}</h3>
+                    <h3 className="font-medium dark:text-white">{item.product_name}</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      Số lượng: {item.quantity || 1}
+                      Số lượng: {item.quantity}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
                       Đơn giá: {Number(item.price).toLocaleString()}₫
@@ -201,7 +210,7 @@ function Checkout() {
                   </div>
                 </div>
                 <p className="font-medium dark:text-white">
-                  {((item.quantity || 1) * Number((item.price).replace(/,/g, ''))).toLocaleString()}₫
+                  {(item.quantity * Number(item.price)).toLocaleString()}₫
                 </p>
               </div>
             ))}
