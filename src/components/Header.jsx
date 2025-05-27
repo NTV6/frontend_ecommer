@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import { signOut } from 'firebase/auth';
+import { fetchCart, resetCart } from '../store/cartSlice';
 
 import ThemeToggle from './ThemeToggle';
 import { auth } from '../lib/firebase';
@@ -17,9 +18,16 @@ function Header() {
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const inputRef = useRef(null);
 
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchCart());
+    }
+  }, [dispatch, user]);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      dispatch(resetCart());
       dispatch(clearUser());
       navigate('/auth');
     } catch (error) {
