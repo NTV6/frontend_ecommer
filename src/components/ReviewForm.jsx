@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
+import { collection, query, where, getDocs, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 import { auth, db } from '../lib/firebase';
-import { collection, addDoc, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 function ReviewForm({ productId, onReviewSubmitted }) {
   const [rating, setRating] = useState(0);
@@ -18,42 +18,47 @@ function ReviewForm({ productId, onReviewSubmitted }) {
 
     try {
       const user = auth.currentUser;
-
       if (!user) {
         setError('Vui lòng đăng nhập để đánh giá sản phẩm');
         return;
       }
 
       const reviewsRef = collection(db, 'reviews');
+
       const q = query(
         reviewsRef,
-        where('productId', '==', productId),
+        where('productId', '==', String(productId)),
         where('userId', '==', user.uid)
       );
+
       const querySnapshot = await getDocs(q);
 
+      const reviewData = {
+        productId: String(productId), // Convert to string
+        userId: user.uid,
+        userEmail: user.email,
+        rating: rating,
+        comment: comment,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+
       if (!querySnapshot.empty) {
-        const reviewDoc = querySnapshot.docs[0];
-        await updateDoc(doc(db, 'reviews', reviewDoc.id), {
-          rating,
-          comment,
-          updatedAt: new Date()
+        // Update existing review
+        const docRef = querySnapshot.docs[0].ref;
+        await updateDoc(docRef, {
+          ...reviewData,
+          updatedAt: serverTimestamp()
         });
       } else {
-        await addDoc(reviewsRef, {
-          productId,
-          userId: user.uid,
-          userEmail: user.email,
-          rating,
-          comment,
-          createdAt: new Date()
-        });
+        // Add new review
+        await addDoc(reviewsRef, reviewData);
       }
-
       setRating(0);
       setComment('');
       onReviewSubmitted();
     } catch (err) {
+      console.error('Lỗi khi gửi đánh giá:', err);
       setError(err.message);
     } finally {
       setIsSubmitting(false);
