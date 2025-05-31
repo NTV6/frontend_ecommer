@@ -33,6 +33,7 @@ api.interceptors.request.use(
 export const authService = {
   login: (credentials) => api.post('/users/login', credentials),
   signup: (userData) => api.post('/users/signup', userData),
+  updateProfile: (userData) => api.patch('/users/profile', userData),
   getProfile: () => api.get('/users/profile')
 };
 
@@ -66,6 +67,11 @@ export const cartService = {
 
 // Service cho upload hình ảnh
 export const uploadService = {
+  uploadImage: (formData) => api.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
   deleteImage: (public_id) => api.delete('/upload', { data: { public_id } })
 };
 

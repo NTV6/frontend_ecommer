@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { getThumbnailImage, getLowestPrice } from '../utils/product';
+
+import { getThumbnailImage, getLowestPrice } from '../utils';
 
 function ProductCard({ product }) {
     return (

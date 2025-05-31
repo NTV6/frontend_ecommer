@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { format, parseISO } from 'date-fns';
-import { vi } from 'date-fns/locale';
 
-import ProductModal from '../../components/ProductModal';
+import { formatDate } from '../../utils';
 import { fetchCategories } from '../../store/categorySlice';
 import { fetchProducts, deleteProduct } from '../../store/productSlice';
+import ProductModal from '../../components/ProductModal';
 
 function ProductManagement() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,7 +81,7 @@ function ProductManagement() {
                     </thead>
                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {[...products].reverse().map((product) => {
-                            // Calculate product statistics from variants
+                            // Tính toán thống kê sản phẩm từ các biến thể
                             const totalStock = product.variants?.reduce((sum, v) => sum + v.stock, 0) || 0;
                             const lowestPrice = product.variants?.length > 0
                                 ? Math.min(...product.variants.map(v => v.price))
@@ -139,9 +138,7 @@ function ProductManagement() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm text-gray-500 dark:text-gray-300">
-                                            {product.created_at
-                                                ? format(parseISO(product.created_at), 'dd/MM/yyyy - HH:mm', { locale: vi })
-                                                : 'Chưa có ngày tạo'}
+                                            {formatDate(product.created_at)}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { addToCart } from '../store/cartSlice';
 import { fetchProducts } from '../store/productSlice';
-import { getThumbnailImage, getLowestPrice } from '../utils/product';
+import { getThumbnailImage, getLowestPrice } from '../utils';
 
 function SearchResults() {
   const [searchParams] = useSearchParams();

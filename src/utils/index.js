@@ -25,3 +25,34 @@ export const getLowestPrice = (product) => {
     const prices = product.variants.map(v => Number(v.price));
     return Math.min(...prices).toLocaleString();
 };
+
+export const getInitials = (email) => {
+    return email
+        .split('@')[0]
+        .substring(0, 1)
+        .toUpperCase();
+};
+
+export const formatDate = (dateString, showTime = true) => {
+    if (!dateString) return 'Chưa cập nhật';
+    const date = new Date(dateString);
+
+    const dateStr = date.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+
+    // Return date only if showTime is false (for birthdays) or time is midnight
+    if (!showTime || (date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0)) {
+        return dateStr;
+    }
+
+    const timeStr = date.toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    return `${dateStr} - ${timeStr}`;
+};

@@ -1,26 +1,28 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { auth } from './lib/firebase';
 import { authService } from './services/api';
 import { setUser, clearUser } from './store/authSlice';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Home from './pages/Home';
+import Auth from './pages/Auth';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import Auth from './pages/Auth';
-import SearchResults from './pages/SearchResults';
-import CategoryProducts from './pages/CategoryProducts';
-import Checkout from './pages/Checkout';
-import CheckoutSuccess from './pages/CheckoutSuccess';
-import Admin from './pages/Admin/HomeAdmin';
 import Profile from './pages/Profile';
+import Products from './pages/Products';
+import Checkout from './pages/Checkout';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Admin from './pages/Admin/HomeAdmin';
+import SearchResults from './pages/SearchResults';
+import ProductDetail from './pages/ProductDetail';
+import CheckoutSuccess from './pages/CheckoutSuccess';
+import CategoryProducts from './pages/CategoryProducts';
 
 function App() {
   const dispatch = useDispatch();
@@ -64,6 +66,17 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 transition-colors">
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Routes>
           <Route path="/admin/*" element={<Admin />} />
           <Route path="/*" element={

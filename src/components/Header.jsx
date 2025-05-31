@@ -5,9 +5,10 @@ import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import { signOut } from 'firebase/auth';
 import { fetchCart, resetCart } from '../store/cartSlice';
 
-import ThemeToggle from './ThemeToggle';
 import { auth } from '../lib/firebase';
+import { getInitials } from '../utils';
 import { clearUser } from '../store/authSlice';
+import ThemeToggle from './ThemeToggle';
 
 function Header() {
   const dispatch = useDispatch();
@@ -42,13 +43,6 @@ function Header() {
       setSearchQuery('');
       inputRef.current.focus();
     }
-  };
-
-  const getInitials = (email) => {
-    return email
-      .split('@')[0]
-      .substring(0, 2)
-      .toUpperCase();
   };
 
   return (
