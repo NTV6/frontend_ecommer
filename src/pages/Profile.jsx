@@ -7,26 +7,38 @@ import { getInitials, formatDate } from '../utils';
 import { authService, uploadService } from '../services/api';
 
 const Profile = () => {
+    const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
-    const [error, setError] = useState(null);
-    const { user } = useSelector((state) => state.auth);
     const [showPreview, setShowPreview] = useState(false);
+    const [currentPublicId, setCurrentPublicId] = useState(null);
+    const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const response = await authService.getProfile();
-                setProfile(response.data.data);
-                setLoading(false);
+                if (response.data?.data) {
+                    setProfile(response.data.data);
+                    // Extract public_id from Cloudinary URL if exists
+                    if (response.data.data.profile_picture) {
+                        const urlParts = response.data.data.profile_picture.split('/');
+                        const fileName = urlParts[urlParts.length - 1];
+                        const publicId = `profiles/${fileName.split('.')[0]}`;
+                        setCurrentPublicId(publicId);
+                    }
+                }
             } catch (err) {
-                setError(err.response?.data?.message || 'Có lỗi xảy ra');
+                console.error("Error fetching profile:", err); // Debug log
+                setError(err.message);
+                toast.error('Không thể tải thông tin người dùng');
+            } finally {
                 setLoading(false);
             }
         };
 
-        if (user) {
+        if (user?.uid) {
             fetchProfile();
         }
     }, [user]);
@@ -49,28 +61,29 @@ const Profile = () => {
 
         try {
             setUploading(true);
+
+            if (currentPublicId) {
+                await uploadService.deleteImage(currentPublicId);
+            }
+
             const formData = new FormData();
             formData.append('image', file);
 
             const uploadResponse = await uploadService.uploadImage(formData);
+            const imageUrl = uploadResponse.data.data.url;
+            const newPublicId = uploadResponse.data.data.public_id;
 
-            if (uploadResponse.data?.data?.url) {
-                // Cập nhật hồ sơ với URL hình ảnh mới
-                await authService.updateProfile({
-                    profile_picture: uploadResponse.data.data.url
-                });
+            await authService.updateProfile({
+                profile_picture: imageUrl
+            });
 
-                setProfile(prev => ({
-                    ...prev,
-                    profile_picture: uploadResponse.data.data.url
-                }));
-
-                toast.success('Cập nhật ảnh đại diện thành công');
-            } else {
-                throw new Error('Không nhận được URL ảnh từ server');
-            }
+            setProfile(prev => ({
+                ...prev,
+                profile_picture: imageUrl
+            }));
+            setCurrentPublicId(newPublicId);
+            toast.success('Cập nhật ảnh đại diện thành công');
         } catch (err) {
-            console.error('Upload error:', err);
             toast.error(err.response?.data?.message || 'Lỗi khi cập nhật ảnh đại diện');
         } finally {
             setUploading(false);
@@ -118,7 +131,7 @@ const Profile = () => {
                                             className="w-full h-full object-cover hover:opacity-90 transition-opacity"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-gray-900 dark:bg-gray-600 text-white rounded-full flex items-center justify-center">
+                                        <div className="w-full h-full bg-gray-900 dark:bg-gray-600 text-white flex items-center justify-center">
                                             <span className="text-8xl font-semibold transform -translate-y-1">
                                                 {getInitials(user.email)}
                                             </span>
@@ -148,14 +161,6 @@ const Profile = () => {
                                 </button>
                             )}
                         </div>
-
-                        {/* Xem trước hình ảnh Modal */}
-                        {showPreview && profile?.profile_picture && (
-                            <ImagePreview
-                                imageUrl={profile.profile_picture}
-                                onClose={() => setShowPreview(false)}
-                            />
-                        )}
 
                         {/* Thông tin chi tiết */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -207,6 +212,14 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Xem trước hình ảnh Modal */}
+            {showPreview && profile?.profile_picture && (
+                <ImagePreview
+                    imageUrl={profile.profile_picture}
+                    onClose={() => setShowPreview(false)}
+                />
+            )}
         </div>
     );
 };

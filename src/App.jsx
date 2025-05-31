@@ -2,8 +2,8 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { auth } from './lib/firebase';
 import { authService } from './services/api';

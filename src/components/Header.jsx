@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import { signOut } from 'firebase/auth';
 import { fetchCart, resetCart } from '../store/cartSlice';
+import { authService } from '../services/api';
 
 import { auth } from '../lib/firebase';
 import { getInitials } from '../utils';
@@ -18,12 +19,30 @@ function Header() {
   const { user } = useSelector((state) => state.auth);
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const inputRef = useRef(null);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     if (user) {
       dispatch(fetchCart());
     }
   }, [dispatch, user]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        if (user) {
+          const response = await authService.getProfile();
+          if (response.data?.data) {
+            setProfile(response.data.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -104,12 +123,23 @@ function Header() {
               <div className="relative group">
                 <button className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-gray-900 dark:bg-gray-600 text-white rounded-full flex items-center justify-center">
-                    {getInitials(user.email)}
+                    {profile?.profile_picture ? (
+                      <img
+                        src={profile.profile_picture}
+                        alt="Profile"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-900 dark:bg-gray-600 text-white flex items-center justify-center rounded-full">
+                        <span className="text-sm font-semibold">
+                          {getInitials(user.email)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </button>
                 {/* Added pt-2 for hover space and changed transition */}
-                <div className="absolute right-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 
-      group-hover:visible transition-all duration-300 ease-in-out z-10">
+                <div className="absolute right-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out z-10">
                   <div className="bg-white dark:bg-gray-700 rounded-md shadow-lg py-1">
                     <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 border-b dark:border-gray-600">
                       {user.email}
