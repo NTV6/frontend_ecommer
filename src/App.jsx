@@ -76,6 +76,7 @@ function App() {
           pauseOnFocusLoss
           draggable
           pauseOnHover
+          style={{ marginTop: "74px" }}
         />
         <Routes>
           <Route path="/admin/*" element={<Admin />} />

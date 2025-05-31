@@ -1,54 +1,39 @@
+import { signOut } from 'firebase/auth';
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
-import { signOut } from 'firebase/auth';
-import { fetchCart, resetCart } from '../store/cartSlice';
-import { authService } from '../services/api';
 
 import { auth } from '../lib/firebase';
 import { getInitials } from '../utils';
 import { clearUser } from '../store/authSlice';
+import { fetchProfile, clearProfile } from '../store/profileSlice';
+import { fetchCart, resetCart } from '../store/cartSlice';
 import ThemeToggle from './ThemeToggle';
 
 function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const cartItems = useSelector((state) => state.carts.items);
-  const { user } = useSelector((state) => state.auth);
-  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const inputRef = useRef(null);
-  const [profile, setProfile] = useState(null);
+  const cartItems = useSelector((state) => state.carts.items);
+  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { user } = useSelector((state) => state.auth);
+  const { data: profile } = useSelector((state) => state.profile);
 
   useEffect(() => {
     if (user) {
       dispatch(fetchCart());
+      dispatch(fetchProfile());
     }
   }, [dispatch, user]);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        if (user) {
-          const response = await authService.getProfile();
-          if (response.data?.data) {
-            setProfile(response.data.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
-
-    fetchProfile();
-  }, [user]);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      dispatch(resetCart());
       dispatch(clearUser());
+      dispatch(clearProfile());
+      dispatch(resetCart());
       navigate('/auth');
     } catch (error) {
       console.error('Lỗi đăng xuất:', error);

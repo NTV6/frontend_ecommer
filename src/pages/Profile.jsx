@@ -1,27 +1,28 @@
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import ImagePreview from '../components/ImagePreview';
 import { getInitials, formatDate } from '../utils';
 import { authService, uploadService } from '../services/api';
+import { setProfile, updateProfile } from '../store/profileSlice';
 
 const Profile = () => {
+    const dispatch = useDispatch();
     const [error, setError] = useState(null);
-    const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
     const [currentPublicId, setCurrentPublicId] = useState(null);
     const { user } = useSelector((state) => state.auth);
+    const { data: profile } = useSelector((state) => state.profile);
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const response = await authService.getProfile();
                 if (response.data?.data) {
-                    setProfile(response.data.data);
-                    // Extract public_id from Cloudinary URL if exists
+                    dispatch(setProfile(response.data.data));
                     if (response.data.data.profile_picture) {
                         const urlParts = response.data.data.profile_picture.split('/');
                         const fileName = urlParts[urlParts.length - 1];
@@ -30,7 +31,6 @@ const Profile = () => {
                     }
                 }
             } catch (err) {
-                console.error("Error fetching profile:", err); // Debug log
                 setError(err.message);
                 toast.error('Không thể tải thông tin người dùng');
             } finally {
@@ -41,7 +41,7 @@ const Profile = () => {
         if (user?.uid) {
             fetchProfile();
         }
-    }, [user]);
+    }, [user, dispatch]);
 
     const handleImageUpload = async (event) => {
         const file = event.target.files[0];
@@ -77,10 +77,13 @@ const Profile = () => {
                 profile_picture: imageUrl
             });
 
+            // Cập nhật cả trạng thái cục bộ và cửa hàng Redux
             setProfile(prev => ({
                 ...prev,
                 profile_picture: imageUrl
             }));
+            dispatch(updateProfile({ profile_picture: imageUrl }));
+
             setCurrentPublicId(newPublicId);
             toast.success('Cập nhật ảnh đại diện thành công');
         } catch (err) {
