@@ -33,7 +33,8 @@ api.interceptors.request.use(
 export const authService = {
   login: (credentials) => api.post('/users/login', credentials),
   signup: (userData) => api.post('/users/signup', userData),
-  updateProfile: (userData) => api.patch('/users/profile', userData),
+  updateImageProfile: (userData) => api.patch('/users/profile/image', userData),
+  updateInfoProfile: (userData) => api.patch('/users/profile/info', userData),
   getProfile: () => api.get('/users/profile')
 };
 

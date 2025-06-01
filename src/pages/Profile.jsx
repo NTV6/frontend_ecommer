@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { FaPen, FaTimes, FaSave } from 'react-icons/fa';
 
 import ImagePreview from '../components/ImagePreview';
 import { getInitials, formatDate } from '../utils';
@@ -16,6 +17,54 @@ const Profile = () => {
     const [currentPublicId, setCurrentPublicId] = useState(null);
     const { user } = useSelector((state) => state.auth);
     const { data: profile } = useSelector((state) => state.profile);
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState({
+        full_name: '',
+        phone_number: '',
+        address: '',
+        date_of_birth: ''
+    });
+
+    useEffect(() => {
+        if (profile) {
+            setFormData({
+                full_name: profile.full_name || '',
+                phone_number: profile.phone_number || '',
+                address: profile.address || '',
+                date_of_birth: profile.date_of_birth ? profile.date_of_birth.split('T')[0] : ''
+            });
+        }
+    }, [profile]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            // Xử lý ngày tháng trước khi gửi
+            const dataToSend = {
+                ...formData,
+                date_of_birth: formData.date_of_birth || null
+            };
+
+            const response = await authService.updateInfoProfile(dataToSend);
+
+            if (response.data.status === 'success') {
+                dispatch(updateProfile(response.data.data.user));
+                setIsEditing(false);
+                toast.success('Cập nhật thông tin thành công');
+            }
+        } catch (err) {
+            console.error('Error updating profile:', err);
+            toast.error(err.response?.data?.message || 'Lỗi khi cập nhật thông tin');
+        }
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -73,7 +122,7 @@ const Profile = () => {
             const imageUrl = uploadResponse.data.data.url;
             const newPublicId = uploadResponse.data.data.public_id;
 
-            await authService.updateProfile({
+            await authService.updateImageProfile({
                 profile_picture: imageUrl
             });
 
@@ -115,9 +164,37 @@ const Profile = () => {
         <div className="container mx-auto px-4 py-8 mt-[74px]">
             <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                 <div className="p-8">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-                        Thông tin cá nhân
-                    </h2>
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Thông tin cá nhân
+                        </h2>
+                        {!isEditing ? (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-md"
+                                title="Chỉnh sửa"
+                            >
+                                <FaPen size={14} />
+                            </button>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setIsEditing(false)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors shadow-sm"
+                                >
+                                    <FaTimes />
+                                    <span>Hủy</span>
+                                </button>
+                                <button
+                                    onClick={handleSubmit}
+                                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-sm"
+                                >
+                                    <FaSave />
+                                    <span>Lưu</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
 
                     <div className="space-y-6">
                         {/* Avatar */}
@@ -171,9 +248,21 @@ const Profile = () => {
                                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                                     Họ và tên
                                 </label>
-                                <div className="mt-1 text-gray-900 dark:text-white">
-                                    {profile?.full_name}
-                                </div>
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        name="full_name"
+                                        value={formData.full_name}
+                                        onChange={handleInputChange}
+                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+        dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
+        focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
+                                    />
+                                ) : (
+                                    <div className="mt-1 text-gray-900 dark:text-white">
+                                        {profile?.full_name || 'Chưa cập nhật'}
+                                    </div>
+                                )}
                             </div>
 
                             <div>
@@ -189,27 +278,63 @@ const Profile = () => {
                                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                                     Số điện thoại
                                 </label>
-                                <div className="mt-1 text-gray-900 dark:text-white">
-                                    {profile?.phone_number || 'Chưa cập nhật'}
-                                </div>
+                                {isEditing ? (
+                                    <input
+                                        type="tel"
+                                        name="phone_number"
+                                        value={formData.phone_number}
+                                        onChange={handleInputChange}
+                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+    dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
+    focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
+                                    />
+                                ) : (
+                                    <div className="mt-1 text-gray-900 dark:text-white">
+                                        {profile?.phone_number || 'Chưa cập nhật'}
+                                    </div>
+                                )}
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                                     Ngày sinh
                                 </label>
-                                <div className="mt-1 text-gray-900 dark:text-white">
-                                    {formatDate(profile?.date_of_birth)}
-                                </div>
+                                {isEditing ? (
+                                    <input
+                                        type="date"
+                                        name="date_of_birth"
+                                        value={formData.date_of_birth}
+                                        onChange={handleInputChange}
+                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+    dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
+    focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
+                                    />
+                                ) : (
+                                    <div className="mt-1 text-gray-900 dark:text-white">
+                                        {formatDate(profile?.date_of_birth) || 'Chưa cập nhật'}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
                                     Địa chỉ
                                 </label>
-                                <div className="mt-1 text-gray-900 dark:text-white">
-                                    {profile?.address || 'Chưa cập nhật'}
-                                </div>
+                                {isEditing ? (
+                                    <textarea
+                                        name="address"
+                                        value={formData.address}
+                                        onChange={handleInputChange}
+                                        rows="3"
+                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+    dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
+    focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
+                                    />
+                                ) : (
+                                    <div className="mt-1 text-gray-900 dark:text-white">
+                                        {profile?.address || 'Chưa cập nhật'}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
