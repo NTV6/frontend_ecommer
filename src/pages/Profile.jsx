@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaPen, FaTimes, FaSave } from 'react-icons/fa';
 
+import InputField from '../components/InputField';
 import ImagePreview from '../components/ImagePreview';
-import { getInitials, formatDate } from '../utils';
+import { getInitials, validatePhoneNumber } from '../utils';
 import { authService, uploadService } from '../services/api';
 import { setProfile, updateProfile } from '../store/profileSlice';
 
@@ -47,6 +48,14 @@ const Profile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Xác thực số điện thoại
+            if (formData.phone_number) {
+                const { isValid, message } = validatePhoneNumber(formData.phone_number);
+                if (!isValid) {
+                    toast.error(message);
+                    return;
+                }
+            }
             // Xử lý ngày tháng trước khi gửi
             const dataToSend = {
                 ...formData,
@@ -244,98 +253,46 @@ const Profile = () => {
 
                         {/* Thông tin chi tiết */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Họ và tên
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        name="full_name"
-                                        value={formData.full_name}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-        dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
-        focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
-                                    />
-                                ) : (
-                                    <div className="mt-1 text-gray-900 dark:text-white">
-                                        {profile?.full_name || 'Chưa cập nhật'}
-                                    </div>
-                                )}
-                            </div>
+                            <InputField
+                                label="Họ và tên"
+                                name="full_name"
+                                value={formData.full_name}
+                                onChange={handleInputChange}
+                                isEditing={isEditing}
+                            />
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Email
-                                </label>
-                                <div className="mt-1 text-gray-900 dark:text-white">
-                                    {profile?.email}
-                                </div>
-                            </div>
+                            <InputField
+                                label="Email"
+                                value={profile?.email}
+                                isEditing={false}
+                            />
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Số điện thoại
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="tel"
-                                        name="phone_number"
-                                        value={formData.phone_number}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-    dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
-    focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
-                                    />
-                                ) : (
-                                    <div className="mt-1 text-gray-900 dark:text-white">
-                                        {profile?.phone_number || 'Chưa cập nhật'}
-                                    </div>
-                                )}
-                            </div>
+                            <InputField
+                                label="Số điện thoại"
+                                type="tel"
+                                name="phone_number"
+                                value={formData.phone_number}
+                                onChange={handleInputChange}
+                                isEditing={isEditing}
+                            />
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Ngày sinh
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="date"
-                                        name="date_of_birth"
-                                        value={formData.date_of_birth}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-    dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
-    focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
-                                    />
-                                ) : (
-                                    <div className="mt-1 text-gray-900 dark:text-white">
-                                        {formatDate(profile?.date_of_birth) || 'Chưa cập nhật'}
-                                    </div>
-                                )}
-                            </div>
+                            <InputField
+                                label="Ngày sinh"
+                                type="date"
+                                name="date_of_birth"
+                                value={formData.date_of_birth}
+                                onChange={handleInputChange}
+                                isEditing={isEditing}
+                            />
 
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Địa chỉ
-                                </label>
-                                {isEditing ? (
-                                    <textarea
-                                        name="address"
-                                        value={formData.address}
-                                        onChange={handleInputChange}
-                                        rows="3"
-                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-    dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 
-    focus:ring-blue-500 dark:focus:border-blue-400 dark:focus:ring-blue-400 px-3 py-1"
-                                    />
-                                ) : (
-                                    <div className="mt-1 text-gray-900 dark:text-white">
-                                        {profile?.address || 'Chưa cập nhật'}
-                                    </div>
-                                )}
-                            </div>
+                            <InputField
+                                label="Địa chỉ"
+                                type="textarea"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                isEditing={isEditing}
+                            />
                         </div>
                     </div>
                 </div>

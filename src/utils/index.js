@@ -43,7 +43,7 @@ export const formatDate = (dateString, showTime = true) => {
         year: 'numeric'
     });
 
-    // Return date only if showTime is false (for birthdays) or time is midnight
+    // Trả về ngày chỉ khi showTime là false (đối với ngày sinh) hoặc thời gian là nửa đêm
     if (!showTime || (date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0)) {
         return dateStr;
     }
@@ -55,4 +55,22 @@ export const formatDate = (dateString, showTime = true) => {
     });
 
     return `${dateStr} - ${timeStr}`;
+};
+
+export const validatePhoneNumber = (phoneNumber) => {
+    // Cho phép số điện thoại trống
+    if (!phoneNumber) {
+        return {
+            isValid: true,
+            message: ''
+        };
+    }
+
+    const phoneRegex = /^0\d{9}$/;
+    const isValid = phoneRegex.test(phoneNumber.trim());
+
+    return {
+        isValid,
+        message: isValid ? '' : 'Số điện thoại phải có 10 số và bắt đầu bằng số 0'
+    };
 };
