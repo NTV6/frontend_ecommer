@@ -83,7 +83,7 @@ function ReviewForm({ productId, onReviewSubmitted }) {
             >
               <FaStar
                 className={`${star <= (hover || rating)
-                  ? 'text-yellow-400'
+                  ? 'text-orange-500'
                   : 'text-gray-300 dark:text-gray-600'
                   }`}
               />

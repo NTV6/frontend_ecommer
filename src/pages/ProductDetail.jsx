@@ -1,3 +1,6 @@
+import { FiPlus, FiMinus } from 'react-icons/fi'
+import { MdShoppingCart } from 'react-icons/md';
+
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -9,6 +12,7 @@ import { addToCart } from '../store/cartSlice';
 import { getProduct } from '../store/productSlice';
 import ReviewForm from '../components/ReviewForm';
 import ReviewList from '../components/ReviewList';
+import RatingStars from '../components/RatingStart';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -180,6 +184,13 @@ function ProductDetail() {
     });
   };
 
+  // Thêm hàm tính điểm trung bình
+  const calculateAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / reviews.length).toFixed(1);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 mt-[74px]">
       {productData ? (
@@ -207,7 +218,7 @@ function ProductDetail() {
               </div>
 
               {/* Main image with zoom */}
-              <div className="flex-1 relative">
+              <div className="flex-1 relative z-10">
                 <div
                   ref={imageRef}
                   className="relative cursor-crosshair overflow-hidden rounded-lg"
@@ -258,17 +269,22 @@ function ProductDetail() {
             {/* Product details */}
             <div>
               <h1 className="text-3xl font-bold mb-4">{productData.name}</h1>
+
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center">
+                  <RatingStars rating={parseFloat(calculateAverageRating(reviews))} />
+                  <span className="ml-2 text-sm text-gray-600">
+                    {calculateAverageRating(reviews)} / 5
+                  </span>
+                </div>
+                <span className="text-sm text-gray-500">
+                  ({reviews.length} đánh giá)
+                </span>
+              </div>
+
               <p className="text-2xl font-semibold text-gray-900 mb-4 dark:text-gray-100">
                 {selectedVariant ? Number(selectedVariant.price).toLocaleString() : 'Chọn biến thể'}₫
               </p>
-
-              <div className="items-center mb-4">
-                {selectedVariant && (
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Còn {selectedVariant.stock} sản phẩm
-                  </span>
-                )}
-              </div>
 
               {/* Color selection */}
               <div className="mb-4">
@@ -314,30 +330,39 @@ function ProductDetail() {
               </div>
 
               {/* Quantity selection */}
-              <div className="mb-4">
+              <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Số lượng</h3>
-                <div className="flex items-center mt-2">
-                  <button
-                    onClick={() => handleQuantityChange(-1)}
-                    className="px-3 py-1 border rounded-l"
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <input
-                    min="1"
-                    max={selectedVariant?.stock || 1}
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="w-16 px-2 py-1 border-t border-b text-center dark:bg-gray-800 dark:text-gray-200"
-                  />
-                  <button
-                    onClick={() => handleQuantityChange(1)}
-                    className="px-3 py-1 border rounded-r"
-                    disabled={!selectedVariant || quantity >= selectedVariant.stock}
-                  >
-                    +
-                  </button>
+
+                <div className="flex items-center gap-4 mt-2">
+                  <div className="flex items-center border rounded overflow-hidden">
+                    <button
+                      onClick={() => handleQuantityChange(-1)}
+                      className="p-2 disabled:opacity-50 dark:bg-gray-700"
+                      disabled={quantity <= 1}
+                    >
+                      <FiMinus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                    </button>
+                    <input
+                      min="1"
+                      max={selectedVariant?.stock || 1}
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      className="w-12 px-2 py-1 text-center border-x dark:bg-gray-800 dark:text-gray-200"
+                    />
+                    <button
+                      onClick={() => handleQuantityChange(1)}
+                      className="p-2 disabled:opacity-50 dark:bg-gray-700"
+                      disabled={!selectedVariant || quantity >= selectedVariant.stock}
+                    >
+                      <FiPlus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                    </button>
+                  </div>
+
+                  {selectedVariant && (
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      Còn {selectedVariant.stock} sản phẩm
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -345,13 +370,18 @@ function ProductDetail() {
               <button
                 onClick={handleAddToCart}
                 disabled={!selectedVariant || selectedVariant.stock === 0}
-                className="w-full md:w-auto bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+                className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
               >
-                {!selectedVariant
-                  ? 'Chọn biến thể'
-                  : selectedVariant.stock === 0
-                    ? 'Hết hàng'
-                    : 'Thêm vào giỏ hàng'
+                {selectedVariant?.stock === 0
+                  ? 'Hết hàng'
+                  : !selectedVariant
+                    ? 'Chọn biến thể'
+                    : (
+                      <>
+                        <MdShoppingCart className="w-5 h-5" />
+                        Thêm vào giỏ hàng
+                      </>
+                    )
                 }
               </button>
 

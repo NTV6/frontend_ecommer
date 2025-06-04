@@ -15,11 +15,11 @@ function ReviewList({ reviews }) {
       {reviews.map((review) => (
         <div key={review.id} className="border-b dark:border-gray-700 pb-4">
           <div className="flex items-center space-x-2 mb-2">
-            <div className="flex text-yellow-400">
+            <div className="flex">
               {[...Array(5)].map((_, index) => (
                 <FaStar
                   key={index}
-                  className={index < review.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}
+                  className={index < review.rating ? 'text-orange-500' : 'text-gray-300 dark:text-gray-600'}
                 />
               ))}
             </div>
