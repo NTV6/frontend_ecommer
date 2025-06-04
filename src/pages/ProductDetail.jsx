@@ -17,19 +17,21 @@ function ProductDetail() {
   const { selectedProduct: productData, loading, error } = useSelector(state => state.products);
 
   const imageRef = useRef(null);
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [zoomBoxSize] = useState(150); // Kích thước khung zoom
+  const [reviews, setReviews] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [showZoom, setShowZoom] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const [reviews, setReviews] = useState([]);
   useEffect(() => {
     if (id) {
       const reviewsRef = collection(db, 'reviews');
-      // Convert id to string to match with Firebase data
+      // Chuyển đổi id thành chuỗi để khớp với dữ liệu Firebase
       const q = query(reviewsRef, where('productId', '==', String(id)));
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -84,10 +86,26 @@ function ProductDetail() {
 
   const handleMouseMove = (e) => {
     if (!imageRef.current) return;
+
     const { left, top, width, height } = imageRef.current.getBoundingClientRect();
-    const x = ((e.clientX - left) / width) * 100;
-    const y = ((e.clientY - top) / height) * 100;
-    setZoomPosition({ x, y });
+    const mouseX = e.clientX - left;
+    const mouseY = e.clientY - top;
+
+    // Tính toán vị trí khung zoom (giới hạn trong ảnh)
+    const halfBoxSize = zoomBoxSize / 2;
+    const boxX = Math.max(halfBoxSize, Math.min(width - halfBoxSize, mouseX));
+    const boxY = Math.max(halfBoxSize, Math.min(height - halfBoxSize, mouseY));
+
+    setMousePosition({ x: boxX, y: boxY });
+
+    // Tính toán vị trí zoom (tỷ lệ phần trăm)
+    const zoomX = ((boxX - halfBoxSize) / (width - zoomBoxSize)) * 100;
+    const zoomY = ((boxY - halfBoxSize) / (height - zoomBoxSize)) * 100;
+
+    setZoomPosition({
+      x: Math.max(0, Math.min(100, zoomX)),
+      y: Math.max(0, Math.min(100, zoomY))
+    });
   };
 
   const handleQuantityChange = (value) => {
@@ -145,7 +163,7 @@ function ProductDetail() {
                   <button
                     key={image.id}
                     onClick={() => setSelectedImage(image)}
-                    className={`w-20 h-20 border rounded-lg overflow-hidden ${selectedImage?.id === image.id
+                    className={`border rounded-lg overflow-hidden ${selectedImage?.id === image.id
                       ? 'border-2 border-blue-500'
                       : 'border-gray-200 hover:border-gray-400'
                       }`}
@@ -153,17 +171,17 @@ function ProductDetail() {
                     <img
                       src={image.image}
                       alt={`View ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </button>
                 ))}
               </div>
 
-              {/* Main image */}
-              <div className="flex-1">
+              {/* Main image with zoom */}
+              <div className="flex-1 relative">
                 <div
                   ref={imageRef}
-                  className="aspect-square relative cursor-crosshair"
+                  className="relative cursor-crosshair overflow-hidden rounded-lg"
                   onMouseEnter={() => setShowZoom(true)}
                   onMouseLeave={() => setShowZoom(false)}
                   onMouseMove={handleMouseMove}
@@ -173,22 +191,34 @@ function ProductDetail() {
                       selectedVariant?.images?.[0]?.image ||
                       productData.variants?.[0]?.images?.[0]?.image}
                     alt={productData.name}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-contain"
                   />
+
+                  {/* Zoom box overlay */}
+                  {showZoom && (
+                    <div
+                      className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-20 pointer-events-none"
+                      style={{
+                        width: `${zoomBoxSize}px`,
+                        height: `${zoomBoxSize}px`,
+                        left: `${mousePosition.x - zoomBoxSize / 2}px`,
+                        top: `${mousePosition.y - zoomBoxSize / 2}px`,
+                        transform: 'translate(0, 0)'
+                      }}
+                    />
+                  )}
                 </div>
 
-                {/* Zoom view */}
+                {/* Zoom view panel */}
                 {showZoom && (selectedImage || selectedVariant?.images?.[0]) && (
-                  <div className="hidden md:block absolute left-[105%] top-0 w-[500px] h-[500px] overflow-hidden rounded-lg shadow-lg">
+                  <div className="hidden md:block absolute left-[105%] top-0 w-[500px] h-[500px] overflow-hidden rounded-lg shadow-lg border-2 border-gray-200 bg-white">
                     <div
-                      className="absolute w-[200%] h-[200%]"
+                      className="w-full h-full"
                       style={{
                         backgroundImage: `url(${selectedImage?.image || selectedVariant.images[0].image})`,
                         backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                        backgroundSize: 'cover',
+                        backgroundSize: '300%', // Tăng độ zoom
                         backgroundRepeat: 'no-repeat',
-                        transform: 'scale(2)',
-                        transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
                       }}
                     />
                   </div>

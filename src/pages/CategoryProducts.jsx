@@ -5,7 +5,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 import PriceFilter from '../components/PriceFilter';
 import GenderFilter from '../components/GenderFilter';
-import ProductItem from '../components/ProductItem';
+import ProductCard from '../components/ProductCard';
 import { fetchProductsByCategory } from '../store/productSlice';
 
 
@@ -76,7 +76,7 @@ function CategoryProducts() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {paginatedProducts.map((product) => (
-                  <ProductItem
+                  <ProductCard
                     key={product.id}
                     product={product}
                   />

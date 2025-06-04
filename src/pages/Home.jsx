@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import Categories from '../components/Categories';
-import ProductItem from '../components/ProductItem';
+import ProductCard from '../components/ProductCard';
 import { fetchProducts } from '../store/productSlice';
 
 function Home() {
@@ -71,7 +71,7 @@ function Home() {
           <h2 className="text-3xl font-bold text-center mb-12">SẢN PHẨM MỚI</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[...products].reverse().slice(0, 4).map((product) => (
-              <ProductItem
+              <ProductCard
                 key={product.id}
                 product={product}
               />

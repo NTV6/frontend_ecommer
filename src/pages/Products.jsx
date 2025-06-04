@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import PriceFilter from '../components/PriceFilter';
 import GenderFilter from '../components/GenderFilter';
-import ProductItem from '../components/ProductItem';
+import ProductCard from '../components/ProductCard';
 import { fetchProducts } from '../store/productSlice';
 
 function Products() {
@@ -46,7 +46,7 @@ function Products() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[...filteredProducts].reverse().map((product) => (
-                <ProductItem
+                <ProductCard
                   key={product.id}
                   product={product}
                 />
