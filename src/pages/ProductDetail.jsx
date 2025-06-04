@@ -17,6 +17,7 @@ function ProductDetail() {
   const { selectedProduct: productData, loading, error } = useSelector(state => state.products);
 
   const imageRef = useRef(null);
+  const zoomTimeoutRef = useRef(null);
   const [zoomBoxSize] = useState(150); // Kích thước khung zoom
   const [reviews, setReviews] = useState([]);
   const [quantity, setQuantity] = useState(1);
@@ -25,6 +26,7 @@ function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [showZoomDelayed, setShowZoomDelayed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -83,6 +85,33 @@ function ProductDetail() {
     ?.filter(v => v.color === selectedColor) // Chỉ lấy các variant có màu đã chọn
     ?.map(v => v.size) || []
   )];
+
+  const handleMouseEnter = () => {
+    setShowZoom(true);
+    // Delay 0.5 giây trước khi hiện zoom
+    zoomTimeoutRef.current = setTimeout(() => {
+      setShowZoomDelayed(true);
+    }, 1000);
+  };
+
+  const handleMouseLeave = () => {
+    setShowZoom(false);
+    setShowZoomDelayed(false);
+    // Clear timeout nếu user rời chuột trước khi delay kết thúc
+    if (zoomTimeoutRef.current) {
+      clearTimeout(zoomTimeoutRef.current);
+      zoomTimeoutRef.current = null;
+    }
+  };
+
+  // Cleanup timeout khi component unmount
+  useEffect(() => {
+    return () => {
+      if (zoomTimeoutRef.current) {
+        clearTimeout(zoomTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleMouseMove = (e) => {
     if (!imageRef.current) return;
@@ -182,8 +211,8 @@ function ProductDetail() {
                 <div
                   ref={imageRef}
                   className="relative cursor-crosshair overflow-hidden rounded-lg"
-                  onMouseEnter={() => setShowZoom(true)}
-                  onMouseLeave={() => setShowZoom(false)}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
                   onMouseMove={handleMouseMove}
                 >
                   <img
@@ -210,7 +239,7 @@ function ProductDetail() {
                 </div>
 
                 {/* Zoom view panel */}
-                {showZoom && (selectedImage || selectedVariant?.images?.[0]) && (
+                {showZoomDelayed && (selectedImage || selectedVariant?.images?.[0]) && (
                   <div className="hidden md:block absolute left-[105%] top-0 w-[500px] h-[500px] overflow-hidden rounded-lg shadow-lg border-2 border-gray-200 bg-white">
                     <div
                       className="w-full h-full"
