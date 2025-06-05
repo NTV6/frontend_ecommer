@@ -1,161 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { FaBox, FaShoppingBag, FaUsers, FaChartBar, FaFolder } from 'react-icons/fa';
+import { FaBox, FaShoppingBag, FaChartBar, FaFolder } from 'react-icons/fa';
 
-import ProductManagement from './ProductManagement';
-import CategoryManagement from './CategotyManagement';
-import ThemeToggle from '../../components/ThemeToggle';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { clearUser } from '../../store/authSlice';
-import { fetchProducts } from '../../store/productSlice';
-import { fetchCategories } from '../../store/categorySlice';
-
-function Dashboard() {
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(fetchProducts());
-        dispatch(fetchCategories());
-    }, [dispatch]);
-
-    const { products } = useSelector((state) => state.products);
-    const { categories } = useSelector((state) => state.categories);
-    return (
-        <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6 dark:text-white">Tổng quan</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-500 dark:text-gray-400">Tổng đơn hàng</p>
-                            <h3 className="text-2xl font-bold dark:text-white">150</h3>
-                        </div>
-                        <FaShoppingBag className="text-3xl text-blue-500" />
-                    </div>
-                </div>
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-500 dark:text-gray-400">Danh mục</p>
-                            <h3 className="text-2xl font-bold dark:text-white">{categories.length}</h3>
-                        </div>
-                        <FaFolder className="text-3xl text-green-500" />
-                    </div>
-                </div>
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-500 dark:text-gray-400">Sản phẩm</p>
-                            <h3 className="text-2xl font-bold dark:text-white">{products.length}</h3>
-                        </div>
-                        <FaBox className="text-3xl text-green-500" />
-                    </div>
-                </div>
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-500 dark:text-gray-400">Khách hàng</p>
-                            <h3 className="text-2xl font-bold dark:text-white">1,234</h3>
-                        </div>
-                        <FaUsers className="text-3xl text-purple-500" />
-                    </div>
-                </div>
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-500 dark:text-gray-400">Doanh thu</p>
-                            <h3 className="text-2xl font-bold dark:text-white">45.5M</h3>
-                        </div>
-                        <FaChartBar className="text-3xl text-red-500" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function Orders() {
-    const orders = [
-        {
-            id: "ORD001",
-            customer: "Nguyễn Văn A",
-            date: "2024-03-20",
-            total: 1298000,
-            status: "Đã giao"
-        },
-        {
-            id: "ORD002",
-            customer: "Trần Thị B",
-            date: "2024-03-19",
-            total: 799000,
-            status: "Đang xử lý"
-        },
-    ];
-
-    return (
-        <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6 dark:text-white">Quản lý đơn hàng</h2>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-900">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Mã đơn hàng
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Khách hàng
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Ngày đặt
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Tổng tiền
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Trạng thái
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Thao tác
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        {orders.map((order) => (
-                            <tr key={order.id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm font-medium text-gray-900 dark:text-white">{order.id}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">{order.customer}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">{order.date}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-500 dark:text-gray-300">{order.total.toLocaleString()}₫</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === "Đã giao"
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-yellow-100 text-yellow-800"
-                                        }`}>
-                                        {order.status}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
-                                        Chi tiết
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
-}
+import Dashboard from './Dashboard';
+import OrderManagement from './OrderManagement';
+import ProductManagement from './ProductManagement';
+import CategoryManagement from './CategotyManagement';
+import ThemeToggle from '../../components/ThemeToggle';
 
 function Admin() {
     const location = useLocation();
@@ -236,7 +91,7 @@ function Admin() {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/products" element={<ProductManagement />} />
                         <Route path="/categories" element={<CategoryManagement />} />
-                        <Route path="/orders" element={<Orders />} />
+                        <Route path="/orders" element={<OrderManagement />} />
                     </Routes>
                 </div>
             </div>

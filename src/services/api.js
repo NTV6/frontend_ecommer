@@ -31,11 +31,11 @@ api.interceptors.request.use(
 
 // Service cho user
 export const authService = {
-  login: (credentials) => api.post('/users/login', credentials),
+  getProfile: () => api.get('/users/profile'),
   signup: (userData) => api.post('/users/signup', userData),
+  login: (credentials) => api.post('/users/login', credentials),
   updateImageProfile: (userData) => api.patch('/users/profile/image', userData),
-  updateInfoProfile: (userData) => api.patch('/users/profile/info', userData),
-  getProfile: () => api.get('/users/profile')
+  updateInfoProfile: (userData) => api.patch('/users/profile/info', userData)
 };
 
 // Service cho sản phẩm
@@ -80,6 +80,5 @@ export const uploadService = {
 export const orderService = {
   createCodOrder: (orderData) => api.post('/orders/cod', orderData),
   createVnpayOrder: (orderData) => api.post('/orders/vnpay', orderData),
-  getUserOrders: () => api.get('/orders')
 };
 export default api;
