@@ -78,7 +78,10 @@ export const uploadService = {
 
 // Service cho đơn hàng
 export const orderService = {
+  getAllOrders: () => api.get('/orders/all'),
+  getOrderDetails: (orderId) => api.get(`/orders/${orderId}`),
   createCodOrder: (orderData) => api.post('/orders/cod', orderData),
   createVnpayOrder: (orderData) => api.post('/orders/vnpay', orderData),
+  updateOrderStatus: (orderId, status) => api.patch(`/orders/${orderId}/status`, { status })
 };
 export default api;
