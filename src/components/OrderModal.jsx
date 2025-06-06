@@ -135,9 +135,9 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
                                     <FaEdit className="w-4 h-4 mr-2" />
                                     Cập nhật trạng thái đơn hàng
                                 </h4>
-                                <div className="relative w-full md:w-64" key={order.id}>
+                                <div className="relative w-full md:w-44" key={order.id}>
                                     <select
-                                        className="w-full outline-none appearance-none md:w-64 px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 font-medium"
+                                        className="w-full outline-none appearance-none md:w-44 px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 font-medium"
                                         value={order.order_status}
                                         onChange={(e) => handleStatusChange(order.order_id, e.target.value)}
                                     >

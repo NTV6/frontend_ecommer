@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
+import { FaChevronDown } from 'react-icons/fa';
 import {
     HiOutlineSearch,
     HiOutlineSwitchVertical,
@@ -83,13 +84,18 @@ function OrderManagement() {
                             />
                             <HiOutlineSearch className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                         </div>
-                        <select className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
-                            <option>Tất cả trạng thái</option>
-                            <option>Đang xử lý</option>
-                            <option>Đã xác nhận</option>
-                            <option>Đang giao</option>
-                            <option>Hoàn thành</option>
-                        </select>
+                        <div className="relative w-full md:w-44">
+                            <select className="w-full outline-none appearance-none md:w-44 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 font-medium">
+                                <option value="pending">⏳ Chờ xử lý</option>
+                                <option value="processing">🔄 Đang xử lý</option>
+                                <option value="shipping">🚚 Đang giao</option>
+                                <option value="delivered">✅ Đã giao</option>
+                                <option value="cancelled">❌ Đã hủy</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                <FaChevronDown />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
