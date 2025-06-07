@@ -25,25 +25,23 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
 
     useEffect(() => {
         if (mode === 'edit' && product) {
-            // Đảm bảo có đủ dữ liệu khi edit
             setFormData({
                 name: product.name || '',
                 description: product.description || '',
                 category_id: product.category_id || '',
                 variants: product.variants?.map(variant => ({
-                    id: variant.id, // Quan trọng: giữ lại id của variant
+                    id: variant.id,
                     color: variant.color || '',
                     size: variant.size || '',
                     price: variant.price || '',
                     stock: variant.stock || '',
                     images: variant.images?.map(img => ({
                         ...img,
-                        variant_id: img.variant_id || variant.id // Giữ liên kết với variant
+                        variant_id: img.variant_id || variant.id
                     })) || []
                 })) || []
             });
         } else {
-            // Reset form khi thêm mới
             setFormData({
                 name: '',
                 description: '',
@@ -117,7 +115,6 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
     };
 
     const handleImageUpload = async (variantIndex, e) => {
-        // Lấy files từ event
         const files = Array.from(e.target.files);
         const newVariants = [...formData.variants];
 
@@ -144,7 +141,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
 
             // Set first image as thumbnail
             if (uploadedImages.length > 0) {
-                uploadedImages[0].is_thumbnail = 1; // Đổi thành 1 thay vì true để phù hợp với MySQL
+                uploadedImages[0].is_thumbnail = 1;
             }
 
             // Update variant images
@@ -174,6 +171,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
             }
 
             // Cập nhật state để xóa ảnh khỏi UI
+
             const newVariants = [...formData.variants];
             newVariants[variantIndex].images = variant.images.filter((_, i) => i !== imgIndex);
 
@@ -217,7 +215,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                 description: formData.description.trim(),
                 category_id: Number(formData.category_id),
                 variants: formData.variants.map(variant => ({
-                    ...(variant.id && { id: variant.id }), // Chỉ thêm id nếu có
+                    ...(variant.id && { id: variant.id }),
                     color: variant.color.trim(),
                     size: variant.size.trim(),
                     price: Number(variant.price) || 0,
@@ -254,39 +252,78 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
         }
     };
 
-    return (
-        <div className={`fixed inset-0 ${isOpen ? 'block' : 'hidden'}`}>
-            <div className="fixed inset-0 bg-black opacity-50"></div>
-            <div className="fixed inset-0 overflow-y-auto">
-                <div className="flex min-h-full items-center justify-center p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
-                        <form onSubmit={handleSubmit} className="p-6">
-                            <h2 className="text-xl font-semibold mb-4">
-                                {mode === 'add' ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm'}
-                            </h2>
+    if (!isOpen) return null;
 
-                            <div className="space-y-4 mb-6">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Tên sản phẩm</label>
+    return (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+            {/* Overlay */}
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
+
+            {/* Modal */}
+            <div className="flex min-h-full items-center justify-center p-4">
+                <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                    {/* Header */}
+                    <div className="sticky top-0 bg-white dark:bg-gray-900 px-8 py-6 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl z-10">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    {mode === 'add' ? '✨ Thêm sản phẩm mới' : '🔧 Chỉnh sửa sản phẩm'}
+                                </h2>
+                                <p className="text-gray-500 dark:text-gray-400 mt-1">
+                                    {mode === 'add' ? 'Tạo sản phẩm mới cho cửa hàng của bạn' : 'Cập nhật thông tin sản phẩm'}
+                                </p>
+                            </div>
+                            <button
+                                onClick={onClose}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                            >
+                                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-8">
+                        {/* Basic Info Section */}
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 mb-8">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                Thông tin cơ bản
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Tên sản phẩm
+                                    </label>
                                     <input
                                         type="text"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white placeholder-gray-400"
+                                        placeholder="Nhập tên sản phẩm..."
                                         required
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Loại sản phẩm</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Loại sản phẩm
+                                    </label>
                                     <select
                                         value={formData.category_id}
                                         onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
                                         required
                                     >
                                         <option value="">Chọn loại sản phẩm</option>
-                                        {categories.map(category => (
+                                        {categories && categories.map(category => (
                                             <option key={category.id} value={category.id}>
                                                 {category.name}
                                             </option>
@@ -294,153 +331,202 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                     </select>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Mô tả</label>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Mô tả sản phẩm
+                                    </label>
                                     <textarea
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-                                        rows="3"
+                                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white placeholder-gray-400"
+                                        rows="4"
+                                        placeholder="Mô tả chi tiết về sản phẩm..."
                                     />
-
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Variants Section */}
+                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                                    <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
+                                        </svg>
+                                    </div>
+                                    Biến thể sản phẩm
+                                </h3>
+                                <button
+                                    type="button"
+                                    onClick={handleAddVariant}
+                                    className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all flex items-center shadow-lg"
+                                >
+                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Thêm biến thể
+                                </button>
                             </div>
 
                             <div className="space-y-6">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="text-lg font-medium">Biến thể sản phẩm</h3>
-                                    <button
-                                        type="button"
-                                        onClick={handleAddVariant}
-                                        className="text-blue-500 hover:text-blue-600"
-                                    >
-                                        + Thêm biến thể
-                                    </button>
-                                </div>
-
                                 {formData.variants.map((variant, index) => (
-                                    <div key={index} className="border p-4 rounded space-y-4">
-                                        <div className="flex justify-between">
-                                            <h4 className="font-medium">Biến thể {index + 1}</h4>
+                                    <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
+                                                <span className="w-6 h-6 bg-indigo-500 text-white text-xs rounded-full flex items-center justify-center mr-2">
+                                                    {index + 1}
+                                                </span>
+                                                Biến thể {index + 1}
+                                            </h4>
                                             {index > 0 && (
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        handleRemoveVariant(index)
-                                                    }
-                                                    className="text-red-500 hover:text-red-600"
+                                                    onClick={() => handleRemoveVariant(index)}
+                                                    className="px-3 py-1 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors flex items-center text-sm"
                                                 >
+                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
                                                     Xóa
                                                 </button>
                                             )}
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                                             <div>
-                                                <label className="block text-sm font-medium mb-1">Màu sắc</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Màu sắc
+                                                </label>
                                                 <input
                                                     type="text"
                                                     value={variant.color}
                                                     onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
-                                                    className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
+                                                    placeholder="Đỏ, Xanh..."
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium mb-1">Kích thước</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Kích thước
+                                                </label>
                                                 <input
                                                     type="text"
                                                     value={variant.size}
                                                     onChange={(e) => handleVariantChange(index, 'size', e.target.value)}
-                                                    className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
+                                                    placeholder="S, M, L..."
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium mb-1">Giá</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Giá (VNĐ)
+                                                </label>
                                                 <input
                                                     type="number"
                                                     value={variant.price}
                                                     onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
-                                                    className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
+                                                    placeholder="100000"
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium mb-1">Số lượng</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Số lượng
+                                                </label>
                                                 <input
                                                     type="number"
                                                     value={variant.stock}
                                                     onChange={(e) => handleVariantChange(index, 'stock', e.target.value)}
-                                                    className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
+                                                    placeholder="10"
                                                     required
                                                 />
                                             </div>
                                         </div>
 
+                                        {/* Images Section */}
                                         <div>
-                                            <label className="block text-sm font-medium mb-1">Hình ảnh</label>
-                                            <input
-                                                type="file"
-                                                multiple
-                                                onChange={(e) => handleImageUpload(index, e)}
-                                                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-                                                accept="image/*"
-                                            />
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                                Hình ảnh sản phẩm
+                                            </label>
+
+                                            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                                                <input
+                                                    type="file"
+                                                    multiple
+                                                    onChange={(e) => handleImageUpload(index, e)}
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                    id={`file-upload-${index}`}
+                                                />
+                                                <label htmlFor={`file-upload-${index}`} className="cursor-pointer">
+                                                    <div className="text-gray-400 mb-2">
+                                                        <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                        </svg>
+                                                    </div>
+                                                    <p className="text-gray-600 dark:text-gray-400">
+                                                        <span className="font-medium text-blue-600">Click để tải ảnh</span> hoặc kéo thả file vào đây
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                                                </label>
+                                            </div>
+
                                             {variant.images.length > 0 && (
-                                                <div className="flex flex-wrap gap-2 mt-2">
+                                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
                                                     {variant.images.map((img, imgIndex) => (
                                                         <div key={imgIndex} className="relative group">
-                                                            <img
-                                                                src={img.image}
-                                                                alt={`Preview ${imgIndex + 1}`}
-                                                                className={`w-20 h-20 object-cover rounded ${img.is_thumbnail ? 'ring-2 ring-blue-500' : ''}`}
-                                                            />
-                                                            <div className="absolute top-0 right-0 flex gap-1">
-                                                                {/* Nút xóa */}
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => handleRemoveImage(index, imgIndex)}
-                                                                    className="bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                >
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        className="h-4 w-4"
-                                                                        viewBox="0 0 20 20"
-                                                                        fill="currentColor"
-                                                                    >
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                            clipRule="evenodd"
-                                                                        />
-                                                                    </svg>
-                                                                </button>
-                                                                {/* Nút set thumbnail */}
+                                                            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                                                                <img
+                                                                    src={img.image}
+                                                                    alt={`Preview ${imgIndex + 1}`}
+                                                                    className={`w-full h-full object-cover transition-all group-hover:scale-105 ${img.is_thumbnail ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                                                                        }`}
+                                                                />
+                                                            </div>
+
+                                                            {/* Image Controls */}
+                                                            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => handleSetThumbnail(index, imgIndex)}
-                                                                    className={`p-1 rounded-full transition-opacity opacity-0 group-hover:opacity-100
-                                                                            ${img.is_thumbnail
-                                                                            ? 'bg-blue-500 text-white'
-                                                                            : 'bg-gray-200 hover:bg-blue-500 hover:text-white'}`}
+                                                                    className={`p-1.5 rounded-full shadow-lg transition-all ${img.is_thumbnail
+                                                                        ? 'bg-blue-500 text-white'
+                                                                        : 'bg-white text-gray-600 hover:bg-blue-500 hover:text-white'
+                                                                        }`}
                                                                     title={img.is_thumbnail ? 'Ảnh đại diện' : 'Đặt làm ảnh đại diện'}
                                                                 >
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        className="h-4 w-4"
-                                                                        viewBox="0 0 20 20"
-                                                                        fill="currentColor"
-                                                                    >
-                                                                        <path
-                                                                            d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"
-                                                                        />
+                                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                                    </svg>
+                                                                </button>
+
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleRemoveImage(index, imgIndex)}
+                                                                    className="p-1.5 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                                                                    title="Xóa ảnh"
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                                                     </svg>
                                                                 </button>
                                                             </div>
+
+                                                            {img.is_thumbnail && (
+                                                                <div className="absolute bottom-2 left-2">
+                                                                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                                                                        Ảnh đại diện
+                                                                    </span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -449,23 +535,25 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                     </div>
                                 ))}
                             </div>
+                        </div>
 
-                            <div className="flex justify-end gap-4 mt-6">
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    className="px-4 py-2 border rounded hover:bg-gray-100 dark:hover:text-black"
-                                >
-                                    Hủy
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                >
-                                    {mode === 'add' ? 'Thêm sản phẩm' : 'Cập nhật'}
-                                </button>
-                            </div>
-                        </form>
+                        {/* Action Buttons */}
+                        <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors font-medium"
+                            >
+                                Hủy bỏ
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleSubmit}
+                                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all font-medium shadow-lg"
+                            >
+                                {mode === 'add' ? '✨ Thêm sản phẩm' : '💾 Cập nhật'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

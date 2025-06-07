@@ -9,8 +9,6 @@ import {
     HiOutlineCreditCard,
     HiOutlineEye,
     HiOutlineDotsVertical,
-    HiOutlineChevronLeft,
-    HiOutlineChevronRight
 } from 'react-icons/hi';
 
 import { orderService } from '../../services/api';
@@ -33,39 +31,11 @@ function OrderManagement() {
     const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
     const totalPages = filteredOrders.length > 0 ? Math.ceil(filteredOrders.length / ordersPerPage) : 1;
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
-
     // Tạo mảng số trang
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
     }
-
-    useEffect(() => {
-        fetchOrders();
-    }, []);
-
-    useEffect(() => {
-        setFilteredOrders(orders);
-    }, [orders]);
-    useEffect(() => {
-        if (currentPage > totalPages) {
-            setCurrentPage(1);
-        }
-    }, [totalPages]);
-    const fetchOrders = async () => {
-        try {
-            const response = await orderService.getAllOrders();
-            setOrders(response.data.data);
-            setLoading(false);
-        } catch (err) {
-            console.error('Error fetching orders:', err);
-            toast.error('Không thể tải danh sách đơn hàng');
-            setLoading(false);
-        }
-    };
 
     const debouncedSearch = useCallback(
         debounce((searchValue, currentOrders, currentStatus) => {
@@ -124,6 +94,20 @@ function OrderManagement() {
         []
     );
 
+    useEffect(() => {
+        fetchOrders();
+    }, []);
+
+    useEffect(() => {
+        setFilteredOrders(orders);
+    }, [orders]);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(1);
+        }
+    }, [totalPages]);
+
     // Replace existing useEffect with this
     useEffect(() => {
         debouncedSearch(searchTerm, orders, statusFilter);
@@ -134,12 +118,28 @@ function OrderManagement() {
         };
     }, [searchTerm, orders, statusFilter, debouncedSearch]);
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
 
     const handleStatusFilter = (e) => {
         setStatusFilter(e.target.value);
+    };
+
+    const fetchOrders = async () => {
+        try {
+            const response = await orderService.getAllOrders();
+            setOrders(response.data.data);
+            setLoading(false);
+        } catch (err) {
+            console.error('Error fetching orders:', err);
+            toast.error('Không thể tải danh sách đơn hàng');
+            setLoading(false);
+        }
     };
 
     const handleStatusChange = async (orderId, newStatus) => {
