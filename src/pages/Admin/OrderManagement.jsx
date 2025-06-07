@@ -16,6 +16,7 @@ import {
 import { orderService } from '../../services/api';
 import { getStatusBadgeColor } from '../../utils';
 import OrderModal from '../../components/OrderModal';
+import Pagination from '../../components/Pagination';
 
 function OrderManagement() {
     const [orders, setOrders] = useState([]);
@@ -24,6 +25,23 @@ function OrderManagement() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [ordersPerPage] = useState(10);
+
+    const indexOfLastOrder = currentPage * ordersPerPage;
+    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+    const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+    const totalPages = filteredOrders.length > 0 ? Math.ceil(filteredOrders.length / ordersPerPage) : 1;
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    // Tạo mảng số trang
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
 
     useEffect(() => {
         fetchOrders();
@@ -32,7 +50,11 @@ function OrderManagement() {
     useEffect(() => {
         setFilteredOrders(orders);
     }, [orders]);
-
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(1);
+        }
+    }, [totalPages]);
     const fetchOrders = async () => {
         try {
             const response = await orderService.getAllOrders();
@@ -245,7 +267,7 @@ function OrderManagement() {
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
-                                {filteredOrders.map((order) => {
+                                {currentOrders.map((order) => {
                                     return (
                                         <tr
                                             key={order.id}
@@ -322,42 +344,21 @@ function OrderManagement() {
                             </tbody>
                         </table>
                     </div>
-
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={filteredOrders.length}
+                        onPageChange={handlePageChange}
+                    />
                     {/* Add no results message */}
                     {filteredOrders.length === 0 && (
                         <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-                            {searchTerm
-                                ? "Không tìm thấy đơn hàng nào phù hợp"
+                            {searchTerm || statusFilter !== 'all'
+                                ? "Không tìm thấy đơn hàng nào phù hợp với điều kiện tìm kiếm"
                                 : "Chưa có đơn hàng nào"
                             }
                         </div>
                     )}
-
-                    {/* Pagination */}
-                    <div className="bg-white dark:bg-gray-800 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div className="text-sm text-gray-700 dark:text-gray-300">
-                                Hiển thị <span className="font-medium">1</span> đến <span className="font-medium">10</span> trong tổng số <span className="font-medium">97</span> đơn hàng
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <button className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <HiOutlineChevronLeft className="h-5 w-5" />
-                                </button>
-                                <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    1
-                                </button>
-                                <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20 text-sm font-medium text-blue-600 dark:text-blue-400">
-                                    2
-                                </button>
-                                <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    3
-                                </button>
-                                <button className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <HiOutlineChevronRight className="h-5 w-5" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 {selectedOrder && (
                     <OrderModal
