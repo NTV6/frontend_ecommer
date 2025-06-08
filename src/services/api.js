@@ -31,14 +31,14 @@ api.interceptors.request.use(
 
 // Service cho user
 export const authService = {
+  getAllUsers: () => api.get('/users'),
   getProfile: () => api.get('/users/profile'),
   signup: (userData) => api.post('/users/signup', userData),
   login: (credentials) => api.post('/users/login', credentials),
-  updateImageProfile: (userData) => api.patch('/users/profile/image', userData),
+  updateUserRole: (userId, data) => api.patch(`/users/${userId}/role`, data),
   updateInfoProfile: (userData) => api.patch('/users/profile/info', userData),
-  getAllUsers: () => api.get('/users'),
+  updateImageProfile: (userData) => api.patch('/users/profile/image', userData),
   deleteUser: (id) => api.delete(`/users/${id}`),
-  updateUser: (id, userData) => api.patch(`/users/${id}`, userData)
 };
 
 // Service cho sản phẩm

@@ -1,8 +1,9 @@
+import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { format } from 'date-fns';
-import { toast } from 'react-toastify';
 import { HiOutlineSearch, HiOutlineTrash, HiOutlineEye } from 'react-icons/hi';
+
+import UserModal from '../../components/UserModal';
 import { fetchUsers, deleteUser } from '../../store/userSlice';
 
 function UserManagement() {
@@ -52,59 +53,6 @@ function UserManagement() {
             console.error('Failed to delete user:', error);
         }
     };
-
-    const UserDetailsModal = ({ user, onClose }) => (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold dark:text-white">
-                        Thông tin người dùng
-                    </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                        <span className="text-2xl">&times;</span>
-                    </button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <p className="text-sm text-gray-500">Họ tên:</p>
-                        <p className="font-medium">{user.full_name}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Email:</p>
-                        <p className="font-medium">{user.email}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Số điện thoại:</p>
-                        <p className="font-medium">{user.phone_number || 'Chưa cập nhật'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Địa chỉ:</p>
-                        <p className="font-medium">{user.address || 'Chưa cập nhật'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Ngày sinh:</p>
-                        <p className="font-medium">
-                            {user.date_of_birth
-                                ? format(new Date(user.date_of_birth), 'dd/MM/yyyy')
-                                : 'Chưa cập nhật'
-                            }
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Vai trò:</p>
-                        <p className="font-medium">{user.role}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Ngày tạo:</p>
-                        <p className="font-medium">
-                            {format(new Date(user.created_at), 'dd/MM/yyyy HH:mm')}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
 
     const DeleteConfirmationModal = ({ onConfirm, onCancel }) => (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -278,7 +226,7 @@ function UserManagement() {
 
             {/* Modals */}
             {selectedUser && (
-                <UserDetailsModal
+                <UserModal
                     user={selectedUser}
                     onClose={() => setSelectedUser(null)}
                 />

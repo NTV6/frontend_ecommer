@@ -15,6 +15,20 @@ export const fetchUsers = createAsyncThunk(
     }
 );
 
+export const updateUserRole = createAsyncThunk(
+    'users/updateRole',
+    async ({ userId, role }, { rejectWithValue }) => {
+        try {
+            const response = await authService.updateUserRole(userId, { role });
+            toast.success('Cập nhật vai trò thành công');
+            return response.data.data;
+        } catch (error) {
+            toast.error('Không thể cập nhật vai trò người dùng');
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
 export const deleteUser = createAsyncThunk(
     'users/deleteUser',
     async (userId, { rejectWithValue }) => {
@@ -50,6 +64,12 @@ const userSlice = createSlice({
             .addCase(fetchUsers.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            .addCase(updateUserRole.fulfilled, (state, action) => {
+                const updatedUser = action.payload;
+                state.users = state.users.map(user =>
+                    user.id === updatedUser.id ? updatedUser : user
+                );
             })
             .addCase(deleteUser.fulfilled, (state, action) => {
                 state.users = state.users.filter(user => user.id !== action.payload);
