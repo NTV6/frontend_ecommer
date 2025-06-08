@@ -35,7 +35,10 @@ export const authService = {
   signup: (userData) => api.post('/users/signup', userData),
   login: (credentials) => api.post('/users/login', credentials),
   updateImageProfile: (userData) => api.patch('/users/profile/image', userData),
-  updateInfoProfile: (userData) => api.patch('/users/profile/info', userData)
+  updateInfoProfile: (userData) => api.patch('/users/profile/info', userData),
+  getAllUsers: () => api.get('/users'),
+  deleteUser: (id) => api.delete(`/users/${id}`),
+  updateUser: (id, userData) => api.patch(`/users/${id}`, userData)
 };
 
 // Service cho sản phẩm
@@ -84,4 +87,5 @@ export const orderService = {
   createVnpayOrder: (orderData) => api.post('/orders/vnpay', orderData),
   updateOrderStatus: (orderId, status) => api.patch(`/orders/${orderId}/status`, { status })
 };
+
 export default api;

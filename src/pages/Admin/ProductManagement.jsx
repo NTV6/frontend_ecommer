@@ -181,14 +181,14 @@ function ProductManagement() {
                                     || product.variants?.[0]?.images?.[0]?.image;
 
                                 return (
-                                    <tr key={`product-${product.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-200 group">
+                                    <tr key={`product-${product.id}`} className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 group">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
                                                 <div className="relative">
                                                     <img
                                                         src={thumbnailImage}
                                                         alt={product.name}
-                                                        className="w-12 h-12 rounded-lg object-cover mr-4 border border-gray-200 dark:border-gray-600"
+                                                        className="w-12 rounded-lg object-cover mr-4 border border-gray-200 dark:border-gray-600"
                                                     />
                                                     {totalStock === 0 && (
                                                         <div className="absolute inset-0 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">

@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import { signOut } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaBox, FaShoppingBag, FaChartBar, FaFolder } from 'react-icons/fa';
+import { FaBox, FaShoppingBag, FaChartBar, FaFolder, FaUsers } from 'react-icons/fa';
 
-import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { clearUser } from '../../store/authSlice';
 import Dashboard from './Dashboard';
+import UserManagement from './UserManagement';
 import OrderManagement from './OrderManagement';
 import ProductManagement from './ProductManagement';
 import CategoryManagement from './CategotyManagement';
@@ -21,6 +22,7 @@ function Admin() {
         { id: 'categories', name: 'Danh mục', icon: FaFolder },
         { id: 'products', name: 'Sản phẩm', icon: FaBox },
         { id: 'orders', name: 'Đơn hàng', icon: FaShoppingBag },
+        { id: 'users', name: 'Người dùng', icon: FaUsers },
     ];
 
     const dispatch = useDispatch();
@@ -92,6 +94,7 @@ function Admin() {
                         <Route path="/products" element={<ProductManagement />} />
                         <Route path="/categories" element={<CategoryManagement />} />
                         <Route path="/orders" element={<OrderManagement />} />
+                        <Route path="/users" element={<UserManagement />} />
                     </Routes>
                 </div>
             </div>
