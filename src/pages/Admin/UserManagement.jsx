@@ -1,12 +1,7 @@
 import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    FaSearch,
-    FaTrashAlt,
-    FaEye,
-    FaUsers,
-} from 'react-icons/fa';
+import { HiOutlineEye, HiTrash, HiSearch, HiUsers } from 'react-icons/hi';
 
 import UserModal from '../../components/UserModal';
 import { fetchUsers, deleteUser } from '../../store/userSlice';
@@ -75,7 +70,7 @@ function UserManagement() {
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
                 <div className="p-6">
                     <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900 rounded-full mb-4">
-                        <FaTrashAlt className="w-6 h-6 text-red-600 dark:text-red-400" />
+                        <HiTrash className="w-6 h-6 text-red-600 dark:text-red-400" />
                     </div>
                     <h3 className="text-xl font-bold text-center mb-2 dark:text-white">
                         Xác nhận xóa người dùng
@@ -115,7 +110,7 @@ function UserManagement() {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-                                <FaUsers className="w-8 h-8 mr-3 text-blue-600" />
+                                <HiUsers className="w-8 h-8 mr-3 text-blue-600" />
                                 Quản lý người dùng
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -127,7 +122,7 @@ function UserManagement() {
                     {/* Search and Filter */}
                     <div className="flex flex-col md:flex-row gap-4 mb-6">
                         <div className="relative flex-1">
-                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
                                 value={searchTerm}
@@ -222,18 +217,18 @@ function UserManagement() {
                                             <div className="flex items-center justify-center space-x-3">
                                                 <button
                                                     onClick={() => setSelectedUser(user)}
-                                                    className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 p-2 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-colors"
-                                                    title="Xem chi tiết"
+                                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors duration-200"
                                                 >
-                                                    <FaEye className="h-5 w-5" />
+                                                    <HiOutlineEye className="w-4 h-4 mr-1" />
+                                                    Chi tiết
                                                 </button>
                                                 {user.role !== 'admin' && (
                                                     <button
                                                         onClick={() => handleDeleteClick(user)}
-                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 p-2 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors"
-                                                        title="Xóa người dùng"
+                                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-md hover:bg-red-200 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors duration-200"
                                                     >
-                                                        <FaTrashAlt className="h-5 w-5" />
+                                                        <HiTrash className="w-4 h-4 mr-1" />
+                                                        Xóa
                                                     </button>
                                                 )}
                                             </div>

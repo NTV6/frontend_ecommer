@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { HiPlus, HiSearch, HiViewGrid, HiViewList, HiPencilAlt, HiTrash, HiOutlineExclamationCircle } from 'react-icons/hi';
 
 import CategoryModal from '../../components/CategoryModal';
 import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../store/categorySlice';
@@ -87,9 +88,7 @@ function CategoryManagement() {
                         onClick={() => setIsModalOpen(true)}
                         className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
+                        <HiPlus className="w-5 h-5 mr-2" />
                         Thêm danh mục
                     </button>
                 </div>
@@ -108,9 +107,7 @@ function CategoryManagement() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-64 pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
-                            <svg className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                            <HiSearch className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                         </div>
 
                         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -127,9 +124,7 @@ function CategoryManagement() {
                                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                            </svg>
+                            <HiViewGrid className="w-5 h-5" />
                         </button>
                         <button
                             onClick={() => setViewMode('list')}
@@ -138,9 +133,7 @@ function CategoryManagement() {
                                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                            </svg>
+                            <HiViewList className="w-5 h-5" />
                         </button>
                     </div>
                 </div>
@@ -173,17 +166,13 @@ function CategoryManagement() {
                                             }}
                                             className="p-2 bg-white/90 text-blue-600 rounded-lg hover:bg-white transition-colors duration-200 shadow-sm"
                                         >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
+                                            <HiPencilAlt className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(category)}
                                             className="p-2 bg-white/90 text-red-600 rounded-lg hover:bg-white transition-colors duration-200 shadow-sm"
                                         >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
+                                            <HiTrash className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </div>
@@ -253,18 +242,14 @@ function CategoryManagement() {
                                                     }}
                                                     className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors duration-200"
                                                 >
-                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                    </svg>
+                                                    <HiPencilAlt className="w-4 h-4" />
                                                     Sửa
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(category)}
                                                     className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-md hover:bg-red-200 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors duration-200"
                                                 >
-                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
+                                                    <HiTrash className="w-4 h-4 mr-1" />
                                                     Xóa
                                                 </button>
                                             </div>
@@ -281,9 +266,7 @@ function CategoryManagement() {
             {filteredCategories.length === 0 && (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12">
                     <div className="text-center">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                        </svg>
+                        <HiOutlineExclamationCircle className="mx-auto h-12 w-12 text-gray-400" />
                         <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Không có danh mục</h3>
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                             {searchTerm ? 'Không tìm thấy danh mục nào phù hợp với từ khóa tìm kiếm.' : 'Bắt đầu bằng cách tạo danh mục đầu tiên.'}
@@ -294,9 +277,7 @@ function CategoryManagement() {
                                     onClick={() => setIsModalOpen(true)}
                                     className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
                                 >
-                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
+                                    <HiPlus className="w-5 h-5 mr-2" />
                                     Thêm danh mục đầu tiên
                                 </button>
                             </div>

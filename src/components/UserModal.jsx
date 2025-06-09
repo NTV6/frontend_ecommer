@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { useDispatch } from 'react-redux';
 import { MdEmail } from 'react-icons/md';
-import { FaUser, FaPhone, FaMapMarkerAlt, FaRegCalendarAlt, FaRegClock, FaShieldAlt, FaTimes } from 'react-icons/fa';
+import { FaUser, FaPhoneAlt, FaMapMarkerAlt, FaRegCalendarAlt, FaRegClock, FaShieldAlt, FaTimes } from 'react-icons/fa';
 
 import { updateUserRole } from '../store/userSlice';
 
@@ -51,9 +51,9 @@ function UserModal({ user, onClose }) {
                         </div>
                         <button
                             onClick={onClose}
-                            className="text-white hover:text-gray-200 transition-colors p-2 hover:bg-white hover:bg-opacity-10 rounded-full"
+                            className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
                         >
-                            <FaTimes className="w-6 h-6" />
+                            <FaTimes className="w-6 h-6 text-white" />
                         </button>
                     </div>
                 </div>
@@ -78,20 +78,11 @@ function UserModal({ user, onClose }) {
                             </div>
                             <div className="space-y-1">
                                 <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                    <FaPhone className="w-4 h-4 mr-2" />
+                                    <FaPhoneAlt className="w-4 h-4 mr-2" />
                                     Số điện thoại
                                 </div>
                                 <p className="font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                                     {user.phone_number || 'Chưa cập nhật'}
-                                </p>
-                            </div>
-                            <div className="space-y-1 md:col-span-2">
-                                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                    <FaMapMarkerAlt className="w-4 h-4 mr-2" />
-                                    Địa chỉ
-                                </div>
-                                <p className="font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                                    {user.address || 'Chưa cập nhật'}
                                 </p>
                             </div>
                             <div className="space-y-1">
@@ -112,6 +103,15 @@ function UserModal({ user, onClose }) {
                                 </div>
                                 <p className="font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                                     {format(new Date(user.created_at), 'dd/MM/yyyy HH:mm')}
+                                </p>
+                            </div>
+                            <div className="space-y-1 md:col-span-2">
+                                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <FaMapMarkerAlt className="w-4 h-4 mr-2" />
+                                    Địa chỉ
+                                </div>
+                                <p className="font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                    {user.address || 'Chưa cập nhật'}
                                 </p>
                             </div>
                         </div>

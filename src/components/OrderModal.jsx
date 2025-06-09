@@ -1,7 +1,7 @@
 import { BiPackage } from 'react-icons/bi';
 import { BsBagCheckFill } from 'react-icons/bs';
-import { MdClose, MdOutlinePayments } from 'react-icons/md';
-import { FaUserCircle, FaPhoneAlt, FaMapMarkedAlt, FaTags, FaTshirt, FaHashtag, FaEdit, FaChevronDown, FaUser } from 'react-icons/fa';
+import { MdOutlinePayments } from 'react-icons/md';
+import { FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaTags, FaTshirt, FaHashtag, FaEdit, FaChevronDown, FaUser, FaTimes } from 'react-icons/fa';
 
 import { getStatusBadgeColor } from '../utils';
 
@@ -10,7 +10,7 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
         <div className="fixed inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden border border-gray-100 dark:border-gray-700">
                 {/* Header Section */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 text-white relative overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 px-6 text-white relative overflow-hidden">
                     <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
                     <div className="relative flex justify-between items-center">
                         <div>
@@ -22,9 +22,9 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
                         </div>
                         <button
                             onClick={onClose}
-                            className="bg-white/20 hover:bg-white/30 transition-all duration-200 rounded-full p-2 backdrop-blur-sm"
+                            className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
                         >
-                            <MdClose className="w-6 h-6" />
+                            <FaTimes className="w-6 h-6 text-white" />
                         </button>
                     </div>
                 </div>
@@ -39,21 +39,21 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                                 <div className="flex items-center mb-2">
-                                    <FaUser className="text-blue-500 mr-2 text-xs" />
+                                    <FaUser className="mr-2 text-xs" />
                                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Khách hàng</p>
                                 </div>
                                 <p className="font-semibold text-gray-900 dark:text-white text-lg">{order.user_name}</p>
                             </div>
                             <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                                 <div className="flex items-center mb-2">
-                                    <FaPhoneAlt className="text-green-500 mr-2 text-xs" />
+                                    <FaPhoneAlt className="mr-2 text-xs" />
                                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Số điện thoại</p>
                                 </div>
                                 <p className="font-semibold text-gray-900 dark:text-white text-lg">{order.phone_number}</p>
                             </div>
                             <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-2">
                                 <div className="flex items-center mb-2">
-                                    <FaMapMarkedAlt className="text-orange-500 mr-2 text-xs" />
+                                    <FaMapMarkerAlt className="mr-2 text-xs" />
                                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Địa chỉ giao hàng</p>
                                 </div>
                                 <p className="font-semibold text-gray-900 dark:text-white text-lg">{order.shipping_address}</p>

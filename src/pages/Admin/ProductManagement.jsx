@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+    HiPlus,
+    HiSearch,
+    HiMenuAlt4,
+    HiClipboardList,
+    HiXCircle,
+    HiPencilAlt,
+    HiTrash
+} from 'react-icons/hi';
 
 import { formatDate } from '../../utils';
 import { fetchCategories } from '../../store/categorySlice';
@@ -82,9 +91,7 @@ function ProductManagement() {
                     onClick={handleAddProduct}
                     className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
+                    <HiPlus className="w-5 h-5 mr-2" />
                     Thêm sản phẩm
                 </button>
             </div>
@@ -100,9 +107,7 @@ function ProductManagement() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                         />
-                        <svg className="absolute left-3 top-3 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+                        <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     </div>
 
                     <select
@@ -131,9 +136,7 @@ function ProductManagement() {
                             {filteredProducts.length} sản phẩm
                         </span>
                         <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                            </svg>
+                            <HiMenuAlt4 className="w-6 h-6" />
                         </button>
                     </div>
                 </div>
@@ -191,10 +194,8 @@ function ProductManagement() {
                                                         className="w-12 rounded-lg object-cover mr-4 border border-gray-200 dark:border-gray-600"
                                                     />
                                                     {totalStock === 0 && (
-                                                        <div className="absolute inset-0 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
-                                                            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                            </svg>
+                                                        <div className="absolute w-12 inset-0 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                                                            <HiXCircle className="w-6 h-6 text-red-600" />
                                                         </div>
                                                     )}
                                                 </div>
@@ -215,9 +216,7 @@ function ProductManagement() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center text-sm text-gray-900 dark:text-white">
-                                                <svg className="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                                </svg>
+                                                <HiClipboardList className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
                                                 {product.variants?.length || 0}
                                             </div>
                                         </td>
@@ -254,18 +253,14 @@ function ProductManagement() {
                                                     onClick={() => handleEditProduct(product)}
                                                     className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors duration-200"
                                                 >
-                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                    </svg>
+                                                    <HiPencilAlt className="w-4 h-4 mr-1" />
                                                     Sửa
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteProduct(product)}
                                                     className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-md hover:bg-red-200 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors duration-200"
                                                 >
-                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
+                                                    <HiTrash className="w-4 h-4 mr-1" />
                                                     Xóa
                                                 </button>
                                             </div>
@@ -280,9 +275,7 @@ function ProductManagement() {
                 {/* Empty State */}
                 {filteredProducts.length === 0 && (
                     <div className="text-center py-12">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                        </svg>
+                        <HiClipboardList className="mx-auto w-12 h-12 text-gray-400 dark:text-gray-500" />
                         <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Không có sản phẩm</h3>
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                             Không tìm thấy sản phẩm nào phù hợp với bộ lọc hiện tại.

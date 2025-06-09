@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { GiSparkles } from 'react-icons/gi';
 import { FaTimes, FaUpload, FaFileImage, FaTag, FaFileAlt } from 'react-icons/fa';
 
-
 function CategoryModal({ isOpen, onClose, category, onSubmit }) {
     const [imageFile, setImageFile] = useState(null);
     const [uploading, setUploading] = useState(false);

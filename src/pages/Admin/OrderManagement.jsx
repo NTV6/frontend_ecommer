@@ -1,6 +1,5 @@
 import debounce from 'lodash/debounce';
 import { toast } from 'react-toastify';
-import { FaChevronDown } from 'react-icons/fa';
 import { format, parse, isValid } from 'date-fns';
 import { useState, useEffect, useCallback } from 'react';
 import {
@@ -9,6 +8,7 @@ import {
     HiOutlineCreditCard,
     HiOutlineEye,
     HiOutlineDotsVertical,
+    HiChevronDown
 } from 'react-icons/hi';
 
 import { orderService } from '../../services/api';
@@ -205,7 +205,7 @@ function OrderManagement() {
                                 <option value="cancelled">❌ Đã hủy</option>
                             </select>
                             <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                <FaChevronDown className="text-gray-400" />
+                                <HiChevronDown className="text-gray-400 h-5 w-5" />
                             </div>
                         </div>
                     </div>
