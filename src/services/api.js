@@ -54,7 +54,6 @@ export const productService = {
 // Service cho danh mục
 export const categoryService = {
   getAllCategories: () => api.get('/categories'),
-  // getCategories: (id) => api.get(`/categories/${id}`),
   addCategory: (categoryData) => api.post('/categories', categoryData),
   updateCategory: (id, categoryData) => api.patch(`/categories/${id}`, categoryData),
   deleteCategory: (categoryId) => api.delete(`/categories/${categoryId}`)

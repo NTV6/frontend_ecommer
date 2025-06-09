@@ -1,7 +1,12 @@
 import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { HiOutlineSearch, HiOutlineTrash, HiOutlineEye } from 'react-icons/hi';
+import {
+    FaSearch,
+    FaTrashAlt,
+    FaEye,
+    FaUsers,
+} from 'react-icons/fa';
 
 import UserModal from '../../components/UserModal';
 import { fetchUsers, deleteUser } from '../../store/userSlice';
@@ -15,19 +20,23 @@ function UserManagement() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [filterRole, setFilterRole] = useState('all');
 
     useEffect(() => {
         dispatch(fetchUsers());
     }, [dispatch]);
 
-    // Tìm kiếm người dùng
+    // Tìm kiếm và lọc người dùng
     const filteredUsers = users.filter(user => {
         const searchString = searchTerm.toLowerCase();
-        return (
+        const matchesSearch =
             user.full_name?.toLowerCase().includes(searchString) ||
             user.email?.toLowerCase().includes(searchString) ||
-            user.phone_number?.includes(searchString)
-        );
+            user.phone_number?.includes(searchString);
+
+        const matchesRole = filterRole === 'all' || user.role === filterRole;
+
+        return matchesSearch && matchesRole;
     });
 
     // Phân trang
@@ -54,84 +63,119 @@ function UserManagement() {
         }
     };
 
+    const getRoleBadge = (role) => {
+        if (role === 'admin') {
+            return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+        }
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+    };
+
     const DeleteConfirmationModal = ({ onConfirm, onCancel }) => (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
-                <h3 className="text-xl font-bold mb-4 dark:text-white">
-                    Xác nhận xóa người dùng
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                    Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.
-                </p>
-                <div className="flex justify-end space-x-3">
-                    <button
-                        onClick={onCancel}
-                        className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-                    >
-                        Hủy
-                    </button>
-                    <button
-                        onClick={onConfirm}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                    >
-                        Xóa
-                    </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
+                <div className="p-6">
+                    <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900 rounded-full mb-4">
+                        <FaTrashAlt className="w-6 h-6 text-red-600 dark:text-red-400" />
+                    </div>
+                    <h3 className="text-xl font-bold text-center mb-2 dark:text-white">
+                        Xác nhận xóa người dùng
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-center mb-6">
+                        Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.
+                    </p>
+                    <div className="flex space-x-3">
+                        <button
+                            onClick={onCancel}
+                            className="flex-1 px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors"
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            onClick={onConfirm}
+                            disabled={loading}
+                            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center justify-center"
+                        >
+                            {loading ? (
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                                'Xóa'
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 
-    if (loading) {
-        return <div className="p-6">Đang tải...</div>;
-    }
-
     return (
-        <div className="p-6">
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Quản lý người dùng
-                    </h2>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Tìm kiếm người dùng..."
-                            className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <HiOutlineSearch className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="p-6 max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+                                <FaUsers className="w-8 h-8 mr-3 text-blue-600" />
+                                Quản lý người dùng
+                            </h1>
+                            <p className="text-gray-600 dark:text-gray-400 mt-2">
+                                Quản lý thông tin và vai trò của người dùng trong hệ thống
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Search and Filter */}
+                    <div className="flex flex-col md:flex-row gap-4 mb-6">
+                        <div className="relative flex-1">
+                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Tìm kiếm theo tên, email hoặc số điện thoại..."
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="flex gap-3">
+                            <select
+                                value={filterRole}
+                                onChange={(e) => setFilterRole(e.target.value)}
+                                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                                <option value="all">Tất cả vai trò</option>
+                                <option value="admin">Quản trị viên</option>
+                                <option value="user">Người dùng</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                {/* Table */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead className="bg-gray-50 dark:bg-gray-900">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Người dùng
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Email
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Liên hệ
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Số điện thoại
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Vai trò
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Ngày tạo
                                     </th>
-                                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Thao tác
                                     </th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 {currentUsers.map((user) => (
-                                    <tr key={user.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
                                                 {user.profile_picture ? (
@@ -151,44 +195,45 @@ function UserManagement() {
                                                     <div className="text-sm font-medium text-gray-900 dark:text-white">
                                                         {user.full_name}
                                                     </div>
+                                                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                        ID: {user.id}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                                            <div className="text-sm text-gray-900 dark:text-white">
                                                 {user.email}
                                             </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-500 dark:text-gray-400">
                                                 {user.phone_number || 'Chưa cập nhật'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin'
-                                                ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                                                : 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                                                }`}>
-                                                {user.role}
+                                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadge(user.role)}`}>
+                                                {user.role === 'admin' ? 'Admin' : 'User'}
                                             </span>
                                         </td>
+
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                            {format(new Date(user.created_at), 'dd/MM/yyyy')}
+                                            {format(new Date(user.created_at), 'dd/MM/yyyy - HH:mm')}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            <div className="flex items-center justify-center space-x-2">
+                                            <div className="flex items-center justify-center space-x-3">
                                                 <button
                                                     onClick={() => setSelectedUser(user)}
-                                                    className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                                                    className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 p-2 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-colors"
+                                                    title="Xem chi tiết"
                                                 >
-                                                    <HiOutlineEye className="h-5 w-5" />
+                                                    <FaEye className="h-5 w-5" />
                                                 </button>
                                                 {user.role !== 'admin' && (
                                                     <button
                                                         onClick={() => handleDeleteClick(user)}
-                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 p-2 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors"
+                                                        title="Xóa người dùng"
                                                     >
-                                                        <HiOutlineTrash className="h-5 w-5" />
+                                                        <FaTrashAlt className="h-5 w-5" />
                                                     </button>
                                                 )}
                                             </div>
@@ -200,17 +245,26 @@ function UserManagement() {
                     </div>
 
                     {/* Pagination */}
-                    <div className="bg-white dark:bg-gray-800 px-6 py-4 border-t border:gray-200 dark:border-gray-700">
+                    <div className="bg-white dark:bg-gray-800 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div className="text-sm text-gray-700 dark:text-gray-300">
-                                Hiển thị {indexOfFirstUser + 1} đến {Math.min(indexOfLastUser, filteredUsers.length)} trong số {filteredUsers.length} người dùng
+                                Hiển thị <span className="font-medium">{indexOfFirstUser + 1}</span> đến{' '}
+                                <span className="font-medium">{Math.min(indexOfLastUser, filteredUsers.length)}</span> trong số{' '}
+                                <span className="font-medium">{filteredUsers.length}</span> người dùng
                             </div>
                             <div className="flex space-x-2">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    Trước
+                                </button>
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                                     <button
                                         key={page}
                                         onClick={() => handlePageChange(page)}
-                                        className={`px-3 py-1 rounded-md ${currentPage === page
+                                        className={`px-3 py-2 text-sm rounded-lg transition-colors ${currentPage === page
                                             ? 'bg-blue-600 text-white'
                                             : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                             }`}
@@ -218,6 +272,13 @@ function UserManagement() {
                                         {page}
                                     </button>
                                 ))}
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    Sau
+                                </button>
                             </div>
                         </div>
                     </div>
