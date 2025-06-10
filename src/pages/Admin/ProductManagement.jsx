@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     HiPlus,
-    HiSearch,
     HiMenuAlt4,
     HiClipboardList,
     HiXCircle,
@@ -13,6 +12,8 @@ import {
 import { formatDate } from '../../utils';
 import { fetchCategories } from '../../store/categorySlice';
 import { fetchProducts, deleteProduct } from '../../store/productSlice';
+import Search from '../../components/Search';
+import Filter from '../../components/Filter';
 import ProductModal from '../../components/ProductModal';
 
 function ProductManagement() {
@@ -26,6 +27,11 @@ function ProductManagement() {
     const dispatch = useDispatch();
     const { products, loading, error } = useSelector((state) => state.products);
     const { categories } = useSelector((state) => state.categories);
+
+    const statusOptions = [
+        { value: 'in-stock', label: '🟢 Còn hàng' },
+        { value: 'out-of-stock', label: '🔴 Hết hàng' }
+    ];
 
     useEffect(() => {
         dispatch(fetchProducts());
@@ -76,7 +82,6 @@ function ProductManagement() {
             </div>
         );
     }
-
     return (
         <div className="p-6 pt-0 space-y-6 mt-[110px]">
             {/* Fixed Header */}
@@ -99,37 +104,28 @@ function ProductManagement() {
             {/* Filters */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm sản phẩm..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                        />
-                        <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    </div>
+                    <Search
+                        value={searchTerm}
+                        onChange={setSearchTerm}
+                        placeholder="Tìm kiếm sản phẩm..."
+                    />
 
-                    <select
+                    <Filter
                         value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                        <option value="all">Tất cả trạng thái</option>
-                        <option value="in-stock">Còn hàng</option>
-                        <option value="out-of-stock">Hết hàng</option>
-                    </select>
+                        onChange={setStatusFilter}
+                        options={statusOptions}
+                        defaultLabel="🔍 Tất cả trạng thái"
+                    />
 
-                    <select
+                    <Filter
                         value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                        <option value="all">Tất cả danh mục</option>
-                        {categories.map(category => (
-                            <option key={category.id} value={category.id}>{category.name}</option>
-                        ))}
-                    </select>
+                        onChange={setCategoryFilter}
+                        options={categories.map(cat => ({
+                            value: cat.id,
+                            label: cat.name
+                        }))}
+                        defaultLabel="🔍 Tất cả danh mục"
+                    />
 
                     <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -271,7 +267,6 @@ function ProductManagement() {
                         </tbody>
                     </table>
                 </div>
-
                 {/* Empty State */}
                 {filteredProducts.length === 0 && (
                     <div className="text-center py-12">

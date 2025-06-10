@@ -3,16 +3,16 @@ import { toast } from 'react-toastify';
 import { format, parse, isValid } from 'date-fns';
 import { useState, useEffect, useCallback } from 'react';
 import {
-    HiOutlineSearch,
     HiOutlineSwitchVertical,
     HiOutlineCreditCard,
     HiOutlineEye,
-    HiOutlineDotsVertical,
-    HiChevronDown
+    HiOutlineDotsVertical
 } from 'react-icons/hi';
 
 import { orderService } from '../../services/api';
 import { getStatusBadgeColor } from '../../utils';
+import Search from '../../components/Search';
+import Filter from '../../components/Filter';
 import OrderModal from '../../components/OrderModal';
 import Pagination from '../../components/Pagination';
 
@@ -24,18 +24,20 @@ function OrderManagement() {
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [statusFilter, setStatusFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
-    const [ordersPerPage] = useState(10);
+    const [ordersPerPage] = useState(9);
 
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
     const totalPages = filteredOrders.length > 0 ? Math.ceil(filteredOrders.length / ordersPerPage) : 1;
 
-    // Tạo mảng số trang
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-    }
+    const orderStatusOptions = [
+        { value: 'pending', label: '⏳ Chờ xử lý' },
+        { value: 'processing', label: '🔄 Đang xử lý' },
+        { value: 'shipping', label: '🚚 Đang giao' },
+        { value: 'delivered', label: '✅ Đã giao' },
+        { value: 'cancelled', label: '❌ Đã hủy' }
+    ];
 
     const debouncedSearch = useCallback(
         debounce((searchValue, currentOrders, currentStatus) => {
@@ -122,14 +124,6 @@ function OrderManagement() {
         setCurrentPage(pageNumber);
     };
 
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const handleStatusFilter = (e) => {
-        setStatusFilter(e.target.value);
-    };
-
     const fetchOrders = async () => {
         try {
             const response = await orderService.getAllOrders();
@@ -181,33 +175,17 @@ function OrderManagement() {
                         Quản lý đơn hàng
                     </h2>
                     <div className="flex items-center space-x-3">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={handleSearch}
-                                placeholder="Tìm kiếm đơn hàng..."
-                                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                            <HiOutlineSearch className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                        </div>
-                        <div className="relative w-full md:w-52">
-                            <select
-                                value={statusFilter}
-                                onChange={handleStatusFilter}
-                                className="w-full outline-none appearance-none md:w-52 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 font-medium"
-                            >
-                                <option value="all">🔍 Tất cả trạng thái</option>
-                                <option value="pending">⏳ Chờ xử lý</option>
-                                <option value="processing">🔄 Đang xử lý</option>
-                                <option value="shipping">🚚 Đang giao</option>
-                                <option value="delivered">✅ Đã giao</option>
-                                <option value="cancelled">❌ Đã hủy</option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                <HiChevronDown className="text-gray-400 h-5 w-5" />
-                            </div>
-                        </div>
+                        <Search
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Tìm kiếm đơn hàng..."
+                        />
+                        <Filter
+                            value={statusFilter}
+                            onChange={setStatusFilter}
+                            options={orderStatusOptions}
+                            defaultLabel="🔍 Tất cả trạng thái"
+                        />
                     </div>
                 </div>
                 {/* Hiển thị thông tin về bộ lọc đang áp dụng */}

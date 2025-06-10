@@ -1,9 +1,12 @@
 import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { HiOutlineEye, HiTrash, HiSearch, HiUsers } from 'react-icons/hi';
+import { HiOutlineEye, HiTrash, HiUsers } from 'react-icons/hi';
 
+import Search from '../../components/Search';
+import Filter from '../../components/Filter';
 import UserModal from '../../components/UserModal';
+import Pagination from '../../components/Pagination';
 import { fetchUsers, deleteUser } from '../../store/userSlice';
 
 function UserManagement() {
@@ -11,7 +14,7 @@ function UserManagement() {
     const { users, loading } = useSelector(state => state.users);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [usersPerPage] = useState(10);
+    const [usersPerPage] = useState(9);
     const [selectedUser, setSelectedUser] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
@@ -40,9 +43,10 @@ function UserManagement() {
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+    const roleOptions = [
+        { value: 'user', label: '👤 Người dùng' },
+        { value: 'admin', label: '👑 Admin' }
+    ];
 
     const handleDeleteClick = (user) => {
         setUserToDelete(user);
@@ -101,47 +105,30 @@ function UserManagement() {
             </div>
         </div>
     );
-
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             <div className="p-6 max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-8">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-                                <HiUsers className="w-8 h-8 mr-3 text-blue-600" />
-                                Quản lý người dùng
-                            </h1>
-                            <p className="text-gray-600 dark:text-gray-400 mt-2">
-                                Quản lý thông tin và vai trò của người dùng trong hệ thống
-                            </p>
-                        </div>
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                            <HiUsers className="w-8 h-8 mr-3 text-blue-600" />
+                            Quản lý người dùng
+                        </h2>
                     </div>
-
                     {/* Search and Filter */}
-                    <div className="flex flex-col md:flex-row gap-4 mb-6">
-                        <div className="relative flex-1">
-                            <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Tìm kiếm theo tên, email hoặc số điện thoại..."
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-                        <div className="flex gap-3">
-                            <select
-                                value={filterRole}
-                                onChange={(e) => setFilterRole(e.target.value)}
-                                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="all">Tất cả vai trò</option>
-                                <option value="admin">Quản trị viên</option>
-                                <option value="user">Người dùng</option>
-                            </select>
-                        </div>
+                    <div className="flex items-center space-x-3">
+                        <Search
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Tìm kiếm người dùng..."
+                        />
+                        <Filter
+                            value={filterRole}
+                            onChange={setFilterRole}
+                            options={roleOptions}
+                            defaultLabel="🔍 Tất cả vai trò"
+                        />
                     </div>
                 </div>
 
@@ -211,7 +198,12 @@ function UserManagement() {
                                         </td>
 
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                            {format(new Date(user.created_at), 'dd/MM/yyyy - HH:mm')}
+                                            <div className="font-medium">
+                                                {format(new Date(user.created_at), 'dd/MM/yyyy')}
+                                            </div>
+                                            <div>
+                                                {format(new Date(user.created_at), 'HH:mm')}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                             <div className="flex items-center justify-center space-x-3">
@@ -240,43 +232,12 @@ function UserManagement() {
                     </div>
 
                     {/* Pagination */}
-                    <div className="bg-white dark:bg-gray-800 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div className="text-sm text-gray-700 dark:text-gray-300">
-                                Hiển thị <span className="font-medium">{indexOfFirstUser + 1}</span> đến{' '}
-                                <span className="font-medium">{Math.min(indexOfLastUser, filteredUsers.length)}</span> trong số{' '}
-                                <span className="font-medium">{filteredUsers.length}</span> người dùng
-                            </div>
-                            <div className="flex space-x-2">
-                                <button
-                                    onClick={() => handlePageChange(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                    className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    Trước
-                                </button>
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                    <button
-                                        key={page}
-                                        onClick={() => handlePageChange(page)}
-                                        className={`px-3 py-2 text-sm rounded-lg transition-colors ${currentPage === page
-                                            ? 'bg-blue-600 text-white'
-                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                            }`}
-                                    >
-                                        {page}
-                                    </button>
-                                ))}
-                                <button
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
-                                    className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    Sau
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={Math.ceil(filteredUsers.length / usersPerPage)}
+                        totalItems={filteredUsers.length}
+                        onPageChange={setCurrentPage}
+                    />
                 </div>
             </div>
 

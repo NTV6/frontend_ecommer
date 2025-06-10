@@ -2,8 +2,9 @@ import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { HiPlus, HiSearch, HiViewGrid, HiViewList, HiPencilAlt, HiTrash, HiOutlineExclamationCircle } from 'react-icons/hi';
+import { HiPlus, HiViewGrid, HiViewList, HiPencilAlt, HiTrash, HiOutlineExclamationCircle } from 'react-icons/hi';
 
+import Search from '../../components/Search';
 import CategoryModal from '../../components/CategoryModal';
 import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../store/categorySlice';
 
@@ -74,7 +75,7 @@ function CategoryManagement() {
     }
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-4 space-y-4">
             {/* Header */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
@@ -99,16 +100,11 @@ function CategoryManagement() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                     <div className="flex items-center space-x-4">
                         {/* Search */}
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Tìm kiếm danh mục..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-64 pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                            <HiSearch className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                        </div>
+                        <Search
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Tìm kiếm danh mục..."
+                        />
 
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                             {filteredCategories.length} danh mục
@@ -142,7 +138,7 @@ function CategoryManagement() {
             {/* Categories Display */}
             {viewMode === 'grid' ? (
                 /* Grid View */
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {filteredCategories.map((category) => (
                         <div
                             key={`category-${category.id}`}
