@@ -2,20 +2,40 @@ import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { HiPlus, HiViewGrid, HiViewList, HiPencilAlt, HiTrash, HiOutlineExclamationCircle } from 'react-icons/hi';
+import { HiPlus, HiViewGrid, HiViewList, HiPencilAlt, HiTrash, HiOutlineExclamationCircle, HiFolder } from 'react-icons/hi';
 
 import Search from '../../components/Search';
+import Pagination from '../../components/Pagination';
 import CategoryModal from '../../components/CategoryModal';
+import { usePagination } from '../../../hook/usePagination';
+import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../store/categorySlice';
 
 function CategoryManagement() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
-
     const dispatch = useDispatch();
     const { categories, loading } = useSelector((state) => state.categories);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+
+    const {
+        searchTerm,
+        setSearchTerm,
+        filteredItems: filteredCategories,
+        activeFilters,
+        setActiveFilters
+    } = useDebounceSearch(categories, {
+        searchFields: ['name'], // Chỉ tìm kiếm theo tên danh mục
+        filters: {}
+    });
+
+    const {
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedItems: currentCategories,
+        totalItems
+    } = usePagination(filteredCategories);
 
     useEffect(() => {
         dispatch(fetchCategories());
@@ -61,11 +81,6 @@ function CategoryManagement() {
         }
     };
 
-    // Filter categories based on search
-    const filteredCategories = categories.filter(category =>
-        category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -75,71 +90,91 @@ function CategoryManagement() {
     }
 
     return (
-        <div className="p-4 space-y-4">
-            {/* Header */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Quản lý danh mục</h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Quản lý các danh mục sản phẩm trong hệ thống
-                        </p>
+        <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                {/* Tiêu đề */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-3">
+                        <HiFolder className="w-8 h-8 text-blue-600" />
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Quản lý danh mục
+                        </h2>
                     </div>
+
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md"
                     >
                         <HiPlus className="w-5 h-5 mr-2" />
                         Thêm danh mục
                     </button>
                 </div>
-            </div>
 
-            {/* Filters & Controls */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                    <div className="flex items-center space-x-4">
-                        {/* Search */}
+                {/* Tìm kiếm, số lượng & chế độ hiển thị */}
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    {/* Search bên trái */}
+                    <div className="flex-1">
                         <Search
                             value={searchTerm}
                             onChange={setSearchTerm}
                             placeholder="Tìm kiếm danh mục..."
+                            className="w-full sm:max-w-60"
                         />
-
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {filteredCategories.length} danh mục
-                        </span>
                     </div>
 
-                    {/* View Mode Toggle */}
-                    <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={`p-2 rounded-md transition-colors ${viewMode === 'grid'
-                                ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                                }`}
-                        >
-                            <HiViewGrid className="w-5 h-5" />
-                        </button>
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={`p-2 rounded-md transition-colors ${viewMode === 'list'
-                                ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                                }`}
-                        >
-                            <HiViewList className="w-5 h-5" />
-                        </button>
+                    {/* Tổng số danh mục + Toggle bên phải */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                            Tổng: <strong>{categories.length}</strong> danh mục
+                        </span>
+
+                        <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1 w-fit">
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className={`p-2 rounded-md transition-colors ${viewMode === 'grid'
+                                    ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                    }`}
+                            >
+                                <HiViewGrid className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`p-2 rounded-md transition-colors ${viewMode === 'list'
+                                    ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                    }`}
+                            >
+                                <HiViewList className="w-5 h-5" />
+                            </button>
+                        </div>
                     </div>
                 </div>
+
             </div>
+
+            {searchTerm && (
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <span>Bộ lọc:</span>
+                    <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300">
+                        Tìm kiếm: {searchTerm}
+                    </span>
+                    <button
+                        onClick={() => {
+                            setSearchTerm('');
+                        }}
+                        className="text-red-600 hover:text-red-800 ml-2"
+                    >
+                        Xóa bộ lọc
+                    </button>
+                </div>
+            )}
 
             {/* Categories Display */}
             {viewMode === 'grid' ? (
                 /* Grid View */
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filteredCategories.map((category) => (
+                    {currentCategories.map((category) => (
                         <div
                             key={`category-${category.id}`}
                             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-200 group"
@@ -179,7 +214,7 @@ function CategoryManagement() {
                                 <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                                     <span>ID: {category.id}</span>
                                     <div className="flex items-center space-x-1">
-                                        <span>{format(new Date(category.created_at), 'dd/MM/yyyy' + ' ' + 'HH:mm')}</span>
+                                        <span>{format(new Date(category.created_at), 'dd/MM/yyyy - HH:mm')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -205,7 +240,7 @@ function CategoryManagement() {
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
-                                {filteredCategories.map((category) => (
+                                {currentCategories.map((category) => (
                                     <tr key={`category-list-${category.id}`} className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
@@ -258,8 +293,15 @@ function CategoryManagement() {
                 </div>
             )}
 
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                onPageChange={setCurrentPage}
+            />
+
             {/* Empty State */}
-            {filteredCategories.length === 0 && (
+            {currentCategories.length === 0 && (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12">
                     <div className="text-center">
                         <HiOutlineExclamationCircle className="mx-auto h-12 w-12 text-gray-400" />

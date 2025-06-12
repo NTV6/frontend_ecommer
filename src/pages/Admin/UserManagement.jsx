@@ -7,46 +7,53 @@ import Search from '../../components/Search';
 import Filter from '../../components/Filter';
 import UserModal from '../../components/UserModal';
 import Pagination from '../../components/Pagination';
+import { getStatusBadgeColor } from '../../utils';
+import { usePagination } from '../../../hook/usePagination';
 import { fetchUsers, deleteUser } from '../../store/userSlice';
+import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 
 function UserManagement() {
     const dispatch = useDispatch();
     const { users, loading } = useSelector(state => state.users);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [usersPerPage] = useState(9);
     const [selectedUser, setSelectedUser] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const [filterRole, setFilterRole] = useState('all');
 
+    const roleOptions = [
+        { value: 'admin', label: '👑 Admin' },
+        { value: 'user', label: '👤 Người dùng' },
+    ];
+
+    const {
+        searchTerm,
+        setSearchTerm,
+        filteredItems: filteredUsers,
+        activeFilters,
+        setActiveFilters
+    } = useDebounceSearch(users, {
+        searchFields: ['full_name', 'email', 'phone_number'],
+        filters: { role: 'all' }
+    });
+
+    const {
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedItems: currentUsers,
+        totalItems
+    } = usePagination(filteredUsers);
+
     useEffect(() => {
         dispatch(fetchUsers());
     }, [dispatch]);
 
-    // Tìm kiếm và lọc người dùng
-    const filteredUsers = users.filter(user => {
-        const searchString = searchTerm.toLowerCase();
-        const matchesSearch =
-            user.full_name?.toLowerCase().includes(searchString) ||
-            user.email?.toLowerCase().includes(searchString) ||
-            user.phone_number?.includes(searchString);
-
-        const matchesRole = filterRole === 'all' || user.role === filterRole;
-
-        return matchesSearch && matchesRole;
-    });
-
-    // Phân trang
-    const indexOfLastUser = currentPage * usersPerPage;
-    const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
-    const roleOptions = [
-        { value: 'user', label: '👤 Người dùng' },
-        { value: 'admin', label: '👑 Admin' }
-    ];
+    useEffect(() => {
+        setActiveFilters(prev => ({
+            ...prev,
+            role: filterRole
+        }));
+    }, [filterRole, setActiveFilters]);
 
     const handleDeleteClick = (user) => {
         setUserToDelete(user);
@@ -60,13 +67,6 @@ function UserManagement() {
         } catch (error) {
             console.error('Failed to delete user:', error);
         }
-    };
-
-    const getRoleBadge = (role) => {
-        if (role === 'admin') {
-            return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
-        }
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
     };
 
     const DeleteConfirmationModal = ({ onConfirm, onCancel }) => (
@@ -106,139 +106,167 @@ function UserManagement() {
         </div>
     );
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <div className="p-6 max-w-7xl mx-auto">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                            <HiUsers className="w-8 h-8 mr-3 text-blue-600" />
-                            Quản lý người dùng
-                        </h2>
-                    </div>
-                    {/* Search and Filter */}
-                    <div className="flex items-center space-x-3">
-                        <Search
-                            value={searchTerm}
-                            onChange={setSearchTerm}
-                            placeholder="Tìm kiếm người dùng..."
-                        />
-                        <Filter
-                            value={filterRole}
-                            onChange={setFilterRole}
-                            options={roleOptions}
-                            defaultLabel="🔍 Tất cả vai trò"
-                        />
-                    </div>
+        <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-900 px-6 py-4 mb-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-3 mb-4">
+                    <HiUsers className="w-8 h-8 text-blue-600" />
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        Quản lý người dùng
+                    </h2>
                 </div>
 
-                {/* Table */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-gray-900">
-                                <tr>
-                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Người dùng
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Liên hệ
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Vai trò
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Ngày tạo
-                                    </th>
-                                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Thao tác
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                {currentUsers.map((user) => (
-                                    <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                {user.profile_picture ? (
-                                                    <img
-                                                        className="h-10 w-10 rounded-full"
-                                                        src={user.profile_picture}
-                                                        alt=""
-                                                    />
-                                                ) : (
-                                                    <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                                        <span className="text-gray-500 dark:text-gray-400 text-lg">
-                                                            {user.full_name?.charAt(0).toUpperCase()}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                                        {user.full_name}
-                                                    </div>
-                                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                        ID: {user.id}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900 dark:text-white">
-                                                {user.email}
-                                            </div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                {user.phone_number || 'Chưa cập nhật'}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadge(user.role)}`}>
-                                                {user.role === 'admin' ? 'Admin' : 'User'}
-                                            </span>
-                                        </td>
+                {/* Tìm kiếm & lọc */}
+                <div className="flex flex-col sm:flex-row items-stretch justify-between gap-4">
+                    <Search
+                        value={searchTerm}
+                        onChange={setSearchTerm}
+                        placeholder="Tìm kiếm người dùng..."
+                        className="w-full sm:max-w-60"
+                    />
 
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                            <div className="font-medium">
-                                                {format(new Date(user.created_at), 'dd/MM/yyyy')}
-                                            </div>
-                                            <div>
-                                                {format(new Date(user.created_at), 'HH:mm')}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            <div className="flex items-center justify-center space-x-3">
-                                                <button
-                                                    onClick={() => setSelectedUser(user)}
-                                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors duration-200"
-                                                >
-                                                    <HiOutlineEye className="w-4 h-4 mr-1" />
-                                                    Chi tiết
-                                                </button>
-                                                {user.role !== 'admin' && (
-                                                    <button
-                                                        onClick={() => handleDeleteClick(user)}
-                                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-md hover:bg-red-200 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors duration-200"
-                                                    >
-                                                        <HiTrash className="w-4 h-4 mr-1" />
-                                                        Xóa
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Pagination */}
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={Math.ceil(filteredUsers.length / usersPerPage)}
-                        totalItems={filteredUsers.length}
-                        onPageChange={setCurrentPage}
+                    <Filter
+                        value={filterRole}
+                        onChange={setFilterRole}
+                        options={roleOptions}
+                        defaultLabel="🔍 Tất cả vai trò"
+                        className="w-full sm:w-auto"
                     />
                 </div>
+            </div>
+
+            {/* Hiển thị thông tin về bộ lọc đang áp dụng */}
+            {(filterRole !== 'all' || searchTerm) && (
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
+                    <span>Bộ lọc:</span>
+                    {filterRole !== 'all' && (
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(filterRole)}`}>
+                            {roleOptions.find(opt => opt.value === filterRole)?.label}
+
+                        </span>
+                    )}
+                    {searchTerm && (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300">
+                            Tìm kiếm: {searchTerm}
+                        </span>
+                    )}
+                    <button
+                        onClick={() => {
+                            setFilterRole('all');
+                            setSearchTerm('');
+                        }}
+                        className="text-red-600 hover:text-red-800 ml-2"
+                    >
+                        Xóa bộ lọc
+                    </button>
+                </div>
+            )}
+
+            {/* Table */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-900">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Người dùng
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Liên hệ
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Vai trò
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Ngày tạo
+                                </th>
+                                <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Thao tác
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            {currentUsers.map((user) => (
+                                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            {user.profile_picture ? (
+                                                <img
+                                                    className="h-10 w-10 rounded-full"
+                                                    src={user.profile_picture}
+                                                    alt=""
+                                                />
+                                            ) : (
+                                                <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                                    <span className="text-gray-500 dark:text-gray-400 text-lg">
+                                                        {user.full_name?.charAt(0).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div className="ml-4">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    {user.full_name}
+                                                </div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                    ID: {user.id}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900 dark:text-white">
+                                            {user.email}
+                                        </div>
+                                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                                            {user.phone_number || 'Chưa cập nhật'}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(user.role)}`}>
+                                            {user.role === 'admin' ? 'Admin' : 'User'}
+                                        </span>
+                                    </td>
+
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <div className="font-medium">
+                                            {format(new Date(user.created_at), 'dd/MM/yyyy')}
+                                        </div>
+                                        <div>
+                                            {format(new Date(user.created_at), 'HH:mm')}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                        <div className="flex items-center justify-center space-x-3">
+                                            <button
+                                                onClick={() => setSelectedUser(user)}
+                                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors duration-200"
+                                            >
+                                                <HiOutlineEye className="w-4 h-4 mr-1" />
+                                                Chi tiết
+                                            </button>
+                                            {user.role !== 'admin' && (
+                                                <button
+                                                    onClick={() => handleDeleteClick(user)}
+                                                    className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-md hover:bg-red-200 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors duration-200"
+                                                >
+                                                    <HiTrash className="w-4 h-4 mr-1" />
+                                                    Xóa
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination */}
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={setCurrentPage}
+                />
             </div>
 
             {/* Modals */}

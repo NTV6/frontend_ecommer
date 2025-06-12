@@ -2,41 +2,72 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     HiPlus,
-    HiMenuAlt4,
     HiClipboardList,
     HiXCircle,
     HiPencilAlt,
-    HiTrash
+    HiTrash,
+    HiInbox
 } from 'react-icons/hi';
 
 import { formatDate } from '../../utils';
 import { fetchCategories } from '../../store/categorySlice';
+import { usePagination } from '../../../hook/usePagination';
+import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 import { fetchProducts, deleteProduct } from '../../store/productSlice';
 import Search from '../../components/Search';
 import Filter from '../../components/Filter';
+import Pagination from '../../components/Pagination';
 import ProductModal from '../../components/ProductModal';
 
 function ProductManagement() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [modalMode, setModalMode] = useState('add');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [categoryFilter, setCategoryFilter] = useState('all');
-
     const dispatch = useDispatch();
     const { products, loading, error } = useSelector((state) => state.products);
     const { categories } = useSelector((state) => state.categories);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [modalMode, setModalMode] = useState('add');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [categoryFilter, setCategoryFilter] = useState('all');
 
     const statusOptions = [
         { value: 'in-stock', label: '🟢 Còn hàng' },
-        { value: 'out-of-stock', label: '🔴 Hết hàng' }
+        { value: '0', label: '🔴 Hết hàng' }
     ];
+
+    const {
+        searchTerm,
+        setSearchTerm,
+        filteredItems: filteredProducts,
+        activeFilters,
+        setActiveFilters
+    } = useDebounceSearch(products, {
+        searchFields: ['name', 'description'],
+        filters: {
+            status: 'all',
+            category_id: 'all'
+        }
+    });
+
+    const {
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedItems: currentProducts,
+        totalItems
+    } = usePagination(filteredProducts);
 
     useEffect(() => {
         dispatch(fetchProducts());
         dispatch(fetchCategories());
     }, [dispatch]);
+
+    useEffect(() => {
+        setActiveFilters(prev => ({
+            ...prev,
+            status: statusFilter,
+            category_id: categoryFilter
+        }));
+    }, [statusFilter, categoryFilter, setActiveFilters]);
 
     const handleAddProduct = () => {
         setModalMode('add');
@@ -63,18 +94,6 @@ function ProductManagement() {
         }
     };
 
-    // Filter products
-    const filteredProducts = [...products].reverse().filter(product => {
-        const totalStock = product.variants?.reduce((sum, v) => sum + v.stock, 0) || 0;
-        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = statusFilter === 'all' ||
-            (statusFilter === 'in-stock' && totalStock > 0) ||
-            (statusFilter === 'out-of-stock' && totalStock === 0);
-        const matchesCategory = categoryFilter === 'all' || product.category_id.toString() === categoryFilter;
-
-        return matchesSearch && matchesStatus && matchesCategory;
-    });
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -83,60 +102,95 @@ function ProductManagement() {
         );
     }
     return (
-        <div className="p-6 pt-0 space-y-6 mt-[110px]">
-            {/* Fixed Header */}
-            <div className="flex justify-between items-center h-[88px] fixed top-0 left-64 right-0 bg-white dark:bg-gray-900 px-6 py-6 border-b border-gray-200 dark:border-gray-700">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Quản lý sản phẩm</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Quản lý thông tin sản phẩm và biến thể
-                    </p>
+        <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                {/* Tiêu đề và nút */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-3">
+                        <HiInbox className="w-8 h-8 text-blue-600" />
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Quản lý sản phẩm
+                        </h2>
+                    </div>
+                    <button
+                        onClick={handleAddProduct}
+                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md"
+                    >
+                        <HiPlus className="w-5 h-5 mr-2" />
+                        Thêm sản phẩm
+                    </button>
                 </div>
-                <button
-                    onClick={handleAddProduct}
-                    className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                    <HiPlus className="w-5 h-5 mr-2" />
-                    Thêm sản phẩm
-                </button>
-            </div>
 
-            {/* Filters */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <Search
-                        value={searchTerm}
-                        onChange={setSearchTerm}
-                        placeholder="Tìm kiếm sản phẩm..."
-                    />
+                {/* Tìm kiếm & bộ lọc */}
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    {/* Search bên trái */}
+                    <div className="flex-1">
+                        <Search
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Tìm kiếm sản phẩm..."
+                            className="w-full sm:max-w-60"
+                        />
+                    </div>
 
-                    <Filter
-                        value={statusFilter}
-                        onChange={setStatusFilter}
-                        options={statusOptions}
-                        defaultLabel="🔍 Tất cả trạng thái"
-                    />
+                    {/* Bộ lọc và tổng số bên phải */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                            Tổng số: <strong>{filteredProducts.length}</strong> sản phẩm
+                        </div>
 
-                    <Filter
-                        value={categoryFilter}
-                        onChange={setCategoryFilter}
-                        options={categories.map(cat => ({
-                            value: cat.id,
-                            label: cat.name
-                        }))}
-                        defaultLabel="🔍 Tất cả danh mục"
-                    />
-
-                    <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {filteredProducts.length} sản phẩm
-                        </span>
-                        <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                            <HiMenuAlt4 className="w-6 h-6" />
-                        </button>
+                        <Filter
+                            value={statusFilter}
+                            onChange={setStatusFilter}
+                            options={statusOptions}
+                            defaultLabel="📦 Tất cả trạng thái"
+                        />
+                        <Filter
+                            value={categoryFilter}
+                            onChange={setCategoryFilter}
+                            options={categories.map(cat => ({
+                                value: cat.id,
+                                label: cat.name
+                            }))}
+                            defaultLabel="📁 Tất cả danh mục"
+                        />
                     </div>
                 </div>
             </div>
+
+            {(statusFilter !== 'all' || categoryFilter !== 'all' || searchTerm) && (
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <span>Bộ lọc:</span>
+                    {statusFilter !== 'all' && (
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusFilter === 'in-stock'
+                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                            : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                            }`}>
+                            {statusOptions.find(opt => opt.value === statusFilter)?.label}
+                        </span>
+                    )}
+                    {categoryFilter !== 'all' && (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                            {categories.find(cat => cat.id.toString() === categoryFilter)?.name}
+                        </span>
+                    )}
+                    {searchTerm && (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300">
+                            Tìm kiếm: {searchTerm}
+                        </span>
+                    )}
+                    <button
+                        onClick={() => {
+                            setStatusFilter('all');
+                            setCategoryFilter('all');
+                            setSearchTerm('');
+                        }}
+                        className="text-red-600 hover:text-red-800 ml-2"
+                    >
+                        Xóa bộ lọc
+                    </button>
+                </div>
+            )}
 
             {/* Products Grid/Table */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -171,7 +225,7 @@ function ProductManagement() {
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
-                            {filteredProducts.map((product) => {
+                            {currentProducts.map((product) => {
                                 const totalStock = product.variants?.reduce((sum, v) => sum + v.stock, 0) || 0;
                                 const lowestPrice = product.variants?.length > 0
                                     ? Math.min(...product.variants.map(v => v.price))
@@ -198,9 +252,6 @@ function ProductManagement() {
                                                 <div>
                                                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
                                                         {product.name}
-                                                    </div>
-                                                    <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
-                                                        {product.description}
                                                     </div>
                                                 </div>
                                             </div>
@@ -267,6 +318,14 @@ function ProductManagement() {
                         </tbody>
                     </table>
                 </div>
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={setCurrentPage}
+                />
+
                 {/* Empty State */}
                 {filteredProducts.length === 0 && (
                     <div className="text-center py-12">
@@ -278,7 +337,6 @@ function ProductManagement() {
                     </div>
                 )}
             </div>
-
             <ProductModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

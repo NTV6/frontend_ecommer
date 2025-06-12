@@ -1,35 +1,31 @@
-import debounce from 'lodash/debounce';
+import { format } from 'date-fns';
 import { toast } from 'react-toastify';
-import { format, parse, isValid } from 'date-fns';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import {
     HiOutlineSwitchVertical,
     HiOutlineCreditCard,
     HiOutlineEye,
-    HiOutlineDotsVertical
+    HiOutlineDotsVertical,
+    HiShoppingCart
 } from 'react-icons/hi';
 
-import { orderService } from '../../services/api';
-import { getStatusBadgeColor } from '../../utils';
 import Search from '../../components/Search';
 import Filter from '../../components/Filter';
 import OrderModal from '../../components/OrderModal';
 import Pagination from '../../components/Pagination';
+import { orderService } from '../../services/api';
+import { getStatusBadgeColor } from '../../utils';
+import { usePagination } from '../../../hook/usePagination';
+import { useDebounceSearch } from '../../../hook/useDebounceSearch';
+import { fetchOrders, updateOrderStatus } from '../../store/orderSlice';
 
 function OrderManagement() {
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
+    const { orders, loading } = useSelector(state => state.orders);
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
     const [statusFilter, setStatusFilter] = useState('all');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [ordersPerPage] = useState(9);
-
-    const indexOfLastOrder = currentPage * ordersPerPage;
-    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-    const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-    const totalPages = filteredOrders.length > 0 ? Math.ceil(filteredOrders.length / ordersPerPage) : 1;
 
     const orderStatusOptions = [
         { value: 'pending', label: '⏳ Chờ xử lý' },
@@ -39,119 +35,48 @@ function OrderManagement() {
         { value: 'cancelled', label: '❌ Đã hủy' }
     ];
 
-    const debouncedSearch = useCallback(
-        debounce((searchValue, currentOrders, currentStatus) => {
-            let results = [...currentOrders];
+    const {
+        searchTerm,
+        setSearchTerm,
+        filteredItems: filteredOrders,
+        activeFilters,
+        setActiveFilters
+    } = useDebounceSearch(orders, {
+        searchFields: ['id', 'user_id', 'user_name', 'phone_number', 'shipping_address', 'user_email'],
+        filters: { order_status: 'all' },
+        searchConfig: { searchByDate: true }
+    });
 
-            if (!searchValue && currentStatus === 'all') {
-                setFilteredOrders(currentOrders);
-                return;
-            }
-
-            // Lọc theo search term
-            if (searchValue) {
-                results = results.filter(order => {
-                    const value = searchValue.toLowerCase();
-                    const createdAt = new Date(order.created_at);
-
-                    const orderDate = format(createdAt, 'dd/MM/yyyy');
-                    const orderTime = format(createdAt, 'HH:mm');
-                    const orderDateTime = `${orderDate} ${orderTime}`;
-
-                    // ✨ 1. Parse trường hợp người dùng nhập cả ngày và giờ: "06/06/2025 14:30"
-                    const inputDateTime = parse(value, 'dd/MM/yyyy HH:mm', new Date());
-                    if (isValid(inputDateTime)) {
-                        const formattedInput = format(inputDateTime, 'dd/MM/yyyy HH:mm');
-                        return orderDateTime === formattedInput;
-                    }
-
-                    // ✨ 2. Parse chỉ ngày: "06/06/2025"
-                    const inputDate = parse(value, 'dd/MM/yyyy', new Date());
-                    if (isValid(inputDate)) {
-                        const formattedInputDate = format(inputDate, 'dd/MM/yyyy');
-                        return orderDate === formattedInputDate;
-                    }
-
-                    // ✨ 3. Tìm theo chuỗi
-                    return (
-                        order.id.toString().includes(value) ||
-                        order.user_id.toString().includes(value) ||
-                        order.user_name?.toLowerCase().includes(value) ||
-                        order.phone_number?.includes(value) ||
-                        order.shipping_address?.toLowerCase().includes(value) ||
-                        order.user_email?.toLowerCase().includes(value) ||
-                        orderDate.includes(value) ||
-                        orderTime.includes(value)
-                    );
-                });
-            }
-
-            // Lọc theo trạng thái
-            if (currentStatus !== 'all') {
-                results = results.filter(order => order.order_status === currentStatus);
-            }
-
-            setFilteredOrders(results);
-        }, 300),
-        []
-    );
+    // Sử dụng hook phân trang
+    const {
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedItems: currentOrders,
+        totalItems
+    } = usePagination(filteredOrders);
 
     useEffect(() => {
-        fetchOrders();
-    }, []);
+        dispatch(fetchOrders());
+    }, [dispatch]);
 
+    // Thêm useEffect để xử lý statusFilter
     useEffect(() => {
-        setFilteredOrders(orders);
-    }, [orders]);
-
-    useEffect(() => {
-        if (currentPage > totalPages) {
-            setCurrentPage(1);
-        }
-    }, [totalPages]);
-
-    // Replace existing useEffect with this
-    useEffect(() => {
-        debouncedSearch(searchTerm, orders, statusFilter);
-
-        // Cleanup function to cancel pending debounced calls
-        return () => {
-            debouncedSearch.cancel();
-        };
-    }, [searchTerm, orders, statusFilter, debouncedSearch]);
+        setActiveFilters(prev => ({
+            ...prev,
+            order_status: statusFilter
+        }));
+    }, [statusFilter, setActiveFilters]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
-    const fetchOrders = async () => {
-        try {
-            const response = await orderService.getAllOrders();
-            setOrders(response.data.data);
-            setLoading(false);
-        } catch (err) {
-            console.error('Error fetching orders:', err);
-            toast.error('Không thể tải danh sách đơn hàng');
-            setLoading(false);
-        }
-    };
-
     const handleStatusChange = async (orderId, newStatus) => {
         try {
-            await orderService.updateOrderStatus(orderId, newStatus);
-            toast.success('Cập nhật trạng thái thành công');
-
-            if (selectedOrder && selectedOrder.order_id === orderId) {
-                setSelectedOrder(prev => ({
-                    ...prev,
-                    order_status: newStatus
-                }));
-            }
-
-            await fetchOrders();
+            await dispatch(updateOrderStatus({ orderId, newStatus })).unwrap();
         } catch (err) {
             console.error('Error updating status:', err);
-            toast.error('Không thể cập nhật trạng thái');
         }
     };
 
@@ -168,185 +93,197 @@ function OrderManagement() {
     if (loading) return <div className="p-6">Đang tải...</div>;
 
     return (
-        <div className="p-6">
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
+        <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-900 px-6 py-4 mb-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                {/* Tiêu đề */}
+                <div className="flex items-center gap-3 mb-4">
+                    <HiShoppingCart className="w-8 h-8 text-blue-600" />
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                         Quản lý đơn hàng
                     </h2>
-                    <div className="flex items-center space-x-3">
-                        <Search
-                            value={searchTerm}
-                            onChange={setSearchTerm}
-                            placeholder="Tìm kiếm đơn hàng..."
-                        />
-                        <Filter
-                            value={statusFilter}
-                            onChange={setStatusFilter}
-                            options={orderStatusOptions}
-                            defaultLabel="🔍 Tất cả trạng thái"
-                        />
-                    </div>
                 </div>
-                {/* Hiển thị thông tin về bộ lọc đang áp dụng */}
-                {(statusFilter !== 'all' || searchTerm) && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <span>Bộ lọc:</span>
-                        {statusFilter !== 'all' && (
-                            <span className={`px-2 py-1 rounded ${getStatusBadgeColor(statusFilter)}`}>
-                                {statusFilter}
-                            </span>
-                        )}
-                        {searchTerm && (
-                            <span className="px-2 py-1 rounded bg-blue-100 text-blue-800">
-                                Tìm kiếm: {searchTerm}
-                            </span>
-                        )}
-                        <button
-                            onClick={() => {
-                                setStatusFilter('all');
-                                setSearchTerm('');
-                            }}
-                            className="text-red-600 hover:text-red-800 ml-2"
-                        >
-                            Xóa bộ lọc
-                        </button>
-                    </div>
-                )}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-                                <tr>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                        <div className="flex items-center space-x-1">
-                                            <span>Mã đơn hàng</span>
-                                            <HiOutlineSwitchVertical className="w-4 h-4" />
-                                        </div>
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                        Khách hàng
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                        Ngày đặt
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                        Tổng tiền
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                        Thanh toán
-                                    </th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                        Trạng thái
-                                    </th>
-                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                        Thao tác
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
-                                {currentOrders.map((order) => {
-                                    return (
-                                        <tr
-                                            key={order.id}
-                                            className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 group"
-                                        >
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                                    <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                                                        #{order.id}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div>
-                                                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                                            {order.user_name}
-                                                        </div>
-                                                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                            ID: {order.user_id}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900 dark:text-white font-medium">
-                                                    {format(new Date(order.created_at), 'dd/MM/yyyy')}
-                                                </div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                    {format(new Date(order.created_at), 'HH:mm')}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                                                    {Number(order.total_amount)?.toLocaleString()}₫
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="space-y-1">
-                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(order.payment_status)}`}>
-                                                        <div className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-75"></div>
-                                                        {order.payment_status}
-                                                    </span>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                                                        <HiOutlineCreditCard className="w-3 h-3 mr-1" />
-                                                        {order.payment_method}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(order.order_status)}`}>
-                                                    <div className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-75"></div>
-                                                    {order.order_status}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                <div className="flex items-center justify-center space-x-2">
-                                                    <button
-                                                        onClick={() => handleViewDetails(order.id)}
-                                                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors duration-200"
-                                                    >
-                                                        <HiOutlineEye className="w-4 h-4 mr-1" />
-                                                        Chi tiết
-                                                    </button>
-                                                    <button className="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200">
-                                                        <HiOutlineDotsVertical className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        totalItems={filteredOrders.length}
-                        onPageChange={handlePageChange}
+
+                {/* Tìm kiếm & Lọc – 2 đầu hàng */}
+                <div className="flex flex-col sm:flex-row items-stretch justify-between gap-4">
+                    <Search
+                        value={searchTerm}
+                        onChange={setSearchTerm}
+                        placeholder="Tìm kiếm đơn hàng..."
+                        className="w-full sm:max-w-60"
                     />
-                    {/* Add no results message */}
-                    {filteredOrders.length === 0 && (
-                        <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-                            {searchTerm || statusFilter !== 'all'
-                                ? "Không tìm thấy đơn hàng nào phù hợp với điều kiện tìm kiếm"
-                                : "Chưa có đơn hàng nào"
-                            }
-                        </div>
+
+                    <Filter
+                        value={statusFilter}
+                        onChange={setStatusFilter}
+                        options={orderStatusOptions}
+                        defaultLabel="📦 Tất cả trạng thái"
+                        className="w-full sm:w-auto"
+                    />
+                </div>
+            </div>
+
+            {/* Hiển thị thông tin về bộ lọc đang áp dụng */}
+            {(statusFilter !== 'all' || searchTerm) && (
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <span>Bộ lọc:</span>
+                    {statusFilter !== 'all' && (
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(statusFilter)}`}>
+                            {orderStatusOptions.find(opt => opt.value === statusFilter)?.label}
+                        </span>
                     )}
+                    {searchTerm && (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300">
+                            Tìm kiếm: {searchTerm}
+                        </span>
+                    )}
+                    <button
+                        onClick={() => {
+                            setStatusFilter('all');
+                            setSearchTerm('');
+                        }}
+                        className="text-red-600 hover:text-red-800 ml-2"
+                    >
+                        Xóa bộ lọc
+                    </button>
                 </div>
-                {selectedOrder && (
-                    <OrderModal
-                        order={selectedOrder}
-                        onClose={() => setSelectedOrder(null)}
-                        handleStatusChange={handleStatusChange}
-                    />
+            )}
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    <div className="flex items-center space-x-1">
+                                        <span>Mã đơn hàng</span>
+                                        <HiOutlineSwitchVertical className="w-4 h-4" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Khách hàng
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Ngày đặt
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Tổng tiền
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Thanh toán
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Trạng thái
+                                </th>
+                                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Thao tác
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+                            {currentOrders.map((order) => {
+                                return (
+                                    <tr
+                                        key={order.id}
+                                        className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 group"
+                                    >
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                                <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                                                    #{order.id}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div>
+                                                    <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                        {order.user_name}
+                                                    </div>
+                                                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                        ID: {order.user_id}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-white font-medium">
+                                                {format(new Date(order.created_at), 'dd/MM/yyyy')}
+                                            </div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                {format(new Date(order.created_at), 'HH:mm')}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                                                {Number(order.total_amount)?.toLocaleString()}₫
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="space-y-1">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(order.payment_status)}`}>
+                                                    <div className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-75"></div>
+                                                    {order.payment_status}
+                                                </span>
+                                                <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                                                    <HiOutlineCreditCard className="w-3 h-3 mr-1" />
+                                                    {order.payment_method}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(order.order_status)}`}>
+                                                <div className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-75"></div>
+                                                {order.order_status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                                            <div className="flex items-center justify-center space-x-2">
+                                                <button
+                                                    onClick={() => handleViewDetails(order.id)}
+                                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors duration-200"
+                                                >
+                                                    <HiOutlineEye className="w-4 h-4 mr-1" />
+                                                    Chi tiết
+                                                </button>
+                                                <button className="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200">
+                                                    <HiOutlineDotsVertical className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                />
+
+                {/* Add no results message */}
+                {filteredOrders.length === 0 && (
+                    <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+                        {searchTerm || statusFilter !== 'all'
+                            ? "Không tìm thấy đơn hàng nào phù hợp với điều kiện tìm kiếm"
+                            : "Chưa có đơn hàng nào"
+                        }
+                    </div>
                 )}
             </div>
-        </div >
+
+            {selectedOrder && (
+                <OrderModal
+                    order={selectedOrder}
+                    onClose={() => setSelectedOrder(null)}
+                    handleStatusChange={handleStatusChange}
+                />
+            )}
+        </div>
     );
 }
 
