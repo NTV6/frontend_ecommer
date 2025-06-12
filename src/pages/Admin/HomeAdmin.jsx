@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     BarChart3,
     Package,
@@ -26,10 +26,11 @@ import CategoryManagement from './CategotyManagement';
 import ThemeToggle from '../../components/ThemeToggle';
 
 function Admin() {
+    const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [currentTab, setCurrentTab] = useState('dashboard');
+    const [currentTab, setCurrentTab] = useState(location.pathname.split('/').pop() || 'dashboard');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -48,23 +49,6 @@ function Admin() {
             navigate('/auth');
         } catch (error) {
             console.error('Lỗi đăng xuất:', error);
-        }
-    };
-
-    const renderContent = () => {
-        switch (currentTab) {
-            case 'dashboard':
-                return <Dashboard />;
-            case 'categories':
-                return <CategoryManagement />;
-            case 'products':
-                return <ProductManagement />;
-            case 'orders':
-                return <OrderManagement />;
-            case 'users':
-                return <UserManagement />;
-            default:
-                return <Dashboard />;
         }
     };
 
@@ -88,7 +72,7 @@ function Admin() {
                             <Home className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-900 dark:text-white">SAVANI</h1>
+                            <Link to="/admin" className="text-xl font-bold text-gray-900 dark:text-white">SAVANI</Link>
                             <p className="text-xs text-gray-500 dark:text-gray-400">Admin Panel</p>
                         </div>
                     </div>
@@ -102,27 +86,25 @@ function Admin() {
 
                 {/* Navigation */}
                 <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-                    {tabs.map((tab) => {
-                        const Icon = tab.icon;
-                        return (
-                            <button
-                                key={tab.id}
-                                onClick={() => {
-                                    setCurrentTab(tab.id);
-                                    setSidebarOpen(false);
-                                }}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-all duration-200 ${currentTab === tab.id
-                                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                    }`}
-                            >
-                                <div className="flex items-center">
-                                    <Icon className="w-5 h-5 mr-3" />
-                                    <span className="font-medium">{tab.name}</span>
-                                </div>
-                            </button>
-                        );
-                    })}
+                    {tabs.map((tab) => (
+                        <Link
+                            key={tab.id}
+                            to={`/admin/${tab.id}`}
+                            onClick={() => {
+                                setCurrentTab(tab.id);
+                                setSidebarOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-all duration-200 ${currentTab === tab.id
+                                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
+                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                }`}
+                        >
+                            <div className="flex items-center">
+                                <tab.icon className="w-5 h-5 mr-3" />
+                                {tab.name}
+                            </div>
+                        </Link>
+                    ))}
                 </nav>
 
                 {/* Sidebar Footer */}
@@ -184,7 +166,14 @@ function Admin() {
 
                 {/* Main content */}
                 <main className="p-4">
-                    {renderContent()}
+                    <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/products" element={<ProductManagement />} />
+                        <Route path="/categories" element={<CategoryManagement />} />
+                        <Route path="/orders" element={<OrderManagement />} />
+                        <Route path="/users" element={<UserManagement />} />
+                    </Routes>
                 </main>
             </div>
         </div>

@@ -98,8 +98,8 @@ function Pagination({ currentPage, totalPages, onPageChange, totalItems }) {
 
   return (
     <div className="bg-white dark:bg-gray-800 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-700 dark:text-gray-300">
+      <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-3 md:gap-0">
+        <div className="text-sm text-gray-700 dark:text-gray-300 text-center md:text-left">
           Hiển thị <span className="font-medium">{(currentPage - 1) * 10 + 1}</span> đến{' '}
           <span className="font-medium">
             {Math.min(currentPage * 10, totalItems)}
@@ -111,7 +111,7 @@ function Pagination({ currentPage, totalPages, onPageChange, totalItems }) {
             onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 
-                            ${currentPage === 1
+                    ${currentPage === 1
                 ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed'
                 : 'bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
               }`}
@@ -125,7 +125,7 @@ function Pagination({ currentPage, totalPages, onPageChange, totalItems }) {
             onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 
-                            ${currentPage === totalPages
+                    ${currentPage === totalPages
                 ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed'
                 : 'bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
               }`}

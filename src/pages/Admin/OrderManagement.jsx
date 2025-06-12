@@ -112,13 +112,15 @@ function OrderManagement() {
                         className="w-full sm:max-w-60"
                     />
 
-                    <Filter
-                        value={statusFilter}
-                        onChange={setStatusFilter}
-                        options={orderStatusOptions}
-                        defaultLabel="📦 Tất cả trạng thái"
-                        className="w-full sm:w-auto"
-                    />
+                    <div className='md:w-52'>
+                        <Filter
+                            value={statusFilter}
+                            onChange={setStatusFilter}
+                            options={orderStatusOptions}
+                            defaultLabel="📦 Tất cả trạng thái"
+                            className="md:w-52"
+                        />
+                    </div>
                 </div>
             </div>
 

@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { GiSparkles } from 'react-icons/gi';
 import { FaTimes, FaUpload, FaFileImage, FaTag, FaFileAlt } from 'react-icons/fa';
+
+import InputField from './InputField';
 
 function CategoryModal({ isOpen, onClose, category, onSubmit }) {
     const [imageFile, setImageFile] = useState(null);
@@ -141,16 +142,13 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-100 animate-in fade-in zoom-in">
                 {/* Header với gradient */}
-                <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-6 rounded-t-2xl">
+                <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 px-6 py-4 rounded-t-2xl">
                     <div className="absolute inset-0 bg-black/10 rounded-t-2xl"></div>
                     <div className="relative flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="p-2">
-                                <GiSparkles className="w-6 h-6 text-white" />
-                            </div>
                             <div>
                                 <h2 className="text-2xl font-bold text-white">
-                                    {!category ? 'Tạo danh mục mới' : 'Chỉnh sửa danh mục'}
+                                    {!category ? '✨ Tạo danh mục mới' : 'Chỉnh sửa danh mục'}
                                 </h2>
                                 <p className="text-white/80 text-sm">
                                     {!category ? 'Thêm danh mục để tổ chức sản phẩm' : 'Cập nhật thông tin danh mục'}
@@ -167,48 +165,41 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
                 </div>
 
                 {/* Form content */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     {/* Tên danh mục */}
-                    <div className="group">
-                        <label className="flex items-center gap-2 mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                            <FaTag className="w-4 h-4 text-blue-500" />
-                            Tên danh mục
-                        </label>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-700 transition-all duration-200 outline-none"
-                                placeholder="Nhập tên danh mục..."
-                                required
-                            />
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-focus-within:from-blue-500/10 group-focus-within:to-purple-500/10 pointer-events-none transition-all duration-300"></div>
-                        </div>
-                    </div>
+                    <InputField
+                        label={
+                            <div className="flex items-center gap-2">
+                                <FaTag />
+                                Tên danh mục
+                            </div>
+                        }
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Nhập tên danh mục..."
+                        required={true}
+                    />
 
                     {/* Mô tả */}
-                    <div className="group">
-                        <label className="flex items-center gap-2 mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                            <FaFileAlt className="w-4 h-4 text-green-500" />
-                            Mô tả
-                        </label>
-                        <div className="relative">
-                            <textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 focus:border-green-500 focus:bg-white dark:focus:bg-gray-700 transition-all duration-200 outline-none resize-none"
-                                rows="4"
-                                placeholder="Mô tả chi tiết về danh mục..."
-                            />
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/0 to-blue-500/0 group-focus-within:from-green-500/10 group-focus-within:to-blue-500/10 pointer-events-none transition-all duration-300"></div>
-                        </div>
-                    </div>
+                    <InputField
+                        label={
+                            <div className="flex items-center gap-2">
+                                <FaFileAlt />
+                                Mô tả
+                            </div>
+                        }
+                        type="textarea"
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Mô tả chi tiết về danh mục..."
+                        rows={1}
+                    />
 
                     {/* Upload ảnh */}
                     <div>
                         <label className="flex items-center gap-2 mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                            <FaFileImage className="w-4 h-4 text-purple-500" />
+                            <FaFileImage />
                             Hình ảnh danh mục
                         </label>
 
@@ -288,8 +279,8 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
                                 </div>
                             ) : (
                                 <div className="flex items-center justify-center gap-2">
-                                    <GiSparkles className="w-4 h-4" />
-                                    {category ? 'Cập nhật' : 'Tạo mới'}
+
+                                    {category ? '💾 Cập nhật' : '✨ Tạo mới'}
                                 </div>
                             )}
                         </button>

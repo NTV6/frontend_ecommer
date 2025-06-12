@@ -1,8 +1,26 @@
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { FaTimes, FaUpload, FaInfoCircle, FaPlus, FaTrash, FaBookOpen, FaStar } from 'react-icons/fa';
+import {
+    FaTimes,
+    FaUpload,
+    FaInfoCircle,
+    FaPlus,
+    FaTrash,
+    FaBookOpen,
+    FaStar,
+    FaTag,
+    FaLayerGroup,
+    FaAlignLeft,
+    FaPalette,
+    FaRulerCombined,
+    FaDollarSign,
+    FaBoxes,
+    FaImages,
+} from 'react-icons/fa';
 
+import Filter from './Filter';
+import InputField from './InputField';
 import { uploadService } from '../services/api';
 import { addProduct, updateProduct, fetchProducts } from '../store/productSlice';
 
@@ -96,7 +114,6 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                             });
                         } catch (deleteError) {
                             console.error('Error deleting image from Cloudinary:', deleteError);
-                            // Continue with other images even if one fails
                         }
                     }
                 }
@@ -262,9 +279,9 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
 
             {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">
-                <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0 px-8 py-6 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl z-10">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl z-10">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-2xl font-bold text-white">
@@ -284,34 +301,30 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                     </div>
 
                     {/* Content */}
-                    <div className="p-8">
+                    <div className="p-4">
                         {/* Basic Info Section */}
-                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 mb-8">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
                                 <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
                                     <FaInfoCircle className="w-5 h-5 text-white" />
                                 </div>
                                 Thông tin cơ bản
                             </h3>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Tên sản phẩm
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white placeholder-gray-400"
-                                        placeholder="Nhập tên sản phẩm..."
-                                        required
-                                    />
-                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <InputField
+                                    label={<div className="flex items-center gap-2"><FaTag /> Tên sản phẩm</div>}
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    placeholder="Nhập tên sản phẩm..."
+                                    required={true}
+                                />
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Loại sản phẩm
+                                {/* <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                        <FaLayerGroup /> Loại sản phẩm
                                     </label>
                                     <select
                                         value={formData.category_id}
@@ -326,26 +339,37 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                             </option>
                                         ))}
                                     </select>
-                                </div>
-
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Mô tả sản phẩm
+                                </div> */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
+                                        <FaLayerGroup /> Loại sản phẩm
                                     </label>
-                                    <textarea
-                                        value={formData.description}
-                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white placeholder-gray-400"
-                                        rows="4"
-                                        placeholder="Mô tả chi tiết về sản phẩm..."
+                                    <Filter
+                                        value={formData.category_id || ''}
+                                        onChange={(value) => setFormData({ ...formData, category_id: value })}
+                                        options={categories.map(category => ({
+                                            value: category.id,
+                                            label: category.name
+                                        }))}
+                                        defaultLabel="Chọn loại sản phẩm"
                                     />
                                 </div>
+
+                                <InputField
+                                    label={<div className="flex items-center gap-2"><FaAlignLeft /> Mô tả sản phẩm</div>}
+                                    type="textarea"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    placeholder="Mô tả chi tiết về sản phẩm..."
+                                    rows={1}
+                                />
                             </div>
                         </div>
 
                         {/* Variants Section */}
                         <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6">
-                            <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                                     <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
                                         <FaBookOpen className="w-5 h-5 text-white" />
@@ -364,7 +388,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
 
                             <div className="space-y-6">
                                 {formData.variants.map((variant, index) => (
-                                    <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 pb-8 border border-gray-200 dark:border-gray-700 shadow-sm">
+                                    <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-4 pb-8 border border-gray-200 dark:border-gray-700 shadow-sm">
                                         <div className="flex justify-between items-center mb-4">
                                             <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
                                                 <span className="w-6 h-6 bg-indigo-500 text-white text-xs rounded-full flex items-center justify-center mr-2">
@@ -385,67 +409,47 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Màu sắc
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={variant.color}
-                                                    onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
-                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
-                                                    placeholder="Đỏ, Xanh..."
-                                                    required
-                                                />
-                                            </div>
+                                            <InputField
+                                                label={<div className="flex items-center gap-2"><FaPalette /> Màu sắc</div>}
+                                                type="text"
+                                                value={variant.color}
+                                                onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
+                                                placeholder="Đỏ, Xanh..."
+                                                required={true}
+                                            />
 
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Kích thước
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={variant.size}
-                                                    onChange={(e) => handleVariantChange(index, 'size', e.target.value)}
-                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
-                                                    placeholder="S, M, L..."
-                                                    required
-                                                />
-                                            </div>
+                                            <InputField
+                                                label={<div className="flex items-center gap-2"><FaRulerCombined /> Kích thước</div>}
+                                                type="text"
+                                                value={variant.size}
+                                                onChange={(e) => handleVariantChange(index, 'size', e.target.value)}
+                                                placeholder="S, M, L..."
+                                                required={true}
+                                            />
 
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Giá (VNĐ)
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    value={variant.price}
-                                                    onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
-                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
-                                                    placeholder="100000"
-                                                    required
-                                                />
-                                            </div>
+                                            <InputField
+                                                label={<div className="flex items-center gap-2"><FaDollarSign /> Giá (VNĐ)</div>}
+                                                type="number"
+                                                value={variant.price}
+                                                onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
+                                                placeholder="100000"
+                                                required={true}
+                                            />
 
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Số lượng
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    value={variant.stock}
-                                                    onChange={(e) => handleVariantChange(index, 'stock', e.target.value)}
-                                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
-                                                    placeholder="10"
-                                                    required
-                                                />
-                                            </div>
+                                            <InputField
+                                                label={<div className="flex items-center gap-2"><FaBoxes /> Số lượng</div>}
+                                                type="number"
+                                                value={variant.stock}
+                                                onChange={(e) => handleVariantChange(index, 'stock', e.target.value)}
+                                                placeholder="10"
+                                                required={true}
+                                            />
                                         </div>
 
                                         {/* Images Section */}
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                                                Hình ảnh sản phẩm
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                                <FaImages /> Hình ảnh sản phẩm
                                             </label>
 
                                             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
@@ -484,7 +488,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                                         </div>
 
                                                         {img.is_thumbnail ? (
-                                                            <div className="absolute -bottom-3 left-2">
+                                                            <div className="absolute -bottom-1 left-1">
                                                                 <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
                                                                     Ảnh đại diện
                                                                 </span>
@@ -517,7 +521,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex justify-end gap-4 pt-4">
                             <button
                                 type="button"
                                 onClick={onClose}

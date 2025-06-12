@@ -9,11 +9,11 @@ function Filter({
     selectClassName = ""
 }) {
     return (
-        <div className="relative w-full md:w-52">
+        <div className="relative w-full">
             <select
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className={`w-full outline-none appearance-none md:w-52 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 font-medium ${selectClassName}`}>
+                className={`w-full outline-none appearance-none px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 font-medium ${selectClassName}`}>
                 <option value={defaultOption}>{defaultLabel}</option>
                 {options.map((option) => (
                     <option key={option.value} value={option.value}>

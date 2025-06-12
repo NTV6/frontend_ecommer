@@ -91,7 +91,7 @@ function CategoryManagement() {
 
     return (
         <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 px-6 py-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 {/* Tiêu đề */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                     <div className="flex items-center gap-3">

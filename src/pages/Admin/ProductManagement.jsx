@@ -103,7 +103,7 @@ function ProductManagement() {
     }
     return (
         <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 px-6 py-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 {/* Tiêu đề và nút */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                     <div className="flex items-center gap-3">
@@ -139,21 +139,27 @@ function ProductManagement() {
                             Tổng số: <strong>{filteredProducts.length}</strong> sản phẩm
                         </div>
 
-                        <Filter
-                            value={statusFilter}
-                            onChange={setStatusFilter}
-                            options={statusOptions}
-                            defaultLabel="📦 Tất cả trạng thái"
-                        />
-                        <Filter
-                            value={categoryFilter}
-                            onChange={setCategoryFilter}
-                            options={categories.map(cat => ({
-                                value: cat.id,
-                                label: cat.name
-                            }))}
-                            defaultLabel="📁 Tất cả danh mục"
-                        />
+                        <div className='md:w-52'>
+                            <Filter
+                                value={statusFilter}
+                                onChange={setStatusFilter}
+                                options={statusOptions}
+                                defaultLabel="📦 Tất cả trạng thái"
+                                className="md:w-52"
+                            />
+                        </div>
+                        <div className='md:w-52'>
+                            <Filter
+                                value={categoryFilter}
+                                onChange={setCategoryFilter}
+                                options={categories.map(cat => ({
+                                    value: cat.id,
+                                    label: cat.name
+                                }))}
+                                defaultLabel="📁 Tất cả danh mục"
+                                className="md:w-52"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

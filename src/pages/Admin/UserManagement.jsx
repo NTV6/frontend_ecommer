@@ -123,14 +123,15 @@ function UserManagement() {
                         placeholder="Tìm kiếm người dùng..."
                         className="w-full sm:max-w-60"
                     />
-
-                    <Filter
-                        value={filterRole}
-                        onChange={setFilterRole}
-                        options={roleOptions}
-                        defaultLabel="🔍 Tất cả vai trò"
-                        className="w-full sm:w-auto"
-                    />
+                    <div className='md:w-52'>
+                        <Filter
+                            value={filterRole}
+                            onChange={setFilterRole}
+                            options={roleOptions}
+                            defaultLabel="🔍 Tất cả vai trò"
+                            className="md:w-52"
+                        />
+                    </div>
                 </div>
             </div>
 
