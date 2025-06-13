@@ -28,11 +28,22 @@ function Dashboard() {
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="flex items-center">
+                        <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-lg">
+                            <Folder className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <div className="ml-4">
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Tổng Danh mục</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{categories.length}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center">
                         <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
                             <ShoppingCart className="w-8 h-8 text-green-600 dark:text-green-400" />
                         </div>
                         <div className="ml-4">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Tổngđơn hàng</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Tổng đơn hàng</p>
                             <p className="text-2xl font-bold text-gray-900 dark:text-white">{orders.length}</p>
                         </div>
                     </div>
@@ -45,17 +56,6 @@ function Dashboard() {
                         <div className="ml-4">
                             <p className="text-sm text-gray-600 dark:text-gray-400">Tổng Người dùng</p>
                             <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.length}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center">
-                        <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-lg">
-                            <Folder className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-                        </div>
-                        <div className="ml-4">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Tổng Danh mục</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{categories.length}</p>
                         </div>
                     </div>
                 </div>

@@ -4,11 +4,18 @@ import { useDispatch } from 'react-redux';
 import { MdEmail } from 'react-icons/md';
 import { FaUser, FaPhoneAlt, FaMapMarkerAlt, FaRegCalendarAlt, FaRegClock, FaShieldAlt, FaTimes } from 'react-icons/fa';
 
+import Filter from './DropDown';
+import { getStatusBadgeColor } from '../utils';
 import { updateUserRole } from '../store/userSlice';
 
 function UserModal({ user, onClose }) {
     const dispatch = useDispatch();
     const [selectedRole, setSelectedRole] = useState(user.role);
+
+    const roleOptions = [
+        { value: 'user', label: '👤 User' },
+        { value: 'admin', label: '👑 Admin' }
+    ];
 
     const handleRoleChange = async (newRole) => {
         if (newRole === user.role) return;
@@ -22,17 +29,11 @@ function UserModal({ user, onClose }) {
         }
     };
 
-    const getRoleBadgeColor = (role) => {
-        return role === 'admin'
-            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-            : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-    };
-
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-screen overflow-y-auto border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-lg w-full max-h-screen overflow-y-auto border border-gray-200 dark:border-gray-700">
                 {/* Header */}
-                <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-t-2xl">
+                <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4 rounded-t-2xl">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                             <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -43,7 +44,7 @@ function UserModal({ user, onClose }) {
                                     {user.full_name}
                                 </h3>
                                 <div className="flex items-center space-x-2 mt-1">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(selectedRole)}`}>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(selectedRole)}`}>
                                         {selectedRole === 'admin' ? 'Admin' : 'User'}
                                     </span>
                                 </div>
@@ -66,7 +67,7 @@ function UserModal({ user, onClose }) {
                             <FaUser className="w-5 h-5 mr-2 text-blue-500" />
                             Thông tin cá nhân
                         </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                                     <MdEmail className="w-4 h-4 mr-2" />
@@ -127,19 +128,15 @@ function UserModal({ user, onClose }) {
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Vai trò hiện tại
                             </label>
-                            <div className="relative">
-                                <select
-                                    value={selectedRole}
-                                    onChange={(e) => {
-                                        setSelectedRole(e.target.value);
-                                        handleRoleChange(e.target.value);
-                                    }}
-                                    className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed appearance-none"
-                                >
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
+                            <Filter
+                                value={selectedRole}
+                                onChange={(value) => {
+                                    setSelectedRole(value);
+                                    handleRoleChange(value);
+                                }}
+                                options={roleOptions}
+                                defaultLabel="Chọn vai trò"
+                            />
                             <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                                 Thay đổi vai trò sẽ được áp dụng ngay lập tức
                             </p>

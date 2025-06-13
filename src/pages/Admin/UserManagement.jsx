@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HiOutlineEye, HiTrash, HiUsers } from 'react-icons/hi';
 
 import Search from '../../components/Search';
-import Filter from '../../components/Filter';
+import DropDown from '../../components/DropDown';
 import UserModal from '../../components/UserModal';
 import Pagination from '../../components/Pagination';
 import { getStatusBadgeColor } from '../../utils';
@@ -124,7 +124,7 @@ function UserManagement() {
                         className="w-full sm:max-w-60"
                     />
                     <div className='md:w-52'>
-                        <Filter
+                        <DropDown
                             value={filterRole}
                             onChange={setFilterRole}
                             options={roleOptions}

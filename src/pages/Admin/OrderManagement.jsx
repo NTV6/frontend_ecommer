@@ -12,7 +12,7 @@ import {
 } from 'react-icons/hi';
 
 import Search from '../../components/Search';
-import Filter from '../../components/Filter';
+import DropDown from '../../components/DropDown';
 import OrderModal from '../../components/OrderModal';
 import Pagination from '../../components/Pagination';
 import { orderService } from '../../services/api';
@@ -113,7 +113,7 @@ function OrderManagement() {
                     />
 
                     <div className='md:w-52'>
-                        <Filter
+                        <DropDown
                             value={statusFilter}
                             onChange={setStatusFilter}
                             options={orderStatusOptions}

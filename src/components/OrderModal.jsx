@@ -1,14 +1,23 @@
 import { BiPackage } from 'react-icons/bi';
 import { BsBagCheckFill } from 'react-icons/bs';
 import { MdOutlinePayments } from 'react-icons/md';
-import { FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaTags, FaTshirt, FaHashtag, FaEdit, FaChevronDown, FaUser, FaTimes } from 'react-icons/fa';
+import { FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaTags, FaTshirt, FaHashtag, FaEdit, FaUser, FaTimes } from 'react-icons/fa';
 
+import Filter from './DropDown';
 import { getStatusBadgeColor } from '../utils';
 
 const OrderModal = ({ order, onClose, handleStatusChange }) => {
+    const orderStatusOptions = [
+        { value: 'pending', label: '⏳ Chờ xử lý' },
+        { value: 'processing', label: '🔄 Đang xử lý' },
+        { value: 'shipping', label: '🚚 Đang giao' },
+        { value: 'delivered', label: '✅ Đã giao' },
+        { value: 'cancelled', label: '❌ Đã hủy' }
+    ];
+
     return (
         <div className="fixed inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden border border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden border border-gray-100 dark:border-gray-700">
                 {/* Header Section */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 px-6 text-white relative overflow-hidden">
                     <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
@@ -31,7 +40,7 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
 
                 <div className="overflow-y-auto max-h-[calc(95vh-100px)]">
                     {/* Customer Info Section */}
-                    <div className="p-4 bg-gray-50 dark:bg-gray-800/50">
+                    <div className="p-6 bg-gray-50 dark:bg-gray-800/50">
                         <h4 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white flex items-center">
                             <FaUserCircle className="text-blue-600 w-5 h-5 mr-2" />
                             Thông tin khách hàng
@@ -62,7 +71,7 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
                     </div>
 
                     {/* Payment Info Section */}
-                    <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+                    <div className="p-6 border-b border-gray-100 dark:border-gray-700">
                         <h4 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white flex items-center">
                             <MdOutlinePayments className="text-green-600 w-5 h-5 mr-2" />
                             Thông tin thanh toán
@@ -82,7 +91,7 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
                     </div>
 
                     {/* Products Section */}
-                    <div className="p-4">
+                    <div className="p-6">
                         <h4 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white flex items-center">
                             <BiPackage className="text-purple-600 w-5 h-5 mr-2" />
                             Sản phẩm đã đặt ({order.items?.length || 0} sản phẩm)
@@ -129,27 +138,19 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
 
                     {/* Footer Section */}
                     <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 border-t border-gray-100 dark:border-gray-600">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                             <div className="flex-1">
                                 <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
                                     <FaEdit className="w-4 h-4 mr-2" />
                                     Cập nhật trạng thái đơn hàng
                                 </h4>
-                                <div className="relative w-full md:w-44" key={order.id}>
-                                    <select
-                                        className="w-full outline-none appearance-none md:w-44 px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 font-medium"
+                                <div className='md:w-52'>
+                                    <Filter
                                         value={order.order_status}
-                                        onChange={(e) => handleStatusChange(order.order_id, e.target.value)}
-                                    >
-                                        <option value="pending">⏳ Chờ xử lý</option>
-                                        <option value="processing">🔄 Đang xử lý</option>
-                                        <option value="shipping">🚚 Đang giao</option>
-                                        <option value="delivered">✅ Đã giao</option>
-                                        <option value="cancelled">❌ Đã hủy</option>
-                                    </select>
-                                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                        <FaChevronDown />
-                                    </div>
+                                        onChange={(value) => handleStatusChange(order.id, value)}
+                                        options={orderStatusOptions}
+                                        defaultLabel="Chọn trạng thái đơn hàng"
+                                    />
                                 </div>
                             </div>
                             <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg border-2 border-blue-100 dark:border-blue-800">

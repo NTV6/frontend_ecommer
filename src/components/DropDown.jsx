@@ -1,6 +1,6 @@
 import { HiChevronDown } from 'react-icons/hi';
 
-function Filter({
+function DropDown({
     value,
     onChange,
     options,
@@ -28,4 +28,4 @@ function Filter({
     );
 }
 
-export default Filter;
+export default DropDown;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { signOut } from 'firebase/auth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     BarChart3,
@@ -16,6 +16,7 @@ import {
     Home
 } from 'lucide-react';
 
+import { getInitials } from '../../utils';
 import { auth } from '../../lib/firebase';
 import { clearUser } from '../../store/authSlice';
 import Dashboard from './Dashboard';
@@ -25,11 +26,12 @@ import ProductManagement from './ProductManagement';
 import CategoryManagement from './CategotyManagement';
 import ThemeToggle from '../../components/ThemeToggle';
 
-function Admin() {
+function HomeAdmin() {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const { user } = useSelector(state => state.auth);
     const [currentTab, setCurrentTab] = useState(location.pathname.split('/').pop() || 'dashboard');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -124,11 +126,12 @@ function Admin() {
                             >
                                 <div className="flex items-center">
                                     <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                                        <span className="text-white text-sm font-bold">A</span>
+                                        <span className="text-white text-sm font-bold">
+                                            {getInitials(user.email)}
+                                        </span>
                                     </div>
                                     <div className="ml-3 text-left">
-                                        <p className="text-sm font-medium text-gray-900 dark:text-white">Admin</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">admin@savani.com</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || 'loading...'}</p>
                                     </div>
                                 </div>
                                 <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
@@ -180,4 +183,4 @@ function Admin() {
     );
 }
 
-export default Admin;
+export default HomeAdmin;

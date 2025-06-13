@@ -15,7 +15,7 @@ import { usePagination } from '../../../hook/usePagination';
 import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 import { fetchProducts, deleteProduct } from '../../store/productSlice';
 import Search from '../../components/Search';
-import Filter from '../../components/Filter';
+import DropDown from '../../components/DropDown';
 import Pagination from '../../components/Pagination';
 import ProductModal from '../../components/ProductModal';
 
@@ -140,7 +140,7 @@ function ProductManagement() {
                         </div>
 
                         <div className='md:w-52'>
-                            <Filter
+                            <DropDown
                                 value={statusFilter}
                                 onChange={setStatusFilter}
                                 options={statusOptions}
@@ -149,7 +149,7 @@ function ProductManagement() {
                             />
                         </div>
                         <div className='md:w-52'>
-                            <Filter
+                            <DropDown
                                 value={categoryFilter}
                                 onChange={setCategoryFilter}
                                 options={categories.map(cat => ({

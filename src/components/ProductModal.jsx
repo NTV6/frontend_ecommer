@@ -19,7 +19,7 @@ import {
     FaImages,
 } from 'react-icons/fa';
 
-import Filter from './Filter';
+import Filter from './DropDown';
 import InputField from './InputField';
 import { uploadService } from '../services/api';
 import { addProduct, updateProduct, fetchProducts } from '../store/productSlice';
@@ -322,24 +322,6 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                     required={true}
                                 />
 
-                                {/* <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                                        <FaLayerGroup /> Loại sản phẩm
-                                    </label>
-                                    <select
-                                        value={formData.category_id}
-                                        onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                                        className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
-                                        required
-                                    >
-                                        <option value="">Chọn loại sản phẩm</option>
-                                        {categories && categories.map(category => (
-                                            <option key={category.id} value={category.id}>
-                                                {category.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div> */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
                                         <FaLayerGroup /> Loại sản phẩm

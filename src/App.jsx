@@ -18,7 +18,7 @@ import Products from './pages/Products';
 import Checkout from './pages/Checkout';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Admin from './pages/Admin/HomeAdmin';
+import HomeAdmin from './pages/Admin/HomeAdmin';
 import SearchResults from './pages/SearchResults';
 import ProductDetail from './pages/ProductDetail';
 import CheckoutSuccess from './pages/CheckoutSuccess';
@@ -79,7 +79,7 @@ function App() {
           style={{ marginTop: "74px" }}
         />
         <Routes>
-          <Route path="/admin/*" element={<Admin />} />
+          <Route path="/admin/*" element={<HomeAdmin />} />
           <Route path="/*" element={
             <>
               <Header />
