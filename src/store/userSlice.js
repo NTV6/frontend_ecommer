@@ -43,6 +43,18 @@ export const deleteUser = createAsyncThunk(
     }
 );
 
+export const fetchProfile = createAsyncThunk(
+    'profile/fetchProfile',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await authService.getProfile();
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Failed to fetch profile');
+        }
+    }
+);
+
 const userSlice = createSlice({
     name: 'users',
     initialState: {
@@ -50,7 +62,19 @@ const userSlice = createSlice({
         loading: false,
         error: null
     },
-    reducers: {},
+    reducers: {
+        setProfile: (state, action) => {
+            state.data = action.payload;
+        },
+        updateProfile: (state, action) => {
+            state.data = { ...state.data, ...action.payload };
+        },
+        clearProfile: (state) => {
+            state.data = null;
+            state.loading = false;
+            state.error = null;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchUsers.pending, (state) => {
@@ -65,16 +89,33 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+
             .addCase(updateUserRole.fulfilled, (state, action) => {
                 const updatedUser = action.payload;
                 state.users = state.users.map(user =>
                     user.id === updatedUser.id ? updatedUser : user
                 );
             })
+
             .addCase(deleteUser.fulfilled, (state, action) => {
                 state.users = state.users.filter(user => user.id !== action.payload);
+            })
+
+            .addCase(fetchProfile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                state.data = action.payload;
+                state.error = null;
+            })
+            .addCase(fetchProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     }
 });
 
+export const { setProfile, updateProfile, clearProfile, } = userSlice.actions;
 export default userSlice.reducer;

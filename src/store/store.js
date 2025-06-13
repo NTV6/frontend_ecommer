@@ -4,7 +4,7 @@ import cartReducer from './cartSlice';
 import authReducer from './authSlice';
 import productReducer from './productSlice';
 import categoryReducer from './categorySlice';
-import profileReducer from './profileSlice';
+// import profileReducer from './profileSlice';
 import userReducer from './userSlice';
 import orderReducer from './orderSlice';
 
@@ -14,7 +14,7 @@ const store = configureStore({
     auth: authReducer,
     products: productReducer,
     categories: categoryReducer,
-    profile: profileReducer,
+    // profile: profileReducer,
     orders: orderReducer,
     users: userReducer,
   },

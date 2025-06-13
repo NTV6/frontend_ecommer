@@ -7,7 +7,7 @@ import InputField from '../components/InputField';
 import ImagePreview from '../components/ImagePreview';
 import { getInitials, validatePhoneNumber } from '../utils';
 import { authService, uploadService } from '../services/api';
-import { setProfile, updateProfile } from '../store/profileSlice';
+import { setProfile, updateProfile } from '../store/userSlice';
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Profile = () => {
     const [showPreview, setShowPreview] = useState(false);
     const [currentPublicId, setCurrentPublicId] = useState(null);
     const { user } = useSelector((state) => state.auth);
-    const { data: profile } = useSelector((state) => state.profile);
+    const { data: users } = useSelector((state) => state.users);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         full_name: '',
@@ -27,15 +27,15 @@ const Profile = () => {
     });
 
     useEffect(() => {
-        if (profile) {
+        if (users) {
             setFormData({
-                full_name: profile.full_name || '',
-                phone_number: profile.phone_number || '',
-                address: profile.address || '',
-                date_of_birth: profile.date_of_birth ? profile.date_of_birth.split('T')[0] : ''
+                full_name: users.full_name || '',
+                phone_number: users.phone_number || '',
+                address: users.address || '',
+                date_of_birth: users.date_of_birth ? users.date_of_birth.split('T')[0] : ''
             });
         }
-    }, [profile]);
+    }, [users]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -211,11 +211,11 @@ const Profile = () => {
                             <div className="relative w-32 h-32 group">
                                 <div
                                     className="w-32 h-32 rounded-full overflow-hidden cursor-pointer"
-                                    onClick={() => profile?.profile_picture && setShowPreview(true)}
+                                    onClick={() => users?.profile_picture && setShowPreview(true)}
                                 >
-                                    {profile?.profile_picture ? (
+                                    {users?.profile_picture ? (
                                         <img
-                                            src={profile.profile_picture}
+                                            src={users.profile_picture}
                                             alt="Profile"
                                             className="w-full h-full object-cover hover:opacity-90 transition-opacity"
                                         />
@@ -241,7 +241,7 @@ const Profile = () => {
                                     </span>
                                 </label>
                             </div>
-                            {profile?.profile_picture && (
+                            {users?.profile_picture && (
                                 <button
                                     onClick={() => setShowPreview(true)}
                                     className="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -263,7 +263,7 @@ const Profile = () => {
 
                             <InputField
                                 label="Email"
-                                value={profile?.email}
+                                value={users?.email}
                                 isEditing={false}
                             />
 
@@ -299,9 +299,9 @@ const Profile = () => {
             </div>
 
             {/* Xem trước hình ảnh Modal */}
-            {showPreview && profile?.profile_picture && (
+            {showPreview && users?.profile_picture && (
                 <ImagePreview
-                    imageUrl={profile.profile_picture}
+                    imageUrl={users.profile_picture}
                     onClose={() => setShowPreview(false)}
                 />
             )}

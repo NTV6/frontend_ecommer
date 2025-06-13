@@ -7,7 +7,7 @@ import { FaShoppingCart, FaSearch, FaUser } from 'react-icons/fa';
 import { auth } from '../lib/firebase';
 import { getInitials } from '../utils';
 import { clearUser } from '../store/authSlice';
-import { fetchProfile, clearProfile } from '../store/profileSlice';
+import { fetchProfile, clearProfile } from '../store/userSlice';
 import { fetchCart, resetCart } from '../store/cartSlice';
 import ThemeToggle from './ThemeToggle';
 
@@ -19,7 +19,7 @@ function Header() {
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useSelector((state) => state.auth);
-  const { data: profile } = useSelector((state) => state.profile);
+  const { data: users } = useSelector((state) => state.users);
 
   useEffect(() => {
     if (user) {
@@ -108,9 +108,9 @@ function Header() {
               <div className="relative group">
                 <button className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-gray-900 dark:bg-gray-600 text-white rounded-full flex items-center justify-center">
-                    {profile?.profile_picture ? (
+                    {users?.profile_picture ? (
                       <img
-                        src={profile.profile_picture}
+                        src={users.profile_picture}
                         alt="Profile"
                         className="w-full h-full object-cover rounded-full"
                       />
