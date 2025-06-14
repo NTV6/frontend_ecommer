@@ -17,7 +17,7 @@ const Profile = () => {
     const [showPreview, setShowPreview] = useState(false);
     const [currentPublicId, setCurrentPublicId] = useState(null);
     const { user } = useSelector((state) => state.auth);
-    const { data: users } = useSelector((state) => state.users);
+    const { users } = useSelector((state) => state.users);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         full_name: '',

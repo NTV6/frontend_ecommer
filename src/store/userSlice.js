@@ -15,6 +15,18 @@ export const fetchUsers = createAsyncThunk(
     }
 );
 
+export const fetchProfile = createAsyncThunk(
+    'users/fetchProfile',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await authService.getProfile();
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Failed to fetch profile');
+        }
+    }
+);
+
 export const updateUserRole = createAsyncThunk(
     'users/updateRole',
     async ({ userId, role }, { rejectWithValue }) => {
@@ -43,18 +55,6 @@ export const deleteUser = createAsyncThunk(
     }
 );
 
-export const fetchProfile = createAsyncThunk(
-    'profile/fetchProfile',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await authService.getProfile();
-            return response.data.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data?.message || 'Failed to fetch profile');
-        }
-    }
-);
-
 const userSlice = createSlice({
     name: 'users',
     initialState: {
@@ -64,13 +64,13 @@ const userSlice = createSlice({
     },
     reducers: {
         setProfile: (state, action) => {
-            state.data = action.payload;
+            state.users = action.payload;
         },
         updateProfile: (state, action) => {
-            state.data = { ...state.data, ...action.payload };
+            state.users = { ...state.users, ...action.payload };
         },
         clearProfile: (state) => {
-            state.data = null;
+            state.users = null;
             state.loading = false;
             state.error = null;
         }
@@ -83,6 +83,7 @@ const userSlice = createSlice({
             .addCase(fetchUsers.fulfilled, (state, action) => {
                 state.loading = false;
                 state.users = action.payload;
+                console.log(" .addCase state.users", state.users)
                 state.error = null;
             })
             .addCase(fetchUsers.rejected, (state, action) => {
@@ -107,7 +108,7 @@ const userSlice = createSlice({
             })
             .addCase(fetchProfile.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data = action.payload;
+                state.users = action.payload;
                 state.error = null;
             })
             .addCase(fetchProfile.rejected, (state, action) => {
