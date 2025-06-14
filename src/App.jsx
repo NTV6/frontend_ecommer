@@ -15,6 +15,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
 import Products from './pages/Products';
+import MyOrders from './pages/MyOrders';
 import Checkout from './pages/Checkout';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -97,6 +98,7 @@ function App() {
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/checkout/success" element={<CheckoutSuccess />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/myorders" element={<MyOrders />} />
                 </Routes>
               </main>
               <Footer />
