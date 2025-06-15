@@ -85,7 +85,8 @@ export const orderService = {
   getOrderDetails: (orderId) => api.get(`/orders/${orderId}`),
   createCodOrder: (orderData) => api.post('/orders/cod', orderData),
   createVnpayOrder: (orderData) => api.post('/orders/vnpay', orderData),
-  updateOrderStatus: (orderId, status) => api.patch(`/orders/${orderId}/status`, { status })
+  updateOrderStatus: (orderId, status) => api.patch(`/orders/${orderId}/status`, { status }),
+  cancelOrder: (orderId) => api.post(`/orders/${orderId}/cancel`),
 };
 
 export default api;
