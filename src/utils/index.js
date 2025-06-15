@@ -33,30 +33,6 @@ export const getInitials = (email) => {
         .toUpperCase();
 };
 
-export const formatDate = (dateString, showTime = true) => {
-    if (!dateString) return 'Chưa cập nhật';
-    const date = new Date(dateString);
-
-    const dateStr = date.toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-
-    // Trả về ngày chỉ khi showTime là false (đối với ngày sinh) hoặc thời gian là nửa đêm
-    if (!showTime || (date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0)) {
-        return dateStr;
-    }
-
-    const timeStr = date.toLocaleTimeString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
-
-    return `${dateStr} - ${timeStr}`;
-};
-
 export const validatePhoneNumber = (phoneNumber) => {
     // Cho phép số điện thoại trống
     if (!phoneNumber) {

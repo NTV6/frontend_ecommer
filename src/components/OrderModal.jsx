@@ -6,7 +6,7 @@ import { FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaTags, FaTshirt, FaHashtag, 
 import Filter from './DropDown';
 import { getStatusBadgeColor } from '../utils';
 
-const OrderModal = ({ order, onClose, handleStatusChange }) => {
+const OrderModal = ({ order, onClose, handleStatusChange, showStatusUpdate = false }) => {
     const orderStatusOptions = [
         { value: 'pending', label: '⏳ Chờ xử lý' },
         { value: 'processing', label: '🔄 Đang xử lý' },
@@ -15,6 +15,7 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
         { value: 'cancelled', label: '❌ Đã hủy' }
     ];
 
+    console.log(" OrderModal order", order)
     return (
         <div className="fixed inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden border border-gray-100 dark:border-gray-700">
@@ -139,20 +140,22 @@ const OrderModal = ({ order, onClose, handleStatusChange }) => {
                     {/* Footer Section */}
                     <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 border-t border-gray-100 dark:border-gray-600">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                            <div className="flex-1">
-                                <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
-                                    <FaEdit className="w-4 h-4 mr-2" />
-                                    Cập nhật trạng thái đơn hàng
-                                </h4>
-                                <div className='md:w-52'>
-                                    <Filter
-                                        value={order.order_status}
-                                        onChange={(value) => handleStatusChange(order.id, value)}
-                                        options={orderStatusOptions}
-                                        defaultLabel="Chọn trạng thái đơn hàng"
-                                    />
+                            {showStatusUpdate && (
+                                <div className="flex-1">
+                                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
+                                        <FaEdit className="w-4 h-4 mr-2" />
+                                        Cập nhật trạng thái đơn hàng
+                                    </h4>
+                                    <div className='md:w-52'>
+                                        <Filter
+                                            value={order.order_status}
+                                            onChange={(value) => handleStatusChange(order.id, value)}
+                                            options={orderStatusOptions}
+                                            defaultLabel="Chọn trạng thái đơn hàng"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                             <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg border-2 border-blue-100 dark:border-blue-800">
                                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Tổng thanh toán</p>
                                 <p className="font-black text-3xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">

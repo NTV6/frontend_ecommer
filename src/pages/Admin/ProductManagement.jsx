@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -9,7 +10,6 @@ import {
     HiInbox
 } from 'react-icons/hi';
 
-import { formatDate } from '../../utils';
 import { fetchCategories } from '../../store/categorySlice';
 import { usePagination } from '../../../hook/usePagination';
 import { useDebounceSearch } from '../../../hook/useDebounceSearch';
@@ -297,7 +297,7 @@ function ProductManagement() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                {formatDate(product.created_at)}
+                                                {format(product.created_at)}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">

@@ -1,4 +1,4 @@
-import { formatDate } from '../utils';
+import { format } from 'date-fns';
 
 function InputField({
     label,
@@ -18,7 +18,7 @@ function InputField({
             if (type === 'date' && value) {
                 return (
                     <div className="mt-1 text-gray-900 dark:text-white">
-                        {formatDate(value, false)}
+                        {format(new Date(value), 'dd/MM/yyyy')}
                     </div>
                 );
             }
