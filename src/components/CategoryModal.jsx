@@ -148,7 +148,7 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
                         <div className="flex items-center gap-3">
                             <div>
                                 <h2 className="text-2xl font-bold text-white">
-                                    {!category ? '✨ Tạo danh mục mới' : 'Chỉnh sửa danh mục'}
+                                    {!category ? '✨ Tạo danh mục mới' : '🔧 Chỉnh sửa danh mục'}
                                 </h2>
                                 <p className="text-white/80 text-sm">
                                     {!category ? 'Thêm danh mục để tổ chức sản phẩm' : 'Cập nhật thông tin danh mục'}

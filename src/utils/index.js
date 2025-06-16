@@ -75,3 +75,27 @@ export const getStatusBadgeColor = (status) => {
             return 'bg-gray-100 text-gray-800';
     }
 };
+
+export const getStatusText = (status) => {
+    switch (status) {
+        case 'pending':
+            return 'Chờ xác nhận';
+        case 'processing':
+            return 'Đang xử lý';
+        case 'shipping':
+            return 'Đang giao hàng';
+        case 'delivered':
+            return 'Đã giao hàng';
+        case 'cancelled':
+            return 'Đã hủy';
+        default:
+            return status;
+    }
+};
+
+export const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(amount);
+};

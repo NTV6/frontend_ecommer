@@ -283,6 +283,7 @@ function OrderManagement() {
                     order={selectedOrder}
                     onClose={() => setSelectedOrder(null)}
                     handleStatusChange={handleStatusChange}
+                    showStatusUpdate={true}
                 />
             )}
         </div>
