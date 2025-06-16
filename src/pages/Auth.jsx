@@ -228,8 +228,8 @@ function Auth() {
   };
 
   return (
-    <div className="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 py-16 px-4 sm:px-6 lg:px-8 mt-[74px]">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl transition duration-300">
+    <div className="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-950 dark:from-gray-950 dark:to-gray-100 py-16 px-4 sm:px-6 lg:px-8 mt-[74px]">
+      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl transition duration-300">
         <div>
           <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
             {isForgotPassword ? 'Quên mật khẩu' : (isLogin ? 'Đăng nhập' : 'Đăng ký')}
@@ -320,7 +320,7 @@ function Auth() {
                   <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                  <span className="px-2 dark:bg-gray-900 text-gray-500 dark:text-gray-400">
                     Hoặc đăng nhập với
                   </span>
                 </div>

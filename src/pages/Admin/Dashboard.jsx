@@ -1,7 +1,15 @@
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import {
+    format,
+    subMonths,
+    startOfMonth,
+    endOfMonth,
+    subDays,
+    startOfDay,
+    endOfDay
+} from 'date-fns';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -35,6 +43,10 @@ function Dashboard() {
     const { categories } = useSelector((state) => state.categories);
     const { orders } = useSelector((state) => state.orders);
     const { users } = useSelector((state) => state.users);
+    const [dailyRevenueData, setDailyRevenueData] = useState({
+        labels: [],
+        datasets: []
+    });
 
     const [revenueData, setRevenueData] = useState({
         labels: [],
@@ -42,7 +54,42 @@ function Dashboard() {
     });
 
     useEffect(() => {
-        // Tạo dữ liệu cho 6 tháng gần nhất
+        // Tạo dữ liệu cho 7 ngày gần nhất
+        const last7Days = Array.from({ length: 7 }, (_, i) => {
+            const date = subDays(new Date(), i);
+            return {
+                date: format(date, 'dd/MM'),
+                start: startOfDay(date),
+                end: endOfDay(date)
+            };
+        }).reverse();
+
+        // Tính tổng doanh thu cho mỗi ngày
+        const dailyRevenue = last7Days.map(day => {
+            const dailyOrders = orders.filter(order => {
+                const orderDate = new Date(order.created_at);
+                return orderDate >= day.start && orderDate <= day.end;
+            });
+
+            return {
+                date: day.date,
+                revenue: dailyOrders.reduce((sum, order) => sum + Number(order.total_amount), 0)
+            };
+        });
+
+        setDailyRevenueData({
+            labels: dailyRevenue.map(data => data.date),
+            datasets: [
+                {
+                    label: 'Doanh thu theo ngày (VNĐ)',
+                    data: dailyRevenue.map(data => data.revenue),
+                    borderColor: 'rgb(34, 197, 94)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.5)',
+                    tension: 0.4
+                }
+            ]
+        });
+
         const last6Months = Array.from({ length: 6 }, (_, i) => {
             const date = subMonths(new Date(), i);
             return {
@@ -173,14 +220,24 @@ function Dashboard() {
                     </div>
                 </div>
             </div>
-
-            <div className="gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Biểu đồ doanh thu theo tháng */}
                 <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                         Doanh thu theo tháng
                     </h3>
-                    <div>
+                    <div className="h-[300px]">
                         <Line options={chartOptions} data={revenueData} />
+                    </div>
+                </div>
+
+                {/* Biểu đồ doanh thu theo ngày */}
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Doanh thu 7 ngày gần nhất
+                    </h3>
+                    <div className="h-[300px]">
+                        <Line options={chartOptions} data={dailyRevenueData} />
                     </div>
                 </div>
                 {/* <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">

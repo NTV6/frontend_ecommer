@@ -7,7 +7,6 @@ import {
     HiOutlineSwitchVertical,
     HiOutlineCreditCard,
     HiOutlineEye,
-    HiOutlineDotsVertical,
     HiShoppingCart
 } from 'react-icons/hi';
 
@@ -247,9 +246,6 @@ function OrderManagement() {
                                                 >
                                                     <HiOutlineEye className="w-4 h-4 mr-1" />
                                                     Chi tiết
-                                                </button>
-                                                <button className="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200">
-                                                    <HiOutlineDotsVertical className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>

@@ -58,7 +58,7 @@ function Home() {
       </Swiper>
 
       {/* Danh mục sản phẩm nổi bật */}
-      <section className="py-16 dark:bg-gray-900">
+      <section className="py-16 dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">DANH MỤC NỔI BẬT</h2>
           <Categories />
@@ -66,7 +66,7 @@ function Home() {
       </section>
 
       {/* Sản phẩm mới */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-950">
+      <section className="py-16 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">SẢN PHẨM MỚI</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

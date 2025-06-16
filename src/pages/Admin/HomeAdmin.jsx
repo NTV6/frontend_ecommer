@@ -122,7 +122,7 @@ function HomeAdmin() {
                         <div className="relative">
                             <button
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                                className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                             >
                                 <div className="flex items-center">
                                     <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">

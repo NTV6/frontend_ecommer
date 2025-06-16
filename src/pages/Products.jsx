@@ -28,7 +28,7 @@ function Products() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-[74px]">
+    <div className="container mx-auto px-4 py-8 mt-[74px] dark:bg-gray-900">
       <h1 className="text-3xl font-bold mb-8 dark:text-white">Sản phẩm</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Sidebar with filters */}

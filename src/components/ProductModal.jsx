@@ -279,7 +279,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
 
             {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">
-                <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto">
+                <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-3xl h-[95vh] overflow-hidden flex flex-col">
                     {/* Header */}
                     <div className="bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl z-10">
                         <div className="flex items-center justify-between">
@@ -301,7 +301,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                     </div>
 
                     {/* Content */}
-                    <div className="p-4">
+                    <div className="p-4 overflow-y-auto flex-1">
                         {/* Basic Info Section */}
                         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 mb-4">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
