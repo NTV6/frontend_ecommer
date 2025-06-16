@@ -83,17 +83,17 @@ function MyOrders() {
 
     return (
         <div className="min-h-screen py-8 mt-[74px]">
-            <div className="max-w-6xl mx-auto px-4">
-                {/* Header */}
+            <div className="max-w-4xl mx-auto px-4">
                 <div className="mb-8">
-                    <h2 className="text-3xl font-bold mb-2">Đơn hàng của tôi</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold">Đơn hàng của tôi</h2>
                 </div>
 
                 {orders.length === 0 ? (
                     <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-                        <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-6" />
-                        <h3 className="text-xl font-semibold mb-2">Chưa có đơn hàng nào</h3>
-                        <p className="text-gray-400 mb-6">Bạn chưa thực hiện đơn hàng nào. Hãy khám phá sản phẩm và đặt hàng ngay!</p>
+                        <p className="text-xl font-semibold mb-2">Chưa có đơn hàng nào</p>
+                        <p className="text-gray-400 mb-6">
+                            Bạn chưa thực hiện đơn hàng nào. Hãy khám phá sản phẩm và đặt hàng ngay!
+                        </p>
                         <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
                             Khám phá sản phẩm
                         </button>
@@ -103,102 +103,95 @@ function MyOrders() {
                         {orders.map((order) => (
                             <div
                                 key={order.id}
-                                className="dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-400 overflow-hidden hover:shadow-md transition-all duration-200"
+                                className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow border border-gray-200 dark:border-gray-600"
                             >
-                                {/* Order Header */}
-                                <div className="p-6 border-b border-gray-200 dark:border-gray-600">
-                                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-3">
-                                                <h3 className="text-lg font-semibold">
-                                                    Đơn hàng #{order.id}
-                                                </h3>
-                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${getStatusBadgeColor(order.order_status)}`}>
-                                                    {getStatusIcon(order.order_status)}
-                                                    {getStatusText(order.order_status)}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-4 text-sm text-gray-400">
-                                                <div className="flex items-center gap-1">
-                                                    <Calendar className="w-4 h-4" />
-                                                    {format(new Date(order.created_at), 'dd/MM/yyyy - HH:mm')}
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Package className="w-4 h-4" />
-                                                    {order.total_items} sản phẩm ({order.total_quantity} món)
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-3">
-                                            {['pending', 'processing'].includes(order.order_status) && (
-                                                <button
-                                                    onClick={() => cancelOrder(order.id)}
-                                                    className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
-                                                >
-                                                    Hủy đơn
-                                                </button>
-                                            )}
-                                            <button
-                                                onClick={() => handleViewOrderDetail(order)}
-                                                className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-2"
-                                            >
-                                                <Eye className="w-4 h-4" />
-                                                Chi tiết
-                                            </button>
-                                        </div>
+                                {/* Header đơn hàng */}
+                                <div className="p-4 pb-0 flex justify-between items-center text-sm font-medium">
+                                    <div className="text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                                        Đơn hàng #{order.id}
+                                    </div>
+                                    <div className={`px-3 py-1 rounded-full ${getStatusBadgeColor(order.order_status)}`}>
+                                        {getStatusText(order.order_status)}
                                     </div>
                                 </div>
 
-                                {/* Order Items */}
-                                <div className="p-6">
-                                    <div>
-                                        {order.items.map((item, index) => (
-                                            <div key={index} className="flex items-center gap-4 p-4 rounded-xl">
-                                                <div className="w-16 h-16 flex-shrink-0 bg-white rounded-lg overflow-hidden">
-                                                    <img
-                                                        src={item.image}
-                                                        alt={item.product_name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                                <div className="flex-grow min-w-0">
-                                                    <h4 className="font-medium truncate">{item.product_name}</h4>
-                                                    <p className="text-sm text-gray-400">
-                                                        {item.color} • {item.size} • Số lượng: {item.quantity}
-                                                    </p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="font-semibold">
-                                                        {formatCurrency(item.price * item.quantity)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))}
+                                {/* Ngày tạo + tổng sản phẩm */}
+                                <div className="px-4 pt-2 pb-4 text-gray-400 flex flex-wrap gap-2 text-sm border-b dark:border-gray-600">
+                                    <div className="flex items-center gap-1">
+                                        <Calendar className="w-4 h-4" />
+                                        {format(new Date(order.created_at), "dd/MM/yyyy - HH:mm")}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <Package className="w-4 h-4" />
+                                        {order.total_items} sản phẩm ({order.total_quantity} món)
                                     </div>
                                 </div>
 
-                                {/* Order Footer */}
-                                <div className="p-6 border-t border-gray-200 dark:border-gray-600">
-                                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                                        <div className="flex items-center gap-6 text-sm text-gray-400">
+                                {/* Sản phẩm */}
+                                <div div className="divide-y" >
+                                    {order.items.map((item, index) => (
+                                        <div key={index} className="flex p-4 pb-0 gap-4 items-center border-none">
+                                            <img
+                                                src={item.image}
+                                                alt={item.product_name}
+                                                className="w-16 object-cover rounded"
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium truncate">{item.product_name}</p>
+                                                <p className="text-sm text-gray-500">
+                                                    {item.color} • {item.size} • SL: {item.quantity}
+                                                </p>
+                                            </div>
+                                            <p className="text-sm font-semibold whitespace-nowrap">
+                                                {formatCurrency(item.price * item.quantity)}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Footer đơn */}
+                                <div className="px-4 py-4 mt-4 border-t dark:border-gray-600">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                        <div className="text-sm text-gray-500 flex flex-wrap items-center gap-4">
                                             <div className="flex items-center gap-1">
                                                 <CreditCard className="w-4 h-4" />
                                                 {order.payment_method}
                                             </div>
-                                            <div className={`px-2 py-1 rounded text-xs font-medium ${order.payment_status === 'paid'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-yellow-100 text-yellow-800'
-                                                }`}>
-                                                {order.payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                                            <div className={`px-2 py-1 rounded text-xs font-medium ${order.payment_status === "paid"
+                                                ? "bg-green-100 text-green-800"
+                                                : "bg-yellow-100 text-yellow-800"
+                                                }`}
+                                            >
+                                                {order.payment_status === "paid"
+                                                    ? "Đã thanh toán"
+                                                    : "Chưa thanh toán"}
                                             </div>
                                         </div>
+
                                         <div className="text-right">
-                                            <p className="text-sm text-gray-400 mb-1">Tổng cộng</p>
-                                            <p className="text-2xl font-bold">
+                                            <p className="text-sm text-gray-700 dark:text-gray-400">Tổng cộng</p>
+                                            <p className="text-lg font-bold text-orange-600">
                                                 {formatCurrency(order.total_amount)}
                                             </p>
                                         </div>
+                                    </div>
+
+                                    <div className="flex justify-end gap-2 mt-4 flex-wrap">
+                                        {["pending", "processing"].includes(order.order_status) && (
+                                            <button
+                                                onClick={() => cancelOrder(order.id)}
+                                                className="text-sm text-red-600 border px-4 py-2 rounded-lg hover:bg-red-50"
+                                            >
+                                                Hủy đơn
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => handleViewOrderDetail(order)}
+                                            className="text-sm text-blue-600 border px-4 py-2 rounded-lg hover:bg-blue-50 flex items-center gap-2"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                            Chi tiết
+                                        </button>
                                     </div>
                                 </div>
                             </div>

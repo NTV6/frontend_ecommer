@@ -55,7 +55,7 @@ function HomeAdmin() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen">
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
                 <div
@@ -65,7 +65,7 @@ function HomeAdmin() {
             )}
 
             {/* Sidebar */}
-            <div className={`fixed top-0 bottom-0 left-0 z-50 w-full sm:w-72 flex-none overflow-hidden bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+            <div className={`fixed top-0 bottom-0 left-0 z-50 w-full sm:w-72 flex-none overflow-hidden bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
                 }`}>
                 {/* Sidebar Header */}
                 <div className="flex justify-between p-6 border-b border-gray-200 dark:border-gray-700">
@@ -110,7 +110,7 @@ function HomeAdmin() {
                 </nav>
 
                 {/* Sidebar Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                     <div className="space-y-3">
                         {/* Theme Toggle */}
                         <div className="flex items-center justify-between">

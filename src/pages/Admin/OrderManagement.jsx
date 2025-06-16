@@ -16,7 +16,7 @@ import DropDown from '../../components/DropDown';
 import OrderModal from '../../components/OrderModal';
 import Pagination from '../../components/Pagination';
 import { orderService } from '../../services/api';
-import { getStatusBadgeColor } from '../../utils';
+import { getStatusBadgeColor, getStatusText } from '../../utils';
 import { usePagination } from '../../../hook/usePagination';
 import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 import { fetchOrders, updateOrderStatus } from '../../store/orderSlice';
@@ -181,7 +181,7 @@ function OrderManagement() {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-700">
                             {currentOrders.map((order) => {
                                 return (
                                     <tr
@@ -225,7 +225,7 @@ function OrderManagement() {
                                             <div className="space-y-1">
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(order.payment_status)}`}>
                                                     <div className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-75"></div>
-                                                    {order.payment_status}
+                                                    {getStatusText(order.payment_status) || order.payment_status}
                                                 </span>
                                                 <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                                     <HiOutlineCreditCard className="w-3 h-3 mr-1" />
@@ -236,7 +236,7 @@ function OrderManagement() {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(order.order_status)}`}>
                                                 <div className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-75"></div>
-                                                {order.order_status}
+                                                {getStatusText(order.order_status) || order.order_status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">

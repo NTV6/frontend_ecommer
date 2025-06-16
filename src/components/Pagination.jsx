@@ -97,7 +97,7 @@ function Pagination({ currentPage, totalPages, onPageChange, totalItems }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-900 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
       <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-3 md:gap-0">
         <div className="text-sm text-gray-700 dark:text-gray-300 text-center md:text-left">
           Hiển thị <span className="font-medium">{(currentPage - 1) * 10 + 1}</span> đến{' '}

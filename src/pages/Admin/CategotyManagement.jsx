@@ -177,7 +177,7 @@ function CategoryManagement() {
                     {currentCategories.map((category) => (
                         <div
                             key={`category-${category.id}`}
-                            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-200 group"
+                            className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-200 group"
                         >
                             <div className="relative overflow-hidden">
                                 <img
@@ -239,7 +239,7 @@ function CategoryManagement() {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+                            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-700">
                                 {currentCategories.map((category) => (
                                     <tr key={`category-list-${category.id}`} className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                                         <td className="px-6 py-4 whitespace-nowrap">

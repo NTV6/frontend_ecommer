@@ -230,7 +230,7 @@ function ProductManagement() {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-700">
                             {currentProducts.map((product) => {
                                 const totalStock = product.variants?.reduce((sum, v) => sum + v.stock, 0) || 0;
                                 const lowestPrice = product.variants?.length > 0
