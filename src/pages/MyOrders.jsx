@@ -89,7 +89,7 @@ function MyOrders() {
                 </div>
 
                 {orders.length === 0 ? (
-                    <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
+                    <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-sm p-12 text-center">
                         <p className="text-xl font-semibold mb-2">Chưa có đơn hàng nào</p>
                         <p className="text-gray-400 mb-6">
                             Bạn chưa thực hiện đơn hàng nào. Hãy khám phá sản phẩm và đặt hàng ngay!

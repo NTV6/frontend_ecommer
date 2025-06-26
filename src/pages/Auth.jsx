@@ -228,7 +228,7 @@ function Auth() {
   };
 
   return (
-    <div className="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-950 dark:from-gray-950 dark:to-gray-100 py-16 px-4 sm:px-6 lg:px-8 mt-[74px]">
+    <div className="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-950 dark:from-gray-950 dark:to-gray-100 py-16 px-4 sm:px-6 lg:px-8 mt-[65px]">
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl transition duration-300">
         <div>
           <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">

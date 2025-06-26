@@ -2,21 +2,23 @@ import { FaSun, FaMoon } from 'react-icons/fa';
 
 import { useTheme } from '../contexts/ThemeContext';
 
-function ThemeToggle() {
+function ThemeToggle({ className }) {
   const { darkMode, toggleDarkMode } = useTheme();
 
   return (
-    <button
+    <div
       onClick={toggleDarkMode}
-      className="rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-      aria-label="Toggle theme"
+      className={`flex items-center cursor-pointer px-4 py-3 w-full ${className}`}
     >
-      {darkMode ? (
-        <FaSun className="text-yellow-400 w-5 h-5" />
-      ) : (
-        <FaMoon className="text-gray-700 w-5 h-5" />
-      )}
-    </button>
+      <div>
+        {darkMode ? (
+          <FaSun className="text-yellow-400 mr-[10px]" size={14} />
+        ) : (
+          <FaMoon className="text-gray-700 mr-[10px]" size={14} />
+        )}
+      </div>
+      Chế độ tối
+    </div>
   );
 }
 
