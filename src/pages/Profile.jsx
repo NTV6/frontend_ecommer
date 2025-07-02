@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FaPen, FaTimes, FaSave } from 'react-icons/fa';
+import { User, Edit3, Save, X, Camera, Mail, Phone, Calendar, MapPin, Eye } from 'lucide-react';
 
 import InputField from '../components/InputField';
 import ImagePreview from '../components/ImagePreview';
@@ -153,7 +153,7 @@ const Profile = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center pt-[65px]">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
             </div>
         );
@@ -161,7 +161,7 @@ const Profile = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center pt-[65px]">
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                     {error}
                 </div>
@@ -170,141 +170,167 @@ const Profile = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 mt-[74px]">
-            <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                <div className="p-8">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            Thông tin cá nhân
+        <div className="min-h-screen">
+            <div className="container mx-auto px-4 pt-[65px] pb-8">
+                <div className="max-w-2xl mx-auto">
+                    {/* Header */}
+                    <div className="text-center m-6">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4 shadow-lg">
+                            <User className="w-8 h-8 text-blue-600" />
+                        </div>
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                            Hồ sơ cá nhân
                         </h2>
-                        {!isEditing ? (
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-md"
-                                title="Chỉnh sửa"
-                            >
-                                <FaPen size={14} />
-                            </button>
-                        ) : (
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={() => setIsEditing(false)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors shadow-sm"
-                                >
-                                    <FaTimes />
-                                    <span>Hủy</span>
-                                </button>
-                                <button
-                                    onClick={handleSubmit}
-                                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-sm"
-                                >
-                                    <FaSave />
-                                    <span>Lưu</span>
-                                </button>
-                            </div>
-                        )}
+                        <p className="text-gray-600 dark:text-gray-400">
+                            Quản lý thông tin cá nhân của bạn
+                        </p>
                     </div>
 
-                    <div className="space-y-6">
-                        {/* Avatar */}
-                        <div className="flex flex-col items-center">
-                            <div className="relative w-32 h-32 group">
-                                <div
-                                    className="w-32 h-32 rounded-full overflow-hidden cursor-pointer"
-                                    onClick={() => users?.profile_picture && setShowPreview(true)}
-                                >
-                                    {users?.profile_picture ? (
-                                        <img
-                                            src={users.profile_picture}
-                                            alt="Profile"
-                                            className="w-full h-full object-cover hover:opacity-90 transition-opacity"
+                    {/* Profile Card */}
+                    <div className="dark:bg-gray-900 rounded-lg shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden">
+                        <div className="px-8 py-12">
+                            {/* Avatar Section */}
+                            <div className="realative flex flex-col items-center mb-12">
+                                <div className="relative group">
+                                    <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-2xl ring-4 ring-white dark:ring-gray-700">
+                                        {users?.profile_picture ? (
+                                            <img
+                                                src={users.profile_picture}
+                                                alt="Profile"
+                                                className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-300"
+                                                onClick={() => setShowPreview(true)}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center">
+                                                <span className="text-6xl font-bold">
+                                                    {getInitials(users?.email)}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Upload Overlay */}
+                                    <label className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 rounded-full cursor-pointer transition-all duration-300">
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            disabled={uploading}
                                         />
-                                    ) : (
-                                        <div className="w-full h-full bg-gray-900 dark:bg-gray-600 text-white flex items-center justify-center">
-                                            <span className="text-8xl font-semibold transform -translate-y-1">
-                                                {getInitials(user.email)}
+                                        <div className="text-center text-white">
+                                            {uploading ? (
+                                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-1"></div>
+                                            ) : (
+                                                <Camera className="w-6 h-6 mx-auto mb-1" />
+                                            )}
+                                            <span className="text-xs font-medium">
+                                                {uploading ? 'Đang tải...' : 'Thay đổi'}
                                             </span>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div className="absolute top-3 right-3">
+                                    {!isEditing ? (
+                                        <button
+                                            onClick={() => setIsEditing(true)}
+                                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 text-white transition-all duration-200"
+                                        >
+                                            <Edit3 className="w-4 h-4" />
+                                            <span className="hidden sm:inline text-sm">Sửa</span>
+                                        </button>
+                                    ) : (
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                onClick={() => setIsEditing(false)}
+                                                className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-200"
+                                            >
+                                                <X className="w-4 h-4" />
+                                                <span className="hidden sm:inline">Hủy</span>
+                                            </button>
+                                            <button
+                                                onClick={handleSubmit}
+                                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all duration-200 shadow-lg"
+                                            >
+                                                <Save className="w-4 h-4" />
+                                                <span className="hidden sm:inline">Lưu</span>
+                                            </button>
                                         </div>
                                     )}
                                 </div>
 
-                                <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 rounded-full cursor-pointer transition-opacity">
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        disabled={uploading}
-                                    />
-                                    <span className="text-white text-sm">
-                                        {uploading ? 'Đang tải...' : 'Thay đổi ảnh'}
-                                    </span>
-                                </label>
+                                {users?.profile_picture && (
+                                    <button
+                                        onClick={() => setShowPreview(true)}
+                                        className="mt-4 inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+                                    >
+                                        <Eye className="w-4 h-4" />
+                                        Xem ảnh đại diện
+                                    </button>
+                                )}
                             </div>
-                            {users?.profile_picture && (
-                                <button
-                                    onClick={() => setShowPreview(true)}
-                                    className="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
-                                >
-                                    Xem ảnh đại diện
-                                </button>
-                            )}
-                        </div>
 
-                        {/* Thông tin chi tiết */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <InputField
-                                label="Họ và tên"
-                                name="full_name"
-                                value={formData.full_name}
-                                onChange={handleInputChange}
-                                isEditing={isEditing}
-                            />
+                            {/* Information Grid */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <InputField
+                                    label="Họ và tên"
+                                    name="full_name"
+                                    value={formData.full_name}
+                                    onChange={handleInputChange}
+                                    isEditing={isEditing}
+                                    icon={User}
+                                />
 
-                            <InputField
-                                label="Email"
-                                value={users?.email}
-                                isEditing={false}
-                            />
+                                <InputField
+                                    label="Email"
+                                    value={users?.email}
+                                    isEditing={false}
+                                    icon={Mail}
+                                />
 
-                            <InputField
-                                label="Số điện thoại"
-                                type="tel"
-                                name="phone_number"
-                                value={formData.phone_number}
-                                onChange={handleInputChange}
-                                isEditing={isEditing}
-                            />
+                                <InputField
+                                    label="Số điện thoại"
+                                    type="tel"
+                                    name="phone_number"
+                                    value={formData.phone_number}
+                                    onChange={handleInputChange}
+                                    isEditing={isEditing}
+                                    icon={Phone}
+                                />
 
-                            <InputField
-                                label="Ngày sinh"
-                                type="date"
-                                name="date_of_birth"
-                                value={formData.date_of_birth}
-                                onChange={handleInputChange}
-                                isEditing={isEditing}
-                            />
+                                <InputField
+                                    label="Ngày sinh"
+                                    type="date"
+                                    name="date_of_birth"
+                                    value={formData.date_of_birth}
+                                    onChange={handleInputChange}
+                                    isEditing={isEditing}
+                                    icon={Calendar}
+                                />
 
-                            <InputField
-                                label="Địa chỉ"
-                                type="textarea"
-                                name="address"
-                                value={formData.address}
-                                onChange={handleInputChange}
-                                isEditing={isEditing}
-                            />
+                                <InputField
+                                    label="Địa chỉ"
+                                    type="textarea"
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleInputChange}
+                                    isEditing={isEditing}
+                                    icon={MapPin}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Xem trước hình ảnh Modal */}
-            {showPreview && users?.profile_picture && (
-                <ImagePreview
-                    imageUrl={users.profile_picture}
-                    onClose={() => setShowPreview(false)}
-                />
-            )}
+                {/* Image Preview Modal */}
+                {showPreview && users?.profile_picture && (
+                    <ImagePreview
+                        imageUrl={users.profile_picture}
+                        onClose={() => setShowPreview(false)}
+                    />
+                )}
+            </div>
         </div>
     );
 };

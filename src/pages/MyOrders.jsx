@@ -72,7 +72,7 @@ function MyOrders() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center mt-[74px]">
+            <div className="min-h-screen flex items-center justify-center pt-[65px]">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mx-auto mb-4"></div>
                     <p className="text-gray-400 text-lg">Đang tải đơn hàng...</p>
@@ -82,10 +82,15 @@ function MyOrders() {
     }
 
     return (
-        <div className="min-h-screen py-8 mt-[74px]">
-            <div className="max-w-4xl mx-auto px-4">
-                <div className="mb-8">
-                    <h2 className="text-2xl sm:text-3xl font-bold">Đơn hàng của tôi</h2>
+        <div className="min-h-screen pt-[65px]">
+            <div className="max-w-2xl mx-auto px-4 py-6">
+                {/* Header */}
+                <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
+                        <ShoppingBag className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Đơn hàng của bạn</h2>
+                    <p className="text-gray-600 dark:text-gray-400">{`Quản lý thông tin đơn hàng của bạn`}</p>
                 </div>
 
                 {orders.length === 0 ? (
@@ -103,14 +108,15 @@ function MyOrders() {
                         {orders.map((order) => (
                             <div
                                 key={order.id}
-                                className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow border border-gray-200 dark:border-gray-600"
+                                className="bg-gray-50 dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-gray-600"
                             >
                                 {/* Header đơn hàng */}
                                 <div className="p-4 pb-0 flex justify-between items-center text-sm font-medium">
                                     <div className="text-gray-700 dark:text-gray-200 flex items-center gap-2">
                                         Đơn hàng #{order.id}
                                     </div>
-                                    <div className={`px-3 py-1 rounded-full ${getStatusBadgeColor(order.order_status)}`}>
+                                    <div className={`px-3 py-1 rounded-full inline-flex items-center gap-1 ${getStatusBadgeColor(order.order_status)}`}>
+                                        {getStatusIcon(order.order_status)}
                                         {getStatusText(order.order_status)}
                                     </div>
                                 </div>
@@ -128,7 +134,7 @@ function MyOrders() {
                                 </div>
 
                                 {/* Sản phẩm */}
-                                <div div className="divide-y" >
+                                <div className="divide-y" >
                                     {order.items.map((item, index) => (
                                         <div key={index} className="flex p-4 pb-0 gap-4 items-center border-none">
                                             <img

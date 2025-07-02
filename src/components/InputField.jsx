@@ -10,6 +10,7 @@ function InputField({
     placeholder = "Chưa cập nhật",
     required = false,
     rows = 3,
+    icon: Icon
 }) {
     const baseClassName = `mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10`;
 
@@ -58,8 +59,8 @@ function InputField({
 
     return (
         <div className={`${type === 'textarea' ? 'md:col-span-2' : ''}`}>
-            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">
-                {label}
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 inline-flex items-center gap-2">
+                {Icon && <Icon className="w-4 h-4" />}{label}
             </label>
             {renderInput()}
         </div>

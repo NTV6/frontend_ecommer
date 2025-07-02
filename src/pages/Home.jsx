@@ -41,7 +41,7 @@ function Home() {
             <div className="absolute inset-0 bg-black bg-opacity-20 z-0" />
             <div className="relative container mx-auto px-4 h-full flex items-center z-10">
               <div className="max-w-xl">
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Bộ sưu tập mới 2024</h1>
+                <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">Bộ sưu tập mới 2024</h2>
                 <p className="text-white text-lg mb-8">Khám phá những xu hướng thời trang mới nhất</p>
                 <button className="bg-white text-gray-900 px-8 py-3 rounded-full hover:bg-gray-100">
                   Xem ngay
@@ -57,7 +57,7 @@ function Home() {
             <div className="absolute inset-0 bg-black bg-opacity-20 z-0" />
             <div className="relative container mx-auto px-4 h-full flex items-center z-10">
               <div className="max-w-xl">
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Phong cách thanh lịch</h1>
+                <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">Phong cách thanh lịch</h2>
                 <p className="text-white text-lg mb-8">Tôn vinh vẻ đẹp của phái nữ</p>
                 <button className="bg-white text-gray-900 px-8 py-3 rounded-full hover:bg-gray-100">
                   Khám phá
@@ -137,10 +137,15 @@ function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[...products].reverse().slice(0, 4).map((product) => (
-              <ProductCard
+              <div
                 key={product.id}
-                product={product}
-              />
+                className="transform hover:scale-105 transition-all duration-300"
+              >
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
+              </div>
             ))}
           </div>
 

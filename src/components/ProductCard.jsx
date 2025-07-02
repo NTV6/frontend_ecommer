@@ -9,7 +9,7 @@ function ProductCard({ product }) {
                 <img
                     src={getThumbnailImage(product)}
                     alt={product.name}
-                    className="w-full h-[381px] object-contain bg-white hover:opacity-90 transition-opacity"
+                    className="w-full h-full object-contain bg-white hover:opacity-90 transition-opacity"
                 />
             </Link>
             <div className="p-4">
