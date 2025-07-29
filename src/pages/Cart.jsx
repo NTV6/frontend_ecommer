@@ -89,7 +89,7 @@ function Cart() {
         {items.length === 0 ? (
           /* Empty Cart */
           <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full mb-6">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 dark:bg-gray-900 rounded-full mb-6">
               <ShoppingBag className="w-12 h-12 text-gray-400" />
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
@@ -128,7 +128,7 @@ function Cart() {
                   return (
                     <div
                       key={item.id}
-                      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 ${isRemoving ? 'opacity-50 scale-95' : ''}`}
+                      className={`bg-gray-50 dark:bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 ${isRemoving ? 'opacity-50 scale-95' : ''}`}
                     >
                       <div className="p-4">
                         <div className="flex gap-6">
@@ -168,20 +168,18 @@ function Cart() {
                               <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium">
                                 {item.color}
                               </span>
-                              <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium">
+                              <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium">
                                 Size {item.size}
                               </span>
                             </div>
 
                             {/* Price and Quantity */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                              {/* <div className="text-blue-600 dark:text-blue-400"> */}
                               {Number(item.price).toLocaleString()} ₫
-                              {/* </div> */}
 
                               {/* Quantity Controls */}
                               <div className="flex items-center">
-                                <div className="flex items-center bg-gray-50 dark:bg-gray-700 rounded-full">
+                                <div className="flex items-center bg-gray-200 dark:bg-gray-700 rounded-full">
                                   <button
                                     onClick={() => handleQuantityChange(
                                       item.product_id,
@@ -189,7 +187,7 @@ function Cart() {
                                       (item.quantity || 1) - 1
                                     )}
                                     disabled={item.quantity <= 1}
-                                    className="p-2 rounded-full hover:bg-white dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                                    className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                                   >
                                     <Minus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                   </button>
@@ -204,7 +202,7 @@ function Cart() {
                                       item.variant_id,
                                       (item.quantity || 1) + 1
                                     )}
-                                    className="p-2 rounded-full hover:bg-white dark:hover:bg-gray-600 transition-colors duration-200"
+                                    className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
                                   >
                                     <Plus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                   </button>
@@ -231,7 +229,7 @@ function Cart() {
               {/* Order Summary */}
               <div className="lg:col-span-2">
                 <div className="sticky top-24">
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                  <div className="dark:bg-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
                       <h2 className="text-xl font-bold">Tóm tắt đơn hàng</h2>
                     </div>

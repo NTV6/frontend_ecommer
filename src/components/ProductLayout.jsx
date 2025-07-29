@@ -1,6 +1,6 @@
 import { HiOutlineCubeTransparent, HiOutlineFilter, HiOutlineChevronDown, HiOutlineDatabase } from 'react-icons/hi';
 import PriceFilter from './PriceFilter';
-import GenderFilter from './GenderFilter';
+// import GenderFilter from './GenderFilter';
 import ProductCard from './ProductCard';
 import Pagination from './Pagination';
 
@@ -36,7 +36,7 @@ function ProductLayout({
                 <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800">
                     <div className="container mx-auto px-4 py-12">
                         <div className="text-center text-white">
-                            <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text">
                                 {title}
                             </h2>
                             {subtitle && <p className="opacity-90 max-w-2xl mx-auto">{subtitle}</p>}
@@ -71,14 +71,14 @@ function ProductLayout({
                     {/* Sidebar with filters */}
                     <div className={`lg:w-80 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
                         <div className="sticky top-24 space-y-6">
-                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 border border-gray-100 dark:border-gray-700">
+                            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-100 dark:border-gray-700">
                                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
                                     <HiOutlineCubeTransparent className="w-6 h-6 mr-2 text-blue-600" />
                                     Bộ Lọc Sản Phẩm
                                 </h3>
 
                                 <div className="space-y-6">
-                                    <GenderFilter />
+                                    {/* <GenderFilter /> */}
                                     <PriceFilter />
                                 </div>
 
@@ -105,7 +105,7 @@ function ProductLayout({
                     {/* Product grid */}
                     <div className="flex-1">
                         {products.length === 0 ? (
-                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center border border-gray-100 dark:border-gray-700">
+                            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-12 text-center border border-gray-100 dark:border-gray-700">
                                 <div className="flex flex-col items-center space-y-4">
                                     <HiOutlineDatabase className="w-16 h-16 text-gray-400" />
                                     <div>

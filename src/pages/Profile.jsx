@@ -187,7 +187,7 @@ const Profile = () => {
                     </div>
 
                     {/* Profile Card */}
-                    <div className="dark:bg-gray-900 rounded-lg shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden">
+                    <div className="dark:bg-gray-900 bg-gray-50 rounded-lg shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden">
                         <div className="px-8 py-12">
                             {/* Avatar Section */}
                             <div className="realative flex flex-col items-center mb-12">

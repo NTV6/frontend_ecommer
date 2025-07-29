@@ -21,7 +21,7 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { user } = useSelector((state) => state.auth);
-  const { data: users } = useSelector((state) => state.users);
+  const { users } = useSelector((state) => state.users);
 
   useEffect(() => {
     if (user) {
