@@ -114,7 +114,7 @@ function HomeAdmin() {
                     <div className="space-y-3">
                         {/* Theme Toggle */}
                         <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700 dark:text-gray-300">Chế độ tối</span>
+                            <span className="text-sm text-gray-700 dark:text-gray-300 w-full">Chế độ tối</span>
                             <ThemeToggle />
                         </div>
 

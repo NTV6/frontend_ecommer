@@ -190,7 +190,7 @@ const Profile = () => {
                     <div className="dark:bg-gray-900 bg-gray-50 rounded-lg shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden">
                         <div className="px-8 py-12">
                             {/* Avatar Section */}
-                            <div className="realative flex flex-col items-center mb-12">
+                            <div className="relative flex flex-col items-center mb-12">
                                 <div className="relative group">
                                     <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-2xl ring-4 ring-white dark:ring-gray-700">
                                         {users?.profile_picture ? (
@@ -231,7 +231,7 @@ const Profile = () => {
                                     </label>
                                 </div>
 
-                                <div className="absolute top-3 right-3">
+                                <div className="absolute top-0 right-0">
                                     {!isEditing ? (
                                         <button
                                             onClick={() => setIsEditing(true)}

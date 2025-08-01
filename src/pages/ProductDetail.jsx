@@ -33,6 +33,7 @@ function ProductDetail() {
   const [showZoomDelayed, setShowZoomDelayed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [activeTab, setActiveTab] = useState('description');
 
   useEffect(() => {
     if (id) {
@@ -195,74 +196,79 @@ function ProductDetail() {
     <div className="container mx-auto px-4 py-8 mt-[65px]">
       {productData ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="relative flex gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Image section */}
+            <div className="flex flex-col md:flex-row gap-4">
               {/* Thumbnail images */}
-              <div className="hidden md:flex flex-col gap-2 w-20">
-                {selectedVariant?.images && sortImages(selectedVariant.images).map((image, index) => (
-                  <button
-                    key={image.id}
-                    onClick={() => setSelectedImage(image)}
-                    className={`border rounded-lg overflow-hidden ${selectedImage?.id === image.id
-                      ? 'border-2 border-blue-500'
-                      : 'border-gray-200 hover:border-gray-400'
-                      }`}
-                  >
-                    <img
-                      src={image.image}
-                      alt={`View ${index + 1}`}
-                      className="w-full h-full object-contain"
-                    />
-                  </button>
-                ))}
+              <div className="order-2 md:order-1 md:w-20">
+                <div className="flex md:flex-col gap-2 overflow-x-auto">
+                  {selectedVariant?.images && sortImages(selectedVariant.images).map((image, index) => (
+                    <button
+                      key={image.id}
+                      onClick={() => setSelectedImage(image)}
+                      className={`flex-shrink-0 w-20 border rounded-lg overflow-hidden ${selectedImage?.id === image.id
+                        ? 'border-2 border-blue-500'
+                        : 'border-gray-200 hover:border-gray-400'
+                        }`}
+                    >
+                      <img
+                        src={image.image}
+                        alt={`View ${index + 1}`}
+                        className="w-full h-full object-contain"
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Main image with zoom */}
-              <div className="flex-1 relative z-10">
-                <div
-                  ref={imageRef}
-                  className="relative cursor-crosshair overflow-hidden rounded-lg"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                  onMouseMove={handleMouseMove}
-                >
-                  <img
-                    src={selectedImage?.image ||
-                      selectedVariant?.images?.[0]?.image ||
-                      productData.variants?.[0]?.images?.[0]?.image}
-                    alt={productData.name}
-                    className="w-full h-full object-contain"
-                  />
-
-                  {/* Zoom box overlay */}
-                  {showZoom && (
-                    <div
-                      className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-20 pointer-events-none"
-                      style={{
-                        width: `${zoomBoxSize}px`,
-                        height: `${zoomBoxSize}px`,
-                        left: `${mousePosition.x - zoomBoxSize / 2}px`,
-                        top: `${mousePosition.y - zoomBoxSize / 2}px`,
-                        transform: 'translate(0, 0)'
-                      }}
+              <div className="order-1 md:order-2 flex-1">
+                <div className="relative z-10">
+                  <div
+                    ref={imageRef}
+                    className="relative cursor-crosshair overflow-hidden rounded-lg"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onMouseMove={handleMouseMove}
+                  >
+                    <img
+                      src={selectedImage?.image ||
+                        selectedVariant?.images?.[0]?.image ||
+                        productData.variants?.[0]?.images?.[0]?.image}
+                      alt={productData.name}
+                      className="w-full h-full object-contain"
                     />
+
+                    {/* Zoom box overlay */}
+                    {showZoom && (
+                      <div
+                        className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-20 pointer-events-none"
+                        style={{
+                          width: `${zoomBoxSize}px`,
+                          height: `${zoomBoxSize}px`,
+                          left: `${mousePosition.x - zoomBoxSize / 2}px`,
+                          top: `${mousePosition.y - zoomBoxSize / 2}px`,
+                          transform: 'translate(0, 0)'
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  {/* Zoom view panel */}
+                  {showZoomDelayed && (selectedImage || selectedVariant?.images?.[0]) && (
+                    <div className="hidden md:block absolute left-[105%] top-0 w-[500px] h-[500px] overflow-hidden rounded-lg shadow-lg border-2 border-gray-200 bg-white">
+                      <div
+                        className="w-full h-full"
+                        style={{
+                          backgroundImage: `url(${selectedImage?.image || selectedVariant.images[0].image})`,
+                          backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                          backgroundSize: '300%', // Tăng độ zoom
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      />
+                    </div>
                   )}
                 </div>
-
-                {/* Zoom view panel */}
-                {showZoomDelayed && (selectedImage || selectedVariant?.images?.[0]) && (
-                  <div className="hidden md:block absolute left-[105%] top-0 w-[500px] h-[500px] overflow-hidden rounded-lg shadow-lg border-2 border-gray-200 bg-white">
-                    <div
-                      className="w-full h-full"
-                      style={{
-                        backgroundImage: `url(${selectedImage?.image || selectedVariant.images[0].image})`,
-                        backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                        backgroundSize: '300%', // Tăng độ zoom
-                        backgroundRepeat: 'no-repeat',
-                      }}
-                    />
-                  </div>
-                )}
               </div>
             </div>
 
@@ -334,24 +340,26 @@ function ProductDetail() {
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Số lượng</h3>
 
                 <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center border rounded overflow-hidden">
+                  <div className="flex items-center bg-gray-200 dark:bg-gray-700 rounded-full">
                     <button
                       onClick={() => handleQuantityChange(-1)}
-                      className="p-2 disabled:opacity-50 dark:bg-gray-700"
+                      className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                       disabled={quantity <= 1}
                     >
                       <FiMinus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
                     </button>
+
                     <input
                       min="1"
                       max={selectedVariant?.stock || 1}
                       value={quantity}
                       onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="w-12 px-2 py-1 text-center border-x dark:bg-gray-800 dark:text-gray-200"
+                      className="w-10 text-center font-medium bg-transparent outline-none"
                     />
+
                     <button
                       onClick={() => handleQuantityChange(1)}
-                      className="p-2 disabled:opacity-50 dark:bg-gray-700"
+                      className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                       disabled={!selectedVariant || quantity >= selectedVariant.stock}
                     >
                       <FiPlus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
@@ -384,31 +392,65 @@ function ProductDetail() {
                     )
                 }
               </button>
-
-              {/* Product description */}
-              <div className="mt-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Mô tả sản phẩm</h3>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">{productData.description}</p>
-              </div>
             </div>
           </div>
 
+          {/* New tabbed section for description and reviews */}
           <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Đánh giá sản phẩm</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <ReviewForm productId={productData.id} onReviewSubmitted={() => console.log('Đánh giá đã được gửi')} />
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-xl overflow-hidden">
+              {/* Tab Headers */}
+              <div className="border-b border-gray-200 dark:border-gray-700">
+                <nav className="flex gap-8 px-8">
+                  {['description', 'reviews'].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`py-6 border-b-2 font-semibold transition-colors ${activeTab === tab
+                        ? 'border-blue-600 text-blue-600'
+                        : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                        }`}
+                    >
+                      {tab === 'description' ? 'Mô tả sản phẩm' : `Đánh giá (${reviews.length})`}
+                    </button>
+                  ))}
+                </nav>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-4">
-                  Tất cả đánh giá ({reviews.length})
-                </h3>
-                {loading ? (
-                  <p>Đang tải đánh giá...</p>
-                ) : reviews.length > 0 ? (
-                  <ReviewList reviews={reviews} />
-                ) : (
-                  <p className="text-gray-500">Chưa có đánh giá nào.</p>
+
+              {/* Tab Content */}
+              <div className="p-8">
+                {activeTab === 'description' && (
+                  <div className="prose prose-lg max-w-none dark:prose-invert">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                      {productData.description}
+                    </p>
+                  </div>
+                )}
+
+                {activeTab === 'reviews' && (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div>
+                      <ReviewForm
+                        productId={productData.id}
+                        onReviewSubmitted={() => console.log('Đánh giá đã được gửi')}
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
+                        Tất cả đánh giá ({reviews.length})
+                      </h3>
+                      {reviews.length > 0 ? (
+                        <ReviewList reviews={reviews} />
+                      ) : (
+                        <div className="text-center py-12">
+                          <div className="text-6xl mb-4">💬</div>
+                          <p className="text-gray-500 dark:text-gray-400">Chưa có đánh giá nào.</p>
+                          <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                            Hãy là người đầu tiên đánh giá sản phẩm này!
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

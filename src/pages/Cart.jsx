@@ -192,7 +192,7 @@ function Cart() {
                                     <Minus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                   </button>
 
-                                  <span className="w-8 text-center font-medium text-gray-900 dark:text-white">
+                                  <span className="w-8 text-center font-medium">
                                     {item.quantity || 1}
                                   </span>
 

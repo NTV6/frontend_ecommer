@@ -176,7 +176,7 @@ function MyOrders() {
 
                                         <div className="text-right">
                                             <p className="text-sm text-gray-700 dark:text-gray-400">Tổng cộng</p>
-                                            <p className="text-lg font-bold text-orange-600">
+                                            <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
                                                 {formatCurrency(order.total_amount)}
                                             </p>
                                         </div>
@@ -186,14 +186,14 @@ function MyOrders() {
                                         {["pending", "processing"].includes(order.order_status) && (
                                             <button
                                                 onClick={() => cancelOrder(order.id)}
-                                                className="text-sm text-red-600 border px-4 py-2 rounded-lg hover:bg-red-50"
+                                                className="text-sm text-red-600 border border-red-600 dark:border-red-900 px-4 py-2 rounded-lg hover:bg-red-200"
                                             >
                                                 Hủy đơn
                                             </button>
                                         )}
                                         <button
                                             onClick={() => handleViewOrderDetail(order)}
-                                            className="text-sm text-blue-600 border px-4 py-2 rounded-lg hover:bg-blue-50 flex items-center gap-2"
+                                            className="text-sm text-blue-600 border border-blue-600 dark:border-blue-900 px-4 py-2 rounded-lg hover:bg-blue-200 flex items-center gap-2"
                                         >
                                             <Eye className="w-4 h-4" />
                                             Chi tiết

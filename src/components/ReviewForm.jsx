@@ -68,9 +68,9 @@ function ReviewForm({ productId, onReviewSubmitted }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
           Đánh giá của bạn
-        </label>
+        </h3>
         <div className="flex space-x-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
