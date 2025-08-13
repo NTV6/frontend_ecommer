@@ -206,9 +206,9 @@ function ProductDetail() {
                     <button
                       key={image.id}
                       onClick={() => setSelectedImage(image)}
-                      className={`flex-shrink-0 w-20 border rounded-lg overflow-hidden ${selectedImage?.id === image.id
+                      className={`flex-shrink-0 w-12 md:w-20 rounded-lg overflow-hidden ${selectedImage?.id === image.id
                         ? 'border-2 border-blue-500'
-                        : 'border-gray-200 hover:border-gray-400'
+                        : ''
                         }`}
                     >
                       <img
@@ -274,7 +274,7 @@ function ProductDetail() {
 
             {/* Product details */}
             <div>
-              <h1 className="text-3xl font-bold mb-4">{productData.name}</h1>
+              <h1 className="text-4xl font-bold mb-4">{productData.name}</h1>
 
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center">
@@ -288,26 +288,38 @@ function ProductDetail() {
                 </span>
               </div>
 
-              <p className="text-2xl font-semibold text-gray-900 mb-4 dark:text-gray-100">
+              <p className="text-3xl font-semibold text-gray-900 mb-4 dark:text-gray-100">
                 {selectedVariant ? Number(selectedVariant.price).toLocaleString() : 'Chọn biến thể'}₫
               </p>
 
-              {/* Color selection */}
+              {/* Color selection with thumbnails */}
               <div className="mb-4">
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Màu sắc</h3>
                 <div className="flex gap-2 mt-2">
-                  {availableColors.map(color => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`px-4 py-2 border rounded-md ${selectedColor === color
-                        ? 'border-blue-500 text-blue-500'
-                        : 'hover:border-gray-900'
-                        }`}
-                    >
-                      {color}
-                    </button>
-                  ))}
+                  {availableColors.map(color => {
+                    // Find the first variant with this color to get its thumbnail
+                    const variantWithColor = productData.variants.find(v => v.color === color);
+                    const thumbnail = variantWithColor?.images?.find(img => img.is_thumbnail)?.image ||
+                      variantWithColor?.images?.[0]?.image;
+
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-12 h-12 rounded-full overflow-hidden transition-all ${selectedColor === color
+                          ? 'border-2 border-blue-500'
+                          : ''
+                          }`}
+                      >
+                        <img
+                          src={thumbnail}
+                          alt={color}
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="sr-only">{color}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -319,9 +331,9 @@ function ProductDetail() {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 border rounded-md ${selectedSize === size
-                        ? 'border-blue-500 text-blue-500'
-                        : 'hover:border-gray-900'
+                      className={`w-12 h-12 rounded-full bg-gray-200 dark:bg-blue-950 ${selectedSize === size
+                        ? 'border-2 border-blue-500 text-blue-500'
+                        : ''
                         }`}
                     >
                       {size}
@@ -343,7 +355,7 @@ function ProductDetail() {
                   <div className="flex items-center bg-gray-200 dark:bg-gray-700 rounded-full">
                     <button
                       onClick={() => handleQuantityChange(-1)}
-                      className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                      className="p-3 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                       disabled={quantity <= 1}
                     >
                       <FiMinus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
@@ -359,7 +371,7 @@ function ProductDetail() {
 
                     <button
                       onClick={() => handleQuantityChange(1)}
-                      className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                      className="p-3 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                       disabled={!selectedVariant || quantity >= selectedVariant.stock}
                     >
                       <FiPlus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
@@ -378,7 +390,7 @@ function ProductDetail() {
               <button
                 onClick={handleAddToCart}
                 disabled={!selectedVariant || selectedVariant.stock === 0}
-                className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+                className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
               >
                 {selectedVariant?.stock === 0
                   ? 'Hết hàng'
@@ -405,7 +417,7 @@ function ProductDetail() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`py-6 border-b-2 font-semibold transition-colors ${activeTab === tab
+                      className={`py-1 my-4 border-b-2 font-semibold transition-colors ${activeTab === tab
                         ? 'border-blue-600 text-blue-600'
                         : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                         }`}

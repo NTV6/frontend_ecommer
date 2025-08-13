@@ -93,9 +93,6 @@ function ReviewForm({ productId, onReviewSubmitted }) {
       </div>
 
       <div>
-        <label htmlFor="comment" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Nhận xét
-        </label>
         <textarea
           id="comment"
           value={comment}
@@ -113,7 +110,7 @@ function ReviewForm({ productId, onReviewSubmitted }) {
       <button
         type="submit"
         disabled={isSubmitting || rating === 0}
-        className="w-full bg-gray-900 dark:bg-blue-700 text-white py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-500 disabled:cursor-not-allowed"
+        className="w-full md:w-auto px-6 bg-gray-900 dark:bg-blue-700 text-white py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-500 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Đang gửi...' : 'Gửi đánh giá'}
       </button>
