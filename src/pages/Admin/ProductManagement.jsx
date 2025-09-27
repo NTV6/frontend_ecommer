@@ -7,11 +7,13 @@ import {
     HiXCircle,
     HiPencilAlt,
     HiTrash,
-    HiInbox
+    HiInbox,
+    HiOutlineDownload
 } from 'react-icons/hi';
 
 import { fetchCategories } from '../../store/categorySlice';
 import { usePagination } from '../../../hook/usePagination';
+import { useExportExcel } from '../../../hook/useExportExcel';
 import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 import { fetchProducts, deleteProduct } from '../../store/productSlice';
 import Search from '../../components/Search';
@@ -21,6 +23,7 @@ import ProductModal from '../../components/ProductModal';
 
 function ProductManagement() {
     const dispatch = useDispatch();
+    const { exportToExcel } = useExportExcel();
     const { products, loading, error } = useSelector((state) => state.products);
     const { categories } = useSelector((state) => state.categories);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -94,6 +97,32 @@ function ProductManagement() {
         }
     };
 
+    const handleExportExcel = () => {
+        exportToExcel({
+            data: filteredProducts,
+            fileName: 'products',
+            sheetName: 'Products',
+            mapper: product => {
+                const totalStock = product.variants?.reduce((sum, v) => sum + v.stock, 0) || 0;
+                const lowestPrice = product.variants?.length > 0
+                    ? Math.min(...product.variants.map(v => v.price))
+                    : 0;
+
+                return {
+                    'Mã sản phẩm': product.id,
+                    'Tên sản phẩm': product.name,
+                    'Danh mục': categories.find(cat => cat.id === product.category_id)?.name || 'Chưa có danh mục',
+                    'Số lượng biến thể': product.variants?.length || 0,
+                    'Giá thấp nhất': Number(lowestPrice).toLocaleString() + '₫',
+                    'Tồn kho': totalStock,
+                    'Trạng thái': totalStock > 0 ? 'Còn hàng' : 'Hết hàng',
+                    'Ngày tạo': format(new Date(product.created_at), 'dd/MM/yyyy HH:mm'),
+                    'Mô tả': product.description
+                };
+            }
+        });
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -101,6 +130,7 @@ function ProductManagement() {
             </div>
         );
     }
+
     return (
         <div className="space-y-4">
             <div className="bg-white dark:bg-gray-900 px-6 py-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -112,13 +142,23 @@ function ProductManagement() {
                             Quản lý sản phẩm
                         </h2>
                     </div>
-                    <button
-                        onClick={handleAddProduct}
-                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md"
-                    >
-                        <HiPlus className="w-5 h-5 mr-2" />
-                        Thêm sản phẩm
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleExportExcel}
+                            disabled={filteredProducts.length === 0}
+                            className="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <HiOutlineDownload className="w-5 h-5 mr-2" />
+                            Xuất Excel
+                        </button>
+                        <button
+                            onClick={handleAddProduct}
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md"
+                        >
+                            <HiPlus className="w-5 h-5 mr-2" />
+                            Thêm sản phẩm
+                        </button>
+                    </div>
                 </div>
 
                 {/* Tìm kiếm & bộ lọc */}

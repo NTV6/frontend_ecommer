@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { HiOutlineEye, HiTrash, HiUsers } from 'react-icons/hi';
+import { HiOutlineEye, HiTrash, HiUsers, HiOutlineDownload } from 'react-icons/hi';
 
 import Search from '../../components/Search';
 import DropDown from '../../components/DropDown';
@@ -9,11 +9,13 @@ import UserModal from '../../components/UserModal';
 import Pagination from '../../components/Pagination';
 import { getStatusBadgeColor } from '../../utils';
 import { usePagination } from '../../../hook/usePagination';
+import { useExportExcel } from '../../../hook/useExportExcel';
 import { fetchUsers, deleteUser } from '../../store/userSlice';
 import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 
 function UserManagement() {
     const dispatch = useDispatch();
+    const { exportToExcel } = useExportExcel();
     const { users, loading } = useSelector(state => state.users);
     const [selectedUser, setSelectedUser] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -69,6 +71,24 @@ function UserManagement() {
         }
     };
 
+    const handleExportExcel = () => {
+        exportToExcel({
+            data: users,
+            fileName: 'users',
+            sheetName: 'Users',
+            mapper: user => ({
+                'ID': user.id,
+                'Họ và tên': user.full_name || '',
+                'Email': user.email,
+                'Số điện thoại': user.phone_number || 'Chưa cập nhật',
+                'Vai trò': user.role === 'admin' ? 'Admin' : 'Người dùng',
+                'Ngày tạo': format(new Date(user.created_at), 'dd/MM/yyyy HH:mm'),
+                'Địa chỉ': user.address || 'Chưa cập nhật',
+                'Trạng thái': user.status || 'Hoạt động'
+            })
+        });
+    };
+
     const DeleteConfirmationModal = ({ onConfirm, onCancel }) => (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700">
@@ -108,11 +128,22 @@ function UserManagement() {
     return (
         <div className="space-y-4">
             <div className="bg-white dark:bg-gray-900 px-6 py-4 mb-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 mb-4">
-                    <HiUsers className="w-8 h-8 text-blue-600" />
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Quản lý người dùng
-                    </h2>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-3">
+                        <HiUsers className="w-8 h-8 text-blue-600" />
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Quản lý người dùng
+                        </h2>
+                    </div>
+
+                    <button
+                        onClick={handleExportExcel}
+                        disabled={users.length === 0}
+                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <HiOutlineDownload className="w-5 h-5 mr-2" />
+                        Xuất Excel
+                    </button>
                 </div>
 
                 {/* Tìm kiếm & lọc */}

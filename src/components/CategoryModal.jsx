@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { FaTimes, FaUpload, FaFileImage, FaTag, FaFileAlt } from 'react-icons/fa';
 
 import InputField from './InputField';
+import { uploadService } from '../services/api';
 
 function CategoryModal({ isOpen, onClose, category, onSubmit }) {
     const [imageFile, setImageFile] = useState(null);
@@ -64,9 +65,7 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
     const deleteImage = async (publicId) => {
         try {
             if (!publicId) return;
-            await axios.delete(import.meta.env.VITE_API_DELETE_IMAGE_CLOUDINARY, {
-                data: { public_id: publicId }
-            });
+            await uploadService.deleteImage(publicId);
         } catch (error) {
             console.error('Error deleting image:', error);
             throw new Error('Lỗi khi xóa ảnh');

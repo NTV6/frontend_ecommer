@@ -1,8 +1,10 @@
-import { HiOutlineCubeTransparent, HiOutlineFilter, HiOutlineChevronDown, HiOutlineDatabase } from 'react-icons/hi';
 import PriceFilter from './PriceFilter';
+import { useDispatch } from 'react-redux';
+import { HiOutlineCubeTransparent, HiOutlineFilter, HiOutlineChevronDown, HiOutlineDatabase, HiOutlineViewGrid } from 'react-icons/hi';
 // import GenderFilter from './GenderFilter';
 import ProductCard from './ProductCard';
 import Pagination from './Pagination';
+import { setSelectedCategory } from '../store/categorySlice';
 
 function ProductLayout({
     title,
@@ -11,13 +13,19 @@ function ProductLayout({
     loading,
     selectedPriceRange,
     selectedGender,
+    selectedCategory,
+    categories,
     isFilterOpen,
     setIsFilterOpen,
     showPagination = false,
     currentPage,
     totalPages,
     onPageChange,
+    showCategories = false,
+    totalItems = 0,
 }) {
+    const dispatch = useDispatch();
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center pt-[65px]">
@@ -31,7 +39,6 @@ function ProductLayout({
 
     return (
         <div className="min-h-screen pt-[65px]">
-            {/* Hero Section - nếu có */}
             {title && (
                 <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800">
                     <div className="container mx-auto px-4 py-12">
@@ -72,6 +79,37 @@ function ProductLayout({
                     <div className={`lg:w-80 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
                         <div className="sticky top-24 space-y-6">
                             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 border border-gray-100 dark:border-gray-700">
+                                {showCategories && (
+                                    <div className="mb-6">
+                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+                                            <HiOutlineViewGrid className="w-6 h-6 mr-2 text-blue-600" />
+                                            Danh mục sản phẩm
+                                        </h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            <button
+                                                onClick={() => dispatch(setSelectedCategory(null))}
+                                                className={`px-4 py-2 rounded-md ${!selectedCategory
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200'
+                                                    }`}
+                                            >
+                                                Tất cả
+                                            </button>
+                                            {Array.isArray(categories) && categories.map(category => (
+                                                <button
+                                                    key={category.id}
+                                                    onClick={() => dispatch(setSelectedCategory(category))}
+                                                    className={`px-4 py-2 rounded-md ${selectedCategory?.id === category.id
+                                                        ? 'bg-blue-500 text-white'
+                                                        : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200'
+                                                        }`}
+                                                >
+                                                    {category.name}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
                                     <HiOutlineCubeTransparent className="w-6 h-6 mr-2 text-blue-600" />
                                     Bộ Lọc Sản Phẩm
@@ -132,8 +170,7 @@ function ProductLayout({
                                             key={product.id}
                                             className="transform hover:scale-105 transition-all duration-300"
                                             style={{
-                                                animationDelay: `${index * 100}ms`,
-                                                animation: 'fadeInUp 0.6s ease-out forwards'
+                                                animation: `fadeInUp 0.6s ease-out forwards ${index * 100}ms`
                                             }}
                                         >
                                             <ProductCard product={product} />
@@ -145,6 +182,7 @@ function ProductLayout({
                                         currentPage={currentPage}
                                         totalPages={totalPages}
                                         onPageChange={onPageChange}
+                                        totalItems={totalItems}
                                     />
                                 )}
                             </>

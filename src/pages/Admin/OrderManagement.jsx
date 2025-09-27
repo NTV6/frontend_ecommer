@@ -7,7 +7,8 @@ import {
     HiOutlineSwitchVertical,
     HiOutlineCreditCard,
     HiOutlineEye,
-    HiShoppingCart
+    HiShoppingCart,
+    HiOutlineDownload
 } from 'react-icons/hi';
 
 import Search from '../../components/Search';
@@ -17,11 +18,13 @@ import Pagination from '../../components/Pagination';
 import { orderService } from '../../services/api';
 import { getStatusBadgeColor, getStatusText } from '../../utils';
 import { usePagination } from '../../../hook/usePagination';
+import { useExportExcel } from '../../../hook/useExportExcel';
 import { useDebounceSearch } from '../../../hook/useDebounceSearch';
 import { fetchOrders, updateOrderStatus } from '../../store/orderSlice';
 
 function OrderManagement() {
     const dispatch = useDispatch();
+    const { exportToExcel } = useExportExcel();
     const { orders, loading } = useSelector(state => state.orders);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [statusFilter, setStatusFilter] = useState('all');
@@ -89,17 +92,48 @@ function OrderManagement() {
         }
     };
 
+    const handleExportExcel = () => {
+        exportToExcel({
+            data: filteredOrders,
+            fileName: 'orders',
+            sheetName: 'Orders',
+            mapper: order => ({
+                'Mã đơn hàng': order.id,
+                'Khách hàng': order.user_name,
+                'ID Khách hàng': order.user_id,
+                'Ngày đặt': format(new Date(order.created_at), 'dd/MM/yyyy HH:mm'),
+                'Tổng tiền': Number(order.total_amount).toLocaleString() + '₫',
+                'Phương thức thanh toán': order.payment_method,
+                'Trạng thái thanh toán': getStatusText(order.payment_status),
+                'Trạng thái đơn hàng': getStatusText(order.order_status),
+                'Địa chỉ': order.shipping_address,
+                'Số điện thoại': order.phone_number,
+                'Email': order.user_email
+            })
+        });
+    };
+
     if (loading) return <div className="p-6">Đang tải...</div>;
 
     return (
         <div className="space-y-4">
             <div className="bg-white dark:bg-gray-900 px-6 py-4 mb-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                {/* Tiêu đề */}
-                <div className="flex items-center gap-3 mb-4">
-                    <HiShoppingCart className="w-8 h-8 text-blue-600" />
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Quản lý đơn hàng
-                    </h2>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    {/* Tiêu đề */}
+                    <div className="flex items-center gap-3">
+                        <HiShoppingCart className="w-8 h-8 text-blue-600" />
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Quản lý đơn hàng
+                        </h2>
+                    </div>
+                    <button
+                        onClick={handleExportExcel}
+                        disabled={filteredOrders.length === 0}
+                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <HiOutlineDownload className="w-5 h-5 mr-2" />
+                        Xuất Excel
+                    </button>
                 </div>
 
                 {/* Tìm kiếm & Lọc – 2 đầu hàng */}

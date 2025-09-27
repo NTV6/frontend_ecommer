@@ -52,7 +52,7 @@ function Footer() {
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("https://specials-images.forbesimg.com/imageserve/661987c8e81ff4fa6d5d72cf/FO041624-001/1440x0.jpg?fit=scale")`,
+            backgroundImage: `url("https://specials-images.forbesimg.com/imageserve/661987c8e81ff4fa6d5d72cf/FO041624-001/1440x0.jpg?fit=scale")`, repeat: 'no-repeat', backgroundSize: 'cover', backgroundPosition: 'center'
           }}></div>
         </div>
 

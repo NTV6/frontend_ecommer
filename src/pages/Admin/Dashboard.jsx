@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -27,6 +27,11 @@ import {
     Users,
 } from 'lucide-react';
 
+import { fetchProducts } from '../../store/productSlice';
+import { fetchCategories } from '../../store/categorySlice';
+import { fetchOrders } from '../../store/orderSlice';
+import { fetchUsers } from '../../store/userSlice';
+
 // Đăng ký các components của Chart.js
 ChartJS.register(
     CategoryScale,
@@ -39,6 +44,7 @@ ChartJS.register(
 );
 
 function Dashboard() {
+    const dispatch = useDispatch();
     const { products } = useSelector((state) => state.products);
     const { categories } = useSelector((state) => state.categories);
     const { orders } = useSelector((state) => state.orders);
@@ -52,6 +58,13 @@ function Dashboard() {
         labels: [],
         datasets: []
     });
+
+    useEffect(() => {
+        dispatch(fetchProducts());
+        dispatch(fetchCategories());
+        dispatch(fetchOrders());
+        dispatch(fetchUsers());
+    }, [dispatch]);
 
     useEffect(() => {
         // Tạo dữ liệu cho 7 ngày gần nhất
@@ -182,7 +195,9 @@ function Dashboard() {
                         </div>
                         <div className="ml-4">
                             <p className="text-sm text-gray-600 dark:text-gray-400">Tổng sản phẩm</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{products.length}</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                {products?.length || 0}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -193,7 +208,9 @@ function Dashboard() {
                         </div>
                         <div className="ml-4">
                             <p className="text-sm text-gray-600 dark:text-gray-400">Tổng Danh mục</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{categories.length}</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                {categories?.length || 0}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -204,7 +221,9 @@ function Dashboard() {
                         </div>
                         <div className="ml-4">
                             <p className="text-sm text-gray-600 dark:text-gray-400">Tổng đơn hàng</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{orders.length}</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                {orders?.length || 0}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -215,7 +234,9 @@ function Dashboard() {
                         </div>
                         <div className="ml-4">
                             <p className="text-sm text-gray-600 dark:text-gray-400">Tổng Người dùng</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.length}</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                {users?.length || 0}
+                            </p>
                         </div>
                     </div>
                 </div>

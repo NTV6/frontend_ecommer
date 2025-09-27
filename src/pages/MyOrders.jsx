@@ -163,12 +163,12 @@ function MyOrders() {
                                                 <CreditCard className="w-4 h-4" />
                                                 {order.payment_method}
                                             </div>
-                                            <div className={`px-2 py-1 rounded text-xs font-medium ${order.payment_status === "paid"
-                                                ? "bg-green-100 text-green-800"
-                                                : "bg-yellow-100 text-yellow-800"
+                                            <div className={`px-2 py-1 rounded text-xs font-medium ${order.payment_status === "completed"
+                                                ? "bg-green-300 text-green-900"
+                                                : "bg-yellow-100 text-yellow-900"
                                                 }`}
                                             >
-                                                {order.payment_status === "paid"
+                                                {order.payment_status === "completed"
                                                     ? "Đã thanh toán"
                                                     : "Chưa thanh toán"}
                                             </div>

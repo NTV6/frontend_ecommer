@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { fetchProducts } from '../store/productSlice';
+import { fetchCategories } from '../store/categorySlice';
 import ProductLayout from '../components/ProductLayout';
 
 function Products() {
@@ -9,9 +11,12 @@ function Products() {
   const { products, loading } = useSelector((state) => state.products);
   const selectedPriceRange = useSelector((state) => state.categories.selectedPriceRange);
   const selectedGender = useSelector((state) => state.categories.selectedGender);
+  const selectedCategory = useSelector((state) => state.categories.selectedCategory);
+  const { categories } = useSelector((state) => state.categories);
 
   useEffect(() => {
     dispatch(fetchProducts());
+    dispatch(fetchCategories());
   }, [dispatch]);
 
   const filteredProducts = products.filter(product => {
@@ -19,7 +24,8 @@ function Products() {
     const matchesPrice = !selectedPriceRange ||
       (minPrice >= selectedPriceRange.min && minPrice <= selectedPriceRange.max);
     const matchesGender = !selectedGender || product.gender === selectedGender.value;
-    return matchesPrice && matchesGender;
+    const matchesCategory = !selectedCategory || product.category_id === selectedCategory.id;
+    return matchesPrice && matchesGender && matchesCategory;
   });
 
   return (
@@ -30,8 +36,11 @@ function Products() {
       loading={loading}
       selectedPriceRange={selectedPriceRange}
       selectedGender={selectedGender}
+      selectedCategory={selectedCategory}
+      categories={categories}
       isFilterOpen={isFilterOpen}
       setIsFilterOpen={setIsFilterOpen}
+      showCategories={true}
     />
   );
 }
