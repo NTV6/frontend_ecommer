@@ -10,6 +10,8 @@ import { db } from '../lib/firebase';
 import { auth } from '../lib/firebase';
 import { addToCart } from '../store/cartSlice';
 import { getProduct } from '../store/productSlice';
+import { fetchProducts } from '../store/productSlice';
+import ProductCard from '../components/ProductCard';
 import ReviewForm from '../components/ReviewForm';
 import ReviewList from '../components/ReviewList';
 import RatingStars from '../components/RatingStart';
@@ -34,6 +36,8 @@ function ProductDetail() {
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [activeTab, setActiveTab] = useState('description');
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const { products } = useSelector(state => state.products);
 
   useEffect(() => {
     if (id) {
@@ -84,6 +88,34 @@ function ProductDetail() {
     }
   }, [selectedColor, selectedSize, productData]);
 
+  // Cleanup timeout khi component unmount
+  useEffect(() => {
+    return () => {
+      if (zoomTimeoutRef.current) {
+        clearTimeout(zoomTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (productData && products) {
+      // Get products in the same category
+      const related = products
+        .filter(p =>
+          p.category_id === productData.category_id &&
+          p.id !== productData.id
+        )
+        .slice(0, 8); // Limit to 4 products
+      setRelatedProducts(related);
+    }
+  }, [productData, products]);
+
+  useEffect(() => {
+    if (!products?.length) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products]);
+
   // Nhận màu sắc và kích thước độc đáo
   const availableColors = [...new Set(productData?.variants?.map(v => v.color) || [])];
   const availableSizes = [...new Set(productData?.variants
@@ -108,15 +140,6 @@ function ProductDetail() {
       zoomTimeoutRef.current = null;
     }
   };
-
-  // Cleanup timeout khi component unmount
-  useEffect(() => {
-    return () => {
-      if (zoomTimeoutRef.current) {
-        clearTimeout(zoomTimeoutRef.current);
-      }
-    };
-  }, []);
 
   const handleMouseMove = (e) => {
     if (!imageRef.current) return;
@@ -471,6 +494,24 @@ function ProductDetail() {
       ) : (
         <div className="flex items-center justify-center h-screen">
           <p className="text-lg text-gray-500">Đang tải thông tin sản phẩm...</p>
+        </div>
+      )}
+
+      {relatedProducts.length > 0 && (
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+            Sản phẩm liên quan
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {relatedProducts.map(product => (
+              <div
+                key={product.id}
+                className="transform hover:scale-105 transition-all duration-300"
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

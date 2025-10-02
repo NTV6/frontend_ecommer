@@ -114,7 +114,7 @@ function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {[...categories].reverse().slice(0, 4).map((category) => (
               <CategoryCard
                 key={category.id}
@@ -135,7 +135,7 @@ function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {[...products].reverse().slice(0, 4).map((product) => (
               <div
                 key={product.id}

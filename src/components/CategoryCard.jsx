@@ -7,7 +7,7 @@ function CategoryCard({ category }) {
         <img
           src={category.image}
           alt={category.name}
-          className="w-full h-[400px] object-cover transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-[300px] object-cover transition-transform duration-300 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <h3 className="text-white text-2xl font-bold">{category.name}</h3>

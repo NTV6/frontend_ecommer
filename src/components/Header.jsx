@@ -20,6 +20,7 @@ function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const { users } = useSelector((state) => state.users);
 
@@ -49,6 +50,10 @@ function Header() {
       setSearchQuery('');
       inputRef.current.blur();
     }
+  };
+
+  const handleCloseDropdown = () => {
+    setIsDropdownOpen(false);
   };
 
   const navItems = [
@@ -126,10 +131,13 @@ function Header() {
 
               {/* User Profile */}
               {user ? (
-                <div className="relative group">
-                  <button className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300">
+                <div className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
+                  >
                     <div className="relative">
-                      <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-gray-800 transition-all duration-300 group-hover:scale-110">
+                      <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-gray-800 transition-all duration-300 hover:scale-110">
                         {users?.profile_picture ? (
                           <img
                             src={users.profile_picture}
@@ -147,62 +155,76 @@ function Header() {
                   </button>
 
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 pt-3 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out transform translate-y-2 group-hover:translate-y-0">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                      {/* User Info */}
-                      <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center">
-                            <span className="text-xs font-semibold">
-                              {getInitials(user.email)}
-                            </span>
+                  {isDropdownOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 w-full h-screen z-40"
+                        onClick={handleCloseDropdown}
+                      ></div>
+                      <div className="absolute right-0 pt-3 w-56 z-50">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                          {/* User Info */}
+                          <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center">
+                                <span className="text-xs font-semibold">
+                                  {getInitials(user.email)}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                  {user.email}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  Thành viên
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                              {user.email}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              Thành viên
-                            </p>
+
+                          {/* Menu Items */}
+                          <div className="py-1">
+                            <Link
+                              to="/profile"
+                              onClick={handleCloseDropdown}
+                              className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200"
+                            >
+                              <FaUser className="mr-3 text-gray-400" size={14} />
+                              Tài khoản của tôi
+                            </Link>
+
+                            <Link
+                              to="/myorders"
+                              onClick={handleCloseDropdown}
+                              className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200"
+                            >
+                              <FaShoppingCart className="mr-3 text-gray-400" size={14} />
+                              Đơn hàng của tôi
+                            </Link>
+
+                            <div onClick={handleCloseDropdown} className="flex items-center text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200">
+                              <ThemeToggle className="ml-[2px]" />
+                            </div>
+
+                            <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                            <button
+                              onClick={() => {
+                                handleCloseDropdown();
+                                handleLogout();
+                              }}
+                              className="flex items-center w-full px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                            >
+                              <svg className="mr-3" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+                              </svg>
+                              Đăng xuất
+                            </button>
                           </div>
                         </div>
                       </div>
-
-                      {/* Menu Items */}
-                      <div className="py-1">
-                        <Link
-                          to="/profile"
-                          className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200"
-                        >
-                          <FaUser className="mr-3 text-gray-400" size={14} />
-                          Tài khoản của tôi
-                        </Link>
-
-                        <Link
-                          to="/myorders"
-                          className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200"
-                        >
-                          <FaShoppingCart className="mr-3 text-gray-400" size={14} />
-                          Đơn hàng của tôi
-                        </Link>
-
-                        <div className="flex items-center text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200">
-                          <ThemeToggle className="ml-[2px]" />
-                        </div>
-
-                        <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center w-full px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
-                        >
-                          <svg className="mr-3" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
-                          </svg>
-                          Đăng xuất
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                    </>
+                  )
+                  }
                 </div>
               ) : (
                 <Link
