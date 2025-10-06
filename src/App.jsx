@@ -24,6 +24,7 @@ import SearchResults from './pages/SearchResults';
 import ProductDetail from './pages/ProductDetail';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import CategoryProducts from './pages/CategoryProducts';
+import Chatbot from './components/Chatbot';
 
 function App() {
   const dispatch = useDispatch();
@@ -107,6 +108,7 @@ function App() {
           />
         </Routes>
       </div>
+      <Chatbot />
     </Router>
   );
 }
