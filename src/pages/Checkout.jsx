@@ -17,7 +17,9 @@ import {
 
 import { clearCart } from '../store/cartSlice';
 import { orderService } from '../services/api';
+import { validatePhoneNumber } from '../utils';
 import InputField from '../components/InputField';
+import AddressSelector from '../components/AddressSelector';
 
 function Checkout() {
   const dispatch = useDispatch();
@@ -25,11 +27,13 @@ function Checkout() {
   const { items } = useSelector((state) => state.carts);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+  const [addressValid, setAddressValid] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
     address: '',
-    city: '',
+    detailAddress: '',
     paymentMethod: 'cod'
   });
 
@@ -43,22 +47,63 @@ function Checkout() {
       ...prev,
       [name]: value
     }));
+
+    // Validate phone number
+    if (name === 'phone') {
+      const { isValid, message } = validatePhoneNumber(value);
+      setPhoneError(message);
+    }
+  };
+
+  const handleAddressChange = (fullAddress) => {
+    setFormData(prev => ({
+      ...prev,
+      address: fullAddress
+    }));
+  };
+
+  const handleDetailAddressChange = (e) => {
+    const { value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      detailAddress: value
+    }));
   };
 
   const isFormValid = formData.fullName.trim() &&
     formData.phone.trim() &&
     formData.address.trim() &&
-    formData.city.trim();
+    formData.detailAddress.trim() &&
+    addressValid &&
+    !phoneError;
+
+  const handleAddressValidityChange = (isValid) => {
+    setAddressValid(isValid);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate phone number trước khi submit
+    const { isValid, message } = validatePhoneNumber(formData.phone);
+    if (!isValid) {
+      setPhoneError(message);
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
+      // Tạo địa chỉ đầy đủ (số nhà + phường/xã, quận/huyện, tỉnh/thành)
+      const fullShippingAddress = formData.detailAddress
+        ? `${formData.detailAddress}, ${formData.address}`
+        : formData.address;
+
       // Chuẩn bị dữ liệu đơn hàng
       const orderData = {
-        shipping_address: `${formData.address}, ${formData.city}`,
+        full_name: formData.fullName,
+        shipping_address: fullShippingAddress,
         phone_number: formData.phone,
         total_amount: totalAmount
       };
@@ -74,7 +119,10 @@ function Checkout() {
               orderDetails: {
                 items,
                 total: totalAmount,
-                shippingInfo: formData
+                shippingInfo: {
+                  ...formData,
+                  address: fullShippingAddress
+                }
               }
             }
           });
@@ -88,7 +136,10 @@ function Checkout() {
           localStorage.setItem('pendingOrder', JSON.stringify({
             items,
             total: totalAmount,
-            shippingInfo: formData
+            shippingInfo: {
+              ...formData,
+              address: fullShippingAddress
+            }
           }));
 
           // Chuyển hướng đến trang thanh toán VNPay
@@ -97,6 +148,7 @@ function Checkout() {
       }
     } catch (error) {
       console.error('Error creating order:', error);
+      setError('Đã có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -176,7 +228,8 @@ function Checkout() {
 
                   <div className="space-y-4">
                     {error && (<div className="mb-2 p-3 bg-rose-100 text-rose-700 rounded">{error}</div>)}
-                    <div className="grid md:grid-cols-2 gap-6">
+
+                    <div className="grid md:grid-cols-2 gap-4">
                       <InputField
                         label="Họ và tên *"
                         name="fullName"
@@ -186,36 +239,69 @@ function Checkout() {
                         icon={User}
                         placeholder=""
                       />
+
+                      <div>
+                        <InputField
+                          label="Số điện thoại *"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          required
+                          icon={Phone}
+                          placeholder=""
+                          className={phoneError ? 'border-red-500' : ''}
+                        />
+                        {phoneError && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {phoneError}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Địa chỉ hành chính */}
+                    <div>
+                      <label className="block text-gray-600 dark:text-gray-400 text-sm font-semibold mb-2 flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        Địa chỉ giao hàng *
+                      </label>
+                      <AddressSelector
+                        value={formData.address}
+                        onChange={handleAddressChange}
+                        required={true}
+                        onValidityChange={handleAddressValidityChange}
+                      />
+                      {!addressValid && formData.address && (
+                        <p className="mt-1 text-sm text-red-500">
+                          Vui lòng chọn đầy đủ Tỉnh/Thành phố, Quận/Huyện và Phường/Xã
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Số nhà, tên đường */}
+                    <div>
                       <InputField
-                        label="Số điện thoại *"
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleInputChange}
+                        name="detailAddress"
+                        value={formData.detailAddress}
+                        onChange={handleDetailAddressChange}
                         required
-                        icon={Phone}
-                        placeholder=""
+                        placeholder="Số nhà, tên đường..."
+                        className={`mt-1 ${!formData.detailAddress.trim() ? 'border-red-500' : ''}`}
                       />
                     </div>
 
-                    <InputField
-                      label="Địa chỉ giao hàng *"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      required
-                      icon={MapPin}
-                      placeholder=""
-                    />
-
-                    <InputField
-                      label="Thành phố *"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      required
-                      placeholder=""
-                    />
+                    {/* Hiển thị địa chỉ đầy đủ */}
+                    {(formData.address || formData.detailAddress) && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <p className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-1">
+                          Địa chỉ giao hàng đầy đủ:
+                        </p>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {formData.detailAddress && `${formData.detailAddress}, `} {formData.address}
+                        </p>
+                      </div>
+                    )}
 
                     <div>
                       <label className="block text-sm font-semibold mb-2">
@@ -363,6 +449,16 @@ function Checkout() {
                       'Đặt hàng ngay'
                     )}
                   </button>
+
+                  {!isFormValid && (
+                    <div className="mt-2 text-sm text-red-500">
+                      {!formData.fullName.trim() && <p>- Vui lòng nhập họ tên</p>}
+                      {!formData.phone.trim() && <p>- Vui lòng nhập số điện thoại</p>}
+                      {phoneError && <p>- {phoneError}</p>}
+                      {!addressValid && <p>- Vui lòng chọn đầy đủ địa chỉ</p>}
+                      {!formData.detailAddress.trim() && <p>- Vui lòng nhập số nhà, tên đường</p>}
+                    </div>
+                  )}
 
                   <div className="mt-4 text-center">
                     <p className="text-xs text-gray-500">

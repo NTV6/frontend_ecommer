@@ -18,20 +18,8 @@ const Chatbot = () => {
 
         try {
             setIsLoading(true);
-            // Sửa lại URL endpoint
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/chatbot`, {
-                method: 'POST',
-                body: JSON.stringify({ message: input }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const { data } = await chatbotService.sendMessage(input);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
             setMessages(prev => [...prev,
             { type: 'user', text: input },
             { type: 'bot', text: data.response }
@@ -39,7 +27,6 @@ const Chatbot = () => {
             setInput('');
         } catch (error) {
             console.error('Chatbot error:', error);
-            // Thêm thông báo lỗi cho người dùng
             setMessages(prev => [...prev,
             { type: 'user', text: input },
             { type: 'bot', text: 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.' }

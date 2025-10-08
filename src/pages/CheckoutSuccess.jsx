@@ -147,7 +147,7 @@ function CheckoutSuccess() {
                           <p className="text-gray-600 dark:text-gray-400">Địa chỉ giao hàng</p>
                         </div>
                         <p className="font-semibold text-gray-800 dark:text-gray-300 ml-6">
-                          {`${orderDetails.shippingInfo.address}, ${orderDetails.shippingInfo.city}`}
+                          {orderDetails.shippingInfo.address}
                         </p>
                       </div>
                     </div>

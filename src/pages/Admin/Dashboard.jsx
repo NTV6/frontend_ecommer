@@ -170,7 +170,7 @@ function Dashboard() {
 
     return (
         <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="flex items-center">
                         <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">

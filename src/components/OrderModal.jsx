@@ -78,7 +78,7 @@ const OrderModal = ({ order, onClose, handleStatusChange, showStatusUpdate = fal
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600 dark:text-gray-300 flex items-center gap-1">
                                     <FaBox className="text-xs mr-1" />
-                                    Trạng thái:
+                                    Trạng thái đơn hàng:
                                 </span>
                                 <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(order.order_status)}`}>
                                     {getStatusIcon(order.order_status)}
@@ -89,10 +89,13 @@ const OrderModal = ({ order, onClose, handleStatusChange, showStatusUpdate = fal
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600 dark:text-gray-300 flex items-center gap-1">
                                     <FaMoneyBillAlt className="text-xs mr-1" />
-                                    Thanh toán:
+                                    Phương thức thanh toán:
                                 </span>
                                 <span className="font-medium text-gray-800 dark:text-white">
                                     {order.payment_method}
+                                    <span className={`inline-flex items-center justify-center gap-1.5 px-2 py-1 rounded-full text-sm font-medium ml-3 ${getStatusBadgeColor(order.payment_status)}`}>
+                                        {order.payment_status}
+                                    </span>
                                 </span>
                             </div>
 
@@ -103,6 +106,16 @@ const OrderModal = ({ order, onClose, handleStatusChange, showStatusUpdate = fal
                                 </span>
                                 <span className="font-medium text-gray-800 dark:text-white">
                                     {order.user_name}
+                                </span>
+                            </div>
+
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                                    <FaUser className="text-xs mr-1" />
+                                    Người nhận:
+                                </span>
+                                <span className="font-medium text-gray-800 dark:text-white">
+                                    {order.full_name}
                                 </span>
                             </div>
 

@@ -5,6 +5,7 @@ import { User, Edit3, Save, X, Camera, Mail, Phone, Calendar, MapPin, Eye } from
 
 import InputField from '../components/InputField';
 import ImagePreview from '../components/ImagePreview';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 import { getInitials, validatePhoneNumber } from '../utils';
 import { authService, uploadService } from '../services/api';
 import { setProfile, updateProfile } from '../store/userSlice';
@@ -178,7 +179,7 @@ const Profile = () => {
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4 shadow-lg">
                             <User className="w-8 h-8 text-blue-600" />
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h2 className="text-3xl font-bold mb-2">
                             Hồ sơ cá nhân
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400">
@@ -187,7 +188,7 @@ const Profile = () => {
                     </div>
 
                     {/* Profile Card */}
-                    <div className="dark:bg-gray-900 bg-gray-50 rounded-lg shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden">
+                    <div className="dark:bg-gray-900 bg-gray-50 rounded-lg shadow-xl border border-white/20 dark:border-gray-700/50">
                         <div className="px-8 py-12">
                             {/* Avatar Section */}
                             <div className="relative flex flex-col items-center mb-12">
@@ -201,7 +202,7 @@ const Profile = () => {
                                                 onClick={() => setShowPreview(true)}
                                             />
                                         ) : (
-                                            <div className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center">
+                                            <div className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                                                 <span className="text-6xl font-bold">
                                                     {getInitials(users?.email)}
                                                 </span>
@@ -218,7 +219,7 @@ const Profile = () => {
                                             onChange={handleImageUpload}
                                             disabled={uploading}
                                         />
-                                        <div className="text-center text-white">
+                                        <div className="text-center">
                                             {uploading ? (
                                                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-1"></div>
                                             ) : (
@@ -235,7 +236,7 @@ const Profile = () => {
                                     {!isEditing ? (
                                         <button
                                             onClick={() => setIsEditing(true)}
-                                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 text-white transition-all duration-200"
+                                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200"
                                         >
                                             <Edit3 className="w-4 h-4" />
                                             <span className="hidden sm:inline text-sm">Sửa</span>
@@ -244,14 +245,14 @@ const Profile = () => {
                                         <div className="flex items-center gap-3">
                                             <button
                                                 onClick={() => setIsEditing(false)}
-                                                className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-200"
+                                                className="inline-flex items-center gap-2 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-xl transition-all duration-200"
                                             >
                                                 <X className="w-4 h-4" />
                                                 <span className="hidden sm:inline">Hủy</span>
                                             </button>
                                             <button
                                                 onClick={handleSubmit}
-                                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all duration-200 shadow-lg"
+                                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 rounded-xl transition-all duration-200 shadow-lg"
                                             >
                                                 <Save className="w-4 h-4" />
                                                 <span className="hidden sm:inline">Lưu</span>
@@ -309,15 +310,25 @@ const Profile = () => {
                                     icon={Calendar}
                                 />
 
-                                <InputField
-                                    label="Địa chỉ"
-                                    type="textarea"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    isEditing={isEditing}
-                                    icon={MapPin}
-                                />
+                                <div className="flex flex-col gap-1 col-span-2">
+                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                                        <MapPin className="w-4 h-4" />
+                                        Địa chỉ
+                                    </label>
+
+                                    {isEditing ? (
+                                        <AddressAutocomplete
+                                            placeholder="Nhập địa chỉ"
+                                            value={formData.address}
+                                            onChange={(e) => handleInputChange({ target: { name: 'address', value: e.target.value } })}
+                                        />
+                                    ) : (
+                                        <div className="mt-1">
+                                            {formData.address || 'Chưa có địa chỉ'}
+                                        </div>
+                                    )}
+                                </div>
+
                             </div>
                         </div>
                     </div>

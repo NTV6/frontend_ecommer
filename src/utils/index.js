@@ -47,7 +47,7 @@ export const validatePhoneNumber = (phoneNumber) => {
 
     return {
         isValid,
-        message: isValid ? '' : 'Số điện thoại phải có 10 số và bắt đầu bằng số 0'
+        message: isValid ? '' : 'SĐT phải có 10 số và bắt đầu bằng số 0'
     };
 };
 

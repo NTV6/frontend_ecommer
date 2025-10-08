@@ -12,6 +12,7 @@ import { setUser } from '../store/authSlice';
 import { authService } from '../services/api';
 import { validatePhoneNumber } from '../utils';
 import InputField from '../components/InputField';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 function Auth() {
   const [email, setEmail] = useState('');
@@ -55,7 +56,7 @@ function Auth() {
       if (!isLogin) {
         await authService.signup({
           token,
-          full_name: fullName, // Tạm thời lấy phần trước @ làm tên
+          full_name: fullName,
           email: user.email,
           phone_number: phoneNumber,
           address: address,
@@ -65,7 +66,7 @@ function Auth() {
       }
       const response = await authService.getProfile();
       const userRole = response.data.data.role;
-      console.log(" handleAuth userRole", userRole)
+      // console.log(" handleAuth userRole", userRole)
 
       dispatch(setUser({
         uid: user.uid,
@@ -187,10 +188,8 @@ function Auth() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Lấy token từ user đã đăng nhập
       const token = await user.getIdToken();
 
-      // Gửi thông tin lên server
       await authService.signup({
         token,
         full_name: user.displayName,
@@ -276,24 +275,25 @@ function Auth() {
                   onChange={(e) => setFullName(e.target.value)}
                   required
                 />
-                <InputField
-                  placeholder="Số điện thoại"
-                  type="tel"
-                  name="phoneNumber"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-                <InputField
-                  placeholder="Ngày sinh"
-                  type="date"
-                  name="dateOfBirth"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                />
-                <InputField
+                <div className="flex gap-3">
+                  <InputField
+                    placeholder="Số điện thoại"
+                    type="tel"
+                    name="phoneNumber"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+                  <InputField
+                    placeholder="Ngày sinh"
+                    type="date"
+                    name="dateOfBirth"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    className="pr-3"
+                  />
+                </div>
+                <AddressAutocomplete
                   placeholder="Địa chỉ"
-                  type="textarea"
-                  name="address"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                 />

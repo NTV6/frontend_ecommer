@@ -89,4 +89,8 @@ export const orderService = {
   cancelOrder: (orderId) => api.post(`/orders/${orderId}/cancel`),
 };
 
+export const chatbotService = {
+  sendMessage: (message) => api.post('/chatbot', { message }),
+};
+
 export default api;

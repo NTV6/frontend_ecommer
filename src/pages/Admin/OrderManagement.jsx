@@ -190,12 +190,15 @@ function OrderManagement() {
                             <tr>
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                                     <div className="flex items-center space-x-1">
-                                        <span>Mã đơn hàng</span>
+                                        <span>ID</span>
                                         <HiOutlineSwitchVertical className="w-4 h-4" />
                                     </div>
                                 </th>
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                                     Khách hàng
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Người nhận
                                 </th>
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                                     Ngày đặt
@@ -241,6 +244,10 @@ function OrderManagement() {
                                                 </div>
                                             </div>
                                         </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {order.full_name}
+                                        </td>
+
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900 dark:text-white font-medium">
                                                 {format(new Date(order.created_at), 'dd/MM/yyyy')}
