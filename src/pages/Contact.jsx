@@ -166,13 +166,18 @@ function Contact() {
           <h2 className="text-3xl font-bold text-center mb-8">
             Vị trí showroom
           </h2>
-          <div className="dark:bg-gray-800 rounded-3xl p-8 shadow-xl">
-            <div className="h-96 bg-gradient-to-r from-blue-200 to-purple-200 rounded-2xl flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">Bản đồ showroom</h3>
-                <p className="text-gray-500">123 Đường ABC, Quận 1, TP.HCM</p>
-              </div>
+          <div className="bg-gray-200 dark:bg-gray-800 rounded-3xl p-4">
+            <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+              <iframe
+                title="Bản đồ showroom SAVANI"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4611.322519227983!2d105.76402637599145!3d21.033876887601473!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab0bf0f1742f%3A0xe820ab53e8c05841!2zS8O9IFTDumMgWMOhIE3hu7kgxJDDrG5o!5e1!3m2!1svi!2sus!4v1759949692714!5m2!1svi!2sus"
+                width="100%"
+                height="100%"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-[450px] rounded-2xl"
+              ></iframe>
             </div>
           </div>
         </div>

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { FiMessageCircle, FiX, FiShoppingCart } from 'react-icons/fi';
-
+import { FiMessageCircle, FiX, FiShoppingCart, FiPackage } from 'react-icons/fi';
 import { chatbotService } from '../services/api';
 import { formatCurrency } from '../utils/index';
+import '../../styles/Chatbot.css';
 
 const Chatbot = () => {
     const [input, setInput] = useState('');
@@ -12,7 +12,7 @@ const Chatbot = () => {
         {
             type: 'bot',
             responseType: 'general_response',
-            message: 'Xin chào! Tôi là trợ lý ảo của cửa hàng. Tôi có thể giúp bạn tìm hiểu về sản phẩm, giá cả và các thông tin khác. Bạn cần hỗ trợ gì ạ?',
+            message: 'Xin chào! 👋 Tôi là trợ lý ảo của cửa hàng. Tôi có thể giúp bạn:\n• Tìm kiếm sản phẩm\n• Xem thông tin chi tiết\n• So sánh giá cả\n\nBạn muốn tìm gì hôm nay?',
             data: null
         }
     ]);
@@ -33,15 +33,11 @@ const Chatbot = () => {
 
         const userMessage = input;
         setInput('');
-
-        // Add user message immediately
         setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
 
         try {
             setIsLoading(true);
             const { data } = await chatbotService.sendMessage(userMessage);
-
-            // Add bot response with structured data
             setMessages(prev => [...prev, {
                 type: 'bot',
                 responseType: data.type,
@@ -53,7 +49,7 @@ const Chatbot = () => {
             setMessages(prev => [...prev, {
                 type: 'bot',
                 responseType: 'error',
-                message: 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.',
+                message: 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau. 😔',
                 data: null
             }]);
         } finally {
@@ -71,6 +67,7 @@ const Chatbot = () => {
                     onClick={() => window.open(product.image, '_blank')}
                 />
             )}
+
             <div className="p-3">
                 <h4 className="font-semibold text-white mb-1">{product.name}</h4>
 
@@ -92,18 +89,21 @@ const Chatbot = () => {
     );
 
     const renderProductDetail = (product) => (
-        <div className="bg-gray-800 rounded-lg overflow-hidden">
-            <div className="p-4">
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden border border-gray-700">
+            <div className="p-3">
                 {product.variants && product.variants.length > 0 && (
                     <div>
-                        <h4 className="text-white font-semibold mb-2">Các phiên bản:</h4>
+                        <div className="flex items-center gap-2 mb-3">
+                            <FiPackage className="text-blue-400" size={18} />
+                            <h4 className="text-white font-bold text-lg">Các phiên bản</h4>
+                        </div>
                         <div className="space-y-3">
                             {product.variants.map((variant, idx) => (
                                 <div key={idx} className="bg-gray-700 rounded-lg p-3">
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
                                             <span className="text-white font-medium">
-                                                {variant.color} - {variant.size}
+                                                {variant.color} - Size {variant.size}
                                             </span>
                                             <div className="text-green-400 font-semibold mt-1">
                                                 {formatCurrency(variant.price)}
@@ -137,18 +137,27 @@ const Chatbot = () => {
     );
 
     const renderCategoryList = (categories) => (
-        <div className="space-y-2">
+        <div className="grid grid-cols-1 gap-2">
             {categories.map((category) => (
-                <div key={category.id} className="bg-gray-800 rounded-lg p-3 hover:bg-gray-750 transition-colors">
+                <div
+                    key={category.id}
+                    className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg p-3 hover:from-gray-750 hover:to-gray-850 transition-all duration-300 border border-gray-700 hover:border-blue-500/50 cursor-pointer group"
+                >
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <FiShoppingCart className="text-blue-400" />
-                            <span className="text-white font-medium">{category.name}</span>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-blue-500/20 p-2.5 rounded-lg group-hover:bg-blue-500/30 transition-colors">
+                                <FiShoppingCart className="text-blue-400" size={16} />
+                            </div>
+                            <span className="text-white font-semibold text-base group-hover:text-blue-400 transition-colors">
+                                {category.name}
+                            </span>
                         </div>
                         {category.productCount !== undefined && (
-                            <span className="text-gray-400 text-sm">
-                                {category.productCount} sản phẩm
-                            </span>
+                            <div className="bg-gray-700 px-3 py-1 rounded-full">
+                                <span className="text-gray-300 text-sm font-medium">
+                                    {category.productCount} SP
+                                </span>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -156,30 +165,37 @@ const Chatbot = () => {
         </div>
     );
 
+    const BotAvatar = ({ size = 40 }) => (
+        <div
+            className="rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg"
+            style={{ width: size, height: size }}
+        >
+            <img
+                src="https://www.shutterstock.com/image-vector/cute-chat-bot-smiling-flat-260nw-2175518705.jpg"
+                alt="Bot Avatar"
+                className="w-full h-full rounded-full object-cover"
+                onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = '<span class="text-white font-bold text-sm">AI</span>';
+                }}
+            />
+        </div>
+    );
+
     const renderBotMessage = (msg) => {
         return (
-            <div className="mb-4 flex justify-start">
-                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2 flex-shrink-0">
-                    <img
-                        src="https://www.shutterstock.com/image-vector/cute-chat-bot-smiling-flat-260nw-2175518705.jpg"
-                        alt="Bot Avatar"
-                        className="w-full h-full rounded-full object-cover"
-                        onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.parentElement.textContent = 'B';
-                        }}
-                    />
-                </div>
+            <div className="mb-4 flex justify-start animate-fadeIn">
+                <BotAvatar size={40} />
 
-                <div className="max-w-[85%]">
+                <div className="max-w-[80%] ml-2">
                     {msg.message && (
-                        <div className="bg-gray-600 text-white p-3 rounded-lg mb-2">
-                            {msg.message}
+                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white p-4 rounded-2xl rounded-tl-none mb-2 shadow-lg border border-gray-600">
+                            <p className="whitespace-pre-line leading-relaxed">{msg.message}</p>
                         </div>
                     )}
 
                     {msg.data && (
-                        <div className="mt-2">
+                        <div className="mt-3">
                             {msg.responseType === 'product_list' && msg.data.products && (
                                 <div className="grid grid-cols-1 gap-3">
                                     {msg.data.products.map(product => renderProductCard(product))}
@@ -205,41 +221,38 @@ const Chatbot = () => {
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 shadow-lg transition-colors"
+                    className="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-full p-3 shadow-2xl transition-all duration-300 hover:scale-110 group"
                 >
-                    <FiMessageCircle size={24} />
+                    <FiMessageCircle size={24} className="group-hover:rotate-12 transition-transform" />
                 </button>
             ) : (
-                <div className="bg-gray-700 rounded-lg shadow-xl w-96 max-h-[600px] flex flex-col">
-                    <div className="flex justify-between items-center p-4 border-b border-gray-500">
-                        <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2">
-                                <img
-                                    src="https://www.shutterstock.com/image-vector/cute-chat-bot-smiling-flat-260nw-2175518705.jpg"
-                                    alt="Bot Avatar"
-                                    className="w-full h-full rounded-full object-cover"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.parentElement.textContent = 'B';
-                                    }}
-                                />
+                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-[400px] max-h-[700px] flex flex-col border border-gray-700 overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-5 border-b border-blue-500">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <BotAvatar size={40} />
+                                <div>
+                                    <h3 className="font-bold text-white text-lg">Trợ lý AI</h3>
+                                    <p className="text-blue-100 text-xs">Luôn sẵn sàng hỗ trợ</p>
+                                </div>
                             </div>
-                            <h3 className="font-semibold text-white">Chat với trợ lý</h3>
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+                            >
+                                <FiX size={24} />
+                            </button>
                         </div>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="text-gray-400 hover:text-white transition-colors"
-                        >
-                            <FiX size={20} />
-                        </button>
                     </div>
 
-                    <div className="flex-1 p-4 overflow-y-auto text-white">
+                    {/* Messages */}
+                    <div className="flex-1 p-4 overflow-y-auto custom-scrollbar">
                         {messages.map((msg, index) => (
                             msg.type === 'user' ? (
-                                <div key={index} className="mb-4 flex justify-end">
-                                    <div className="bg-blue-600 text-white p-3 rounded-lg max-w-[85%]">
-                                        {msg.text}
+                                <div key={index} className="mb-4 flex justify-end animate-fadeIn">
+                                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[80%] shadow-lg">
+                                        <p className="leading-relaxed">{msg.text}</p>
                                     </div>
                                 </div>
                             ) : (
@@ -251,22 +264,12 @@ const Chatbot = () => {
 
                         {isLoading && (
                             <div className="mb-4 flex justify-start">
-                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2 flex-shrink-0">
-                                    <img
-                                        src="https://www.shutterstock.com/image-vector/cute-chat-bot-smiling-flat-260nw-2175518705.jpg"
-                                        alt="Bot Avatar"
-                                        className="w-full h-full rounded-full object-cover"
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            e.target.parentElement.textContent = 'B';
-                                        }}
-                                    />
-                                </div>
-                                <div className="bg-gray-600 text-white p-3 rounded-lg">
-                                    <div className="flex gap-1">
-                                        <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                                        <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                        <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                <BotAvatar size={40} />
+                                <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white p-4 rounded-2xl rounded-tl-none shadow-lg ml-2">
+                                    <div className="flex gap-1.5">
+                                        <div className="w-2.5 h-2.5 bg-blue-400 rounded-full animate-bounce"></div>
+                                        <div className="w-2.5 h-2.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                        <div className="w-2.5 h-2.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                                     </div>
                                 </div>
                             </div>
@@ -274,20 +277,21 @@ const Chatbot = () => {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    <form onSubmit={sendMessage} className="p-4 border-t border-gray-500">
+                    {/* Input */}
+                    <form onSubmit={sendMessage} className="p-4 border-t border-gray-700 bg-gray-800/50">
                         <div className="flex gap-2">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                placeholder="Nhập câu hỏi..."
-                                className="flex-1 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:border-blue-500"
+                                placeholder="Nhập câu hỏi của bạn..."
+                                className="flex-1 p-3 border border-gray-600 bg-gray-700 text-white rounded-xl focus:outline-none focus:border-blue-500"
                                 disabled={isLoading}
                             />
                             <button
                                 type="submit"
                                 disabled={isLoading || !input.trim()}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-5 py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-lg disabled:hover:shadow-none"
                             >
                                 Gửi
                             </button>
