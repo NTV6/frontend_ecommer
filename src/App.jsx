@@ -22,6 +22,7 @@ import Footer from './components/Footer';
 import HomeAdmin from './pages/Admin/HomeAdmin';
 import SearchResults from './pages/SearchResults';
 import ProductDetail from './pages/ProductDetail';
+import CheckoutFailed from './pages/CheckoutFailed';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import CategoryProducts from './pages/CategoryProducts';
 import Chatbot from './components/Chatbot';
@@ -98,6 +99,7 @@ function App() {
                   <Route path="/category/:id" element={<CategoryProducts />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/checkout/success" element={<CheckoutSuccess />} />
+                  <Route path="/checkout/failed" element={<CheckoutFailed />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/myorders" element={<MyOrders />} />
                 </Routes>

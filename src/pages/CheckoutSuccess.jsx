@@ -150,7 +150,7 @@ function CheckoutSuccess() {
                   </h3>
 
                   <div className="space-y-3">
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-[1fr,auto] gap-4">
                       <div>
                         <div className="flex items-center">
                           <User className="w-4 h-4 mr-2 text-gray-500" />
@@ -171,7 +171,7 @@ function CheckoutSuccess() {
                         </p>
                       </div>
 
-                      <div>
+                      <div className="md:col-span-2">
                         <div className="flex items-center">
                           <MapPin className="w-4 h-4 mr-2 text-gray-500" />
                           <p className="text-gray-600 dark:text-gray-400">Địa chỉ giao hàng</p>
