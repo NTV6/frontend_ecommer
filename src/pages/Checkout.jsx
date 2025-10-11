@@ -116,14 +116,7 @@ function Checkout() {
           dispatch(clearCart());
           navigate('/checkout/success', {
             state: {
-              orderDetails: {
-                items,
-                total: totalAmount,
-                shippingInfo: {
-                  ...formData,
-                  address: fullShippingAddress
-                }
-              }
+              orderId: response.data.data.order_id
             }
           });
         }

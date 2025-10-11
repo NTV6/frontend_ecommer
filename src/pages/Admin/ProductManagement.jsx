@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -89,10 +90,10 @@ function ProductManagement() {
             try {
                 await dispatch(deleteProduct(product.id)).unwrap();
                 dispatch(fetchProducts());
-                alert('Xóa sản phẩm thành công');
+                toast.success('Xóa sản phẩm thành công');
             } catch (error) {
                 console.error('Lỗi khi xóa sản phẩm:', error);
-                alert('Có lỗi xảy ra khi xóa sản phẩm');
+                toast.error('Có lỗi xảy ra khi xóa sản phẩm');
             }
         }
     };

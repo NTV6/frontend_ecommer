@@ -69,7 +69,7 @@ function Home() {
       </Swiper>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-r from-white to-cyan-50 dark:from-gray-950 dark:to-cyan-950 text-gray-900 dark:text-white">
+      <section className="py-20 bg-gradient-to-r from-white to-cyan-50 dark:from-gray-950 dark:to-cyan-950 text-gray-900 dark:text-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
@@ -115,7 +115,7 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {[...categories].reverse().slice(0, 4).map((category) => (
+            {[...categories].slice(0, 8).map((category) => (
               <CategoryCard
                 key={category.id}
                 category={category}
@@ -126,7 +126,7 @@ function Home() {
       </section >
 
       {/* Featured Products */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900" >
+      <section className="py-20 bg-gray-50 dark:bg-black" >
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">Sản phẩm mới nhất</h2>
@@ -136,7 +136,7 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {[...products].reverse().slice(0, 4).map((product) => (
+            {[...products].reverse().slice(0, 8).map((product) => (
               <div
                 key={product.id}
                 className="transform hover:scale-105 transition-all duration-300"

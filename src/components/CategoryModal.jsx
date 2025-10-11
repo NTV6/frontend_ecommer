@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { FaTimes, FaUpload, FaFileImage, FaTag, FaFileAlt } from 'react-icons/fa';
 
@@ -122,14 +123,14 @@ function CategoryModal({ isOpen, onClose, category, onSubmit }) {
 
             const actionData = {
                 ...formData,
-                image: imageUrl,
-                image_public_id: publicId
+                image: imageUrl || '',
+                image_public_id: publicId || ''
             };
 
             await onSubmit(actionData);
             onClose();
         } catch (error) {
-            alert(error.message || 'Có lỗi xảy ra');
+            toast.error(error.message || 'Có lỗi xảy ra');
         } finally {
             setIsSubmitting(false);
         }

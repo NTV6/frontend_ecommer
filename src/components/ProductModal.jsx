@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import {
@@ -224,7 +225,8 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
         try {
             // Validate form data
             if (!formData.name?.trim() || !formData.category_id || !formData.description?.trim()) {
-                throw new Error('Vui lòng điền đầy đủ thông tin sản phẩm');
+                toast.error('Vui lòng điền đầy đủ thông tin sản phẩm');
+                return;
             }
 
             // Clean and format data
@@ -265,8 +267,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
 
             onClose();
         } catch (error) {
-            console.error('Submit error:', error);
-            alert(error.message || 'Có lỗi xảy ra khi lưu sản phẩm');
+            toast.error(error);
         }
     };
 
@@ -323,7 +324,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                 />
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                                         <FaLayerGroup /> Loại sản phẩm
                                     </label>
                                     <Filter
@@ -344,7 +345,7 @@ function ProductModal({ isOpen, onClose, product, mode, categories }) {
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Mô tả chi tiết về sản phẩm..."
-                                    rows={1}
+                                    rows={8}
                                 />
                             </div>
                         </div>

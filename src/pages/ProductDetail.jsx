@@ -1,10 +1,8 @@
-import { FiPlus, FiMinus } from 'react-icons/fi'
-import { MdShoppingCart } from 'react-icons/md';
-
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { HiChevronDown, HiChevronUp, HiPlus, HiMinus, HiShoppingCart } from "react-icons/hi";
 
 import { db } from '../lib/firebase';
 import { auth } from '../lib/firebase';
@@ -38,6 +36,12 @@ function ProductDetail() {
   const [activeTab, setActiveTab] = useState('description');
   const [relatedProducts, setRelatedProducts] = useState([]);
   const { products } = useSelector(state => state.products);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const MAX_DESCRIPTION_LENGTH = 300; // Số ký tự tối đa khi thu gọn
+
+  const isDescriptionLong = (description) => {
+    return description?.length > MAX_DESCRIPTION_LENGTH;
+  };
 
   useEffect(() => {
     if (id) {
@@ -330,7 +334,7 @@ function ProductDetail() {
                         key={color}
                         onClick={() => setSelectedColor(color)}
                         className={`w-12 h-12 rounded-full overflow-hidden transition-all ${selectedColor === color
-                          ? 'border-2 border-blue-500'
+                          ? 'border-[3px] border-blue-500'
                           : ''
                           }`}
                       >
@@ -381,7 +385,7 @@ function ProductDetail() {
                       className="p-3 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                       disabled={quantity <= 1}
                     >
-                      <FiMinus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                      <HiMinus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
                     </button>
 
                     <input
@@ -397,7 +401,7 @@ function ProductDetail() {
                       className="p-3 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                       disabled={!selectedVariant || quantity >= selectedVariant.stock}
                     >
-                      <FiPlus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                      <HiPlus className="w-4 h-4 text-gray-700 dark:text-gray-200" />
                     </button>
                   </div>
 
@@ -421,7 +425,7 @@ function ProductDetail() {
                     ? 'Chọn biến thể'
                     : (
                       <>
-                        <MdShoppingCart className="w-5 h-5" />
+                        <HiShoppingCart className="w-5 h-5" />
                         Thêm vào giỏ hàng
                       </>
                     )
@@ -455,9 +459,33 @@ function ProductDetail() {
               <div className="p-8">
                 {activeTab === 'description' && (
                   <div className="prose prose-lg max-w-none dark:prose-invert">
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                      {productData.description}
-                    </p>
+                    <div className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                      <p className="whitespace-pre-line">
+                        {isDescriptionLong(productData.description) && !isExpanded
+                          ? productData.description.slice(0, MAX_DESCRIPTION_LENGTH) + '...'
+                          : productData.description
+                        }
+                      </p>
+
+                      {isDescriptionLong(productData.description) && (
+                        <button
+                          onClick={() => setIsExpanded(!isExpanded)}
+                          className="mt-4 text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
+                        >
+                          {isExpanded ? (
+                            <>
+                              Thu gọn
+                              <HiChevronUp className="w-5 h-5" />
+                            </>
+                          ) : (
+                            <>
+                              Xem thêm
+                              <HiChevronDown className="w-5 h-5" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )}
 

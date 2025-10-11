@@ -5,7 +5,7 @@ import { Calendar, Package, Eye, ShoppingBag, CreditCard, Clock, Truck, CheckCir
 
 import { orderService } from '../services/api';
 import OrderModal from '../components/OrderModal';
-import { getStatusBadgeColor, getStatusText, formatCurrency } from '../utils';
+import { getStatusBadgeColor, getStatusText, formatCurrency, getPaymentStatus } from '../utils';
 
 function MyOrders() {
     const [orders, setOrders] = useState([]);
@@ -163,14 +163,8 @@ function MyOrders() {
                                                 <CreditCard className="w-4 h-4" />
                                                 {order.payment_method}
                                             </div>
-                                            <div className={`px-2 py-1 rounded text-xs font-medium ${order.payment_status === "completed"
-                                                ? "bg-green-300 text-green-900"
-                                                : "bg-yellow-100 text-yellow-900"
-                                                }`}
-                                            >
-                                                {order.payment_status === "completed"
-                                                    ? "Đã thanh toán"
-                                                    : "Chưa thanh toán"}
+                                            <div className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(order.payment_status)}`}>
+                                                {getPaymentStatus(order.payment_status)}
                                             </div>
                                         </div>
 

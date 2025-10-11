@@ -18,6 +18,7 @@ function CheckoutSuccess() {
     const queryParams = new URLSearchParams(location.search);
     const vnpayStatus = queryParams.get('vnp_ResponseCode');
     const orderId = queryParams.get('vnp_TxnRef');
+    const codOrderId = location.state?.orderId;
 
     const fetchOrderDetails = async (id) => {
       try {
@@ -29,7 +30,7 @@ function CheckoutSuccess() {
           message: 'Thanh toán thành công',
         });
       } catch (err) {
-        console.error('Error fetching order details:', err);
+        console.error('Error details:', err.response?.data || err.message);
         toast.error('Không thể tải thông tin đơn hàng');
         setError('Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.');
       } finally {
@@ -38,16 +39,9 @@ function CheckoutSuccess() {
     };
 
     if (vnpayStatus === '00' && orderId) {
-      // Thanh toán VNPay thành công
       fetchOrderDetails(orderId);
-    } else if (location.state?.orderDetails) {
-      // COD
-      setOrderDetails(location.state.orderDetails);
-      setPaymentStatus({
-        success: true,
-        message: 'Đặt hàng thành công',
-      });
-      setLoading(false);
+    } else if (codOrderId) {
+      fetchOrderDetails(codOrderId);
     } else {
       setError('Không tìm thấy thông tin đơn hàng');
       setLoading(false);

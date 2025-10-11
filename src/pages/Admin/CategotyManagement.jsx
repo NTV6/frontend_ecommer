@@ -18,7 +18,7 @@ function CategoryManagement() {
     const { categories, loading } = useSelector((state) => state.categories);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+    const [viewMode, setViewMode] = useState('grid');
 
     const {
         searchTerm,
@@ -27,7 +27,7 @@ function CategoryManagement() {
         activeFilters,
         setActiveFilters
     } = useDebounceSearch(categories, {
-        searchFields: ['name'], // Chỉ tìm kiếm theo tên danh mục
+        searchFields: ['name'],
         filters: {}
     });
 
@@ -281,7 +281,7 @@ function CategoryManagement() {
                                                         {category.name}
                                                     </div>
                                                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                        {format(new Date(category.created_at), 'dd/MM/yyyy' + ' ' + 'HH:mm')}
+                                                        {format(new Date(category.created_at), 'dd/MM/yyyy - HH:mm')}
                                                     </div>
                                                 </div>
                                             </div>

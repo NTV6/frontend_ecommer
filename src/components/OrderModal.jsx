@@ -5,7 +5,7 @@ import { FaPhoneAlt, FaMapMarkerAlt, FaEdit, FaUser, FaTimes, FaCalendarAlt, FaB
 import { Package, Clock, Truck, CheckCircle, XCircle } from 'lucide-react';
 
 import Filter from './DropDown';
-import { getStatusBadgeColor, getStatusText } from '../utils';
+import { getStatusBadgeColor, getStatusText, getPaymentStatus } from '../utils';
 
 const OrderModal = ({ order, onClose, handleStatusChange, showStatusUpdate = false }) => {
     const orderStatusOptions = [
@@ -94,7 +94,7 @@ const OrderModal = ({ order, onClose, handleStatusChange, showStatusUpdate = fal
                                 <span className="font-medium text-gray-800 dark:text-white">
                                     {order.payment_method}
                                     <span className={`inline-flex items-center justify-center gap-1.5 px-2 py-1 rounded-full text-sm font-medium ml-3 ${getStatusBadgeColor(order.payment_status)}`}>
-                                        {order.payment_status}
+                                        {getPaymentStatus(order.payment_status)}
                                     </span>
                                 </span>
                             </div>
@@ -150,11 +150,11 @@ const OrderModal = ({ order, onClose, handleStatusChange, showStatusUpdate = fal
                         <div className="space-y-3">
                             {order.items && order.items.map((item, index) => (
                                 <div key={index} className="flex items-center gap-4 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl">
-                                    <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0">
+                                    <div className="bg-white rounded-lg overflow-hidden flex-shrink-0">
                                         <img
                                             src={item.image}
                                             alt={item.product_name}
-                                            className="w-full h-full object-cover"
+                                            className="w-12 h-full object-cover"
                                         />
                                     </div>
                                     <div className="flex-grow min-w-0">

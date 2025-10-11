@@ -136,16 +136,13 @@ const productSlice = createSlice({
       })
 
       .addCase(deleteProduct.pending, (state) => {
-        console.log('Delete pending');
         state.loading = true;
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
-        console.log('Delete fulfilled:', action.payload);
         state.products = state.products.filter(p => p.id !== action.payload);
         state.loading = false;
       })
       .addCase(deleteProduct.rejected, (state, action) => {
-        console.log('Delete rejected:', action.payload);
         state.error = action.payload;
         state.loading = false;
       })
