@@ -29,7 +29,7 @@ export const useExportExcel = () => {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `${fileName}_${format(new Date(), 'dd-MM-yyyy')}.xlsx`;
+            link.download = `${fileName}_${format(new Date(), 'dd-MM-yyyy - HH:mm')}.xlsx`;
             link.click();
             URL.revokeObjectURL(url);
 

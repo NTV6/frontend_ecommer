@@ -5,7 +5,7 @@ function About() {
     <div className="min-h-screen pt-[65px]">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900"></div>
         <div className="relative max-w-7xl mx-auto px-4 py-16">
           <div className="text-center">
             <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200 px-4 py-2 rounded-full text-sm font-medium mb-6">
@@ -41,10 +41,10 @@ function About() {
           </div>
 
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl transform rotate-6"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 rounded-3xl transform rotate-6"></div>
             <div className="relative bg-gray-100 dark:bg-gray-900 p-8 rounded-3xl shadow-2xl">
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Tầm nhìn</h3>
@@ -60,7 +60,7 @@ function About() {
         <div className="grid md:grid-cols-3 gap-8 mb-20">
           <div className="group hover:transform hover:scale-105 transition-all duration-300">
             <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-blue-100 dark:border-blue-900">
-              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Award className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Chất lượng cao cấp</h3>
@@ -72,7 +72,7 @@ function About() {
 
           <div className="group hover:transform hover:scale-105 transition-all duration-300">
             <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-blue-100  dark:border-blue-900">
-              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Xu hướng mới nhất</h3>
@@ -84,7 +84,7 @@ function About() {
 
           <div className="group hover:transform hover:scale-105 transition-all duration-300">
             <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-blue-100  dark:border-blue-900">
-              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Users className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Dịch vụ tận tâm</h3>
@@ -97,7 +97,7 @@ function About() {
 
         {/* Call to Action */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-900 rounded-3xl p-12 text-white">
             <h3 className="text-3xl font-bold mb-4">
               Khám phá bộ sưu tập mới nhất
             </h3>

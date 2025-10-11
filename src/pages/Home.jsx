@@ -173,9 +173,9 @@ function Home() {
               <input
                 type="email"
                 placeholder="Nhập email của bạn"
-                className="flex-1 px-6 py-4 rounded-full border border-gray-300"
+                className="flex-1 px-6 py-4 rounded-full border border-blue-600 bg-transparent"
               />
-              <button className="border border-gray-400 dark:border-white px-8 py-4 rounded-full font-semibold bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 dark:hover:bg-black transition-colors hover:text-white">
+              <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-800 hover:to-blue-600 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-lg">
                 Đăng ký
               </button>
             </div>

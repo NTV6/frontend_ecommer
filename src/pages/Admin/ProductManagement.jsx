@@ -338,7 +338,10 @@ function ProductManagement() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                {format(new Date(product.created_at), 'dd/MM/yyyy - HH:mm')}
+                                                {product.created_at ?
+                                                    format(new Date(product.created_at), 'dd/MM/yyyy - HH:mm')
+                                                    : 'Chưa có ngày tạo'
+                                                }
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">

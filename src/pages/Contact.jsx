@@ -23,7 +23,7 @@ function Contact() {
   return (
     <div className="min-h-screen pt-[65px]">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 text-white">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-7xl mx-auto px-4 py-16 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -49,7 +49,7 @@ function Contact() {
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -60,7 +60,7 @@ function Contact() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -71,7 +71,7 @@ function Contact() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -82,7 +82,7 @@ function Contact() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Clock className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -126,13 +126,13 @@ function Contact() {
                   value={formData.message}
                   onChange={handleInputChange}
                   type="textarea"
-                  rows={5}
+                  rows={1}
                   required
                 />
 
                 <button
                   type="submit"
-                  className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                  className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-800 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-800 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   Gửi tin nhắn
@@ -155,13 +155,27 @@ function Contact() {
                   Trải nghiệm mua sắm riêng tư với dịch vụ chăm sóc khách hàng đặc biệt
                 </p>
               </div>
+
+              <div className="rounded-2xl p-6 border border-blue-100 dark:border-blue-900 shadow-lg">
+                <h3 className="text-xl font-bold mb-2">Chính sách đổi trả linh hoạt</h3>
+                <p className="opacity-90">
+                  Đổi trả sản phẩm dễ dàng trong vòng 7 ngày nếu bạn không hoàn toàn hài lòng
+                </p>
+              </div>
+
+              <div className="rounded-2xl p-6 border border-blue-100 dark:border-blue-900 shadow-lg">
+                <h3 className="text-xl font-bold mb-2">Giao hàng nhanh chóng</h3>
+                <p className="opacity-90">
+                  Đơn hàng sẽ được xử lý và giao đến tận tay bạn chỉ trong 1–3 ngày làm việc
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Map Section Placeholder */}
-      <div className="bg-gray-50 dark:bg-gray-900 py-16">
+      <div className="bg-gray-50 dark:bg-black py-16">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-center mb-8">
             Vị trí showroom

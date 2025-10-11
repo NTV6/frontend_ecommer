@@ -40,7 +40,7 @@ function ProductLayout({
     return (
         <div className="min-h-screen pt-[65px]">
             {title && (
-                <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800">
+                <div className="bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900">
                     <div className="container mx-auto px-4 py-12">
                         <div className="text-center text-white">
                             <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text">

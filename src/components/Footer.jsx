@@ -33,13 +33,6 @@ function Footer() {
     { to: '/return', label: 'Chính sách đổi trả' }
   ];
 
-  const categories = [
-    { to: '/category/dress', label: 'Váy đầm' },
-    { to: '/category/tops', label: 'Áo blouse' },
-    { to: '/category/pants', label: 'Quần tây' },
-    { to: '/category/accessories', label: 'Phụ kiện' }
-  ];
-
   const socialLinks = [
     { href: 'https://facebook.com/savani', icon: FaFacebook, label: 'Facebook', color: 'hover:text-blue-500' },
     { href: 'https://instagram.com/savani', icon: FaInstagram, label: 'Instagram', color: 'hover:text-pink-500' },
@@ -70,21 +63,6 @@ function Footer() {
                 <p className="text-gray-300 text-lg leading-relaxed mb-6">
                   Thời trang cao cấp dành cho phái đẹp. Khám phá vẻ đẹp tinh tế và phong cách riêng của bạn cùng SAVANI.
                 </p>
-
-                {/* Newsletter Signup */}
-                <div className="mb-6">
-                  <h4 className="text-lg font-semibold mb-3 text-white">Đăng ký nhận tin</h4>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="email"
-                      placeholder="Nhập email của bạn"
-                      className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300"
-                    />
-                    <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg">
-                      Đăng ký
-                    </button>
-                  </div>
-                </div>
 
                 {/* Social Links */}
                 <div>
@@ -128,20 +106,20 @@ function Footer() {
               </ul>
             </div>
 
-            {/* Categories */}
+            {/* Customer Service */}
             <div>
               <h4 className="text-lg font-semibold mb-6 text-white relative">
-                Danh mục
+                Hỗ trợ khách hàng
                 <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
               </h4>
               <ul className="space-y-3">
-                {categories.map((category, index) => (
+                {customerService.map((service, index) => (
                   <li key={index}>
                     <Link
-                      to={category.to}
+                      to={service.to}
                       className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block"
                     >
-                      {category.label}
+                      {service.label}
                     </Link>
                   </li>
                 ))}
@@ -168,23 +146,6 @@ function Footer() {
                   <span>contact@savani.com</span>
                 </li>
               </ul>
-
-              {/* Customer Service */}
-              <div className="mt-8">
-                <h5 className="text-sm font-semibold mb-3 text-gray-200">Hỗ trợ khách hàng</h5>
-                <ul className="space-y-2">
-                  {customerService.map((service, index) => (
-                    <li key={index}>
-                      <Link
-                        to={service.to}
-                        className="text-sm text-gray-400 hover:text-gray-200 transition-colors duration-300"
-                      >
-                        {service.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
           </div>
 

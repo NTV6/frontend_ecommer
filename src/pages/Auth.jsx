@@ -82,10 +82,9 @@ function Auth() {
       }
 
     } catch (error) {
-      let errorMessage = 'Đã có lỗi xảy ra';
+      let errorMessage = 'Đăng nhập thất bại';
       console.error('Auth error:', error);
       setError(error.message);
-      toast.error(error.message);
       switch (error.code) {
         case 'auth/invalid-email':
           errorMessage = 'Email không hợp lệ';

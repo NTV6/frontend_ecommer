@@ -27,7 +27,7 @@ function CheckoutSuccess() {
         setOrderDetails(response.data.data);
         setPaymentStatus({
           success: true,
-          message: 'Thanh toán thành công',
+          message: vnpayStatus === '00' ? 'Thanh toán thành công' : codOrderId ? 'Đặt hàng thành công' : 'Không xác định',
         });
       } catch (err) {
         console.error('Error details:', err.response?.data || err.message);
@@ -99,9 +99,9 @@ function CheckoutSuccess() {
               )}
             </div>
 
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-2">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-2">
               {paymentStatus?.message}
-            </h1>
+            </h2>
 
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               {paymentStatus?.success
