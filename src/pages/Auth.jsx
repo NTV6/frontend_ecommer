@@ -49,24 +49,32 @@ function Auth() {
         ? await signInWithEmailAndPassword(auth, email, password)
         : await createUserWithEmailAndPassword(auth, email, password);
 
-      // Lấy token từ user đã đăng nhập
       const token = await user.getIdToken();
 
-      // Nếu là đăng ký, gửi thông tin lên server
-      if (!isLogin) {
-        await authService.signup({
-          token,
-          full_name: fullName,
-          email: user.email,
-          phone_number: phoneNumber,
-          address: address,
-          date_of_birth: dateOfBirth,
-          profile_picture: ''
-        });
+      try {
+        if (!isLogin) {
+          await authService.signup({
+            token,
+            full_name: fullName,
+            email: user.email,
+            phone_number: phoneNumber,
+            address: address,
+            date_of_birth: dateOfBirth,
+            profile_picture: ''
+          });
+        }
+      } catch (signupError) {
+        // Nếu lỗi từ API signup
+        if (signupError.response?.data?.message) {
+          // Xóa tài khoản Firebase nếu đăng ký thất bại
+          await user.delete();
+          throw new Error(signupError.response.data.message);
+        }
+        throw signupError;
       }
+
       const response = await authService.getProfile();
       const userRole = response.data.data.role;
-      // console.log(" handleAuth userRole", userRole)
 
       dispatch(setUser({
         uid: user.uid,
@@ -101,6 +109,12 @@ function Auth() {
         case 'auth/weak-password':
           errorMessage = 'Mật khẩu phải có ít nhất 6 ký tự';
           break;
+        case 'auth/invalid-credential':
+          errorMessage = 'Đăng nhập thất bại';
+          break;
+        default:
+          // Nếu là lỗi từ API của chúng ta
+          errorMessage = error.message;
       }
       setError(errorMessage);
     } finally {

@@ -173,7 +173,7 @@ function Checkout() {
         </div>
       ) : (
         <>
-          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-12">
+          <div className="bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 text-white py-12">
             <div className="max-w-6xl mx-auto px-6">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <ShoppingBag className="w-8 h-8" />
