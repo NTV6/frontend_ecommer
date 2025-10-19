@@ -26,6 +26,7 @@ import CheckoutFailed from './pages/CheckoutFailed';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import CategoryProducts from './pages/CategoryProducts';
 import Chatbot from './components/Chatbot';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   const dispatch = useDispatch();
@@ -68,6 +69,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 transition-colors">
         <ToastContainer
           position="top-right"

@@ -36,8 +36,8 @@ function Contact() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid lg:grid-cols-3 gap-12">
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="grid lg:grid-cols-3 gap-8">
 
           {/* Contact Information */}
           <div className="lg:col-span-1">
@@ -126,7 +126,7 @@ function Contact() {
                   value={formData.message}
                   onChange={handleInputChange}
                   type="textarea"
-                  rows={1}
+                  rows={3}
                   required
                 />
 
@@ -176,7 +176,7 @@ function Contact() {
 
       {/* Map Section Placeholder */}
       <div className="bg-gray-50 dark:bg-black py-16">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-center mb-8">
             Vị trí showroom
           </h2>

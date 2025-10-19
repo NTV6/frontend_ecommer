@@ -4,12 +4,12 @@ import { getThumbnailImage, getLowestPrice } from '../utils';
 
 function ProductCard({ product }) {
     return (
-        <div className="rounded-lg overflow-hidden shadow-md">
+        <div className="rounded-lg overflow-hidden">
             <Link to={`/product/${product.id}`} state={{ product }}>
                 <img
                     src={getThumbnailImage(product)}
                     alt={product.name}
-                    className="w-full h-full object-contain bg-white hover:opacity-90 transition-opacity"
+                    className="w-full h-full object-contain hover:opacity-90 transition-opacity"
                 />
             </Link>
             <div className="p-4">

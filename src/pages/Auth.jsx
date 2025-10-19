@@ -90,9 +90,9 @@ function Auth() {
       }
 
     } catch (error) {
-      let errorMessage = 'Đăng nhập thất bại';
+      toast.error(error.response?.data?.message || 'Đăng nhập thất bại');
       console.error('Auth error:', error);
-      setError(error.message);
+      let errorMessage = 'Đã có lỗi xảy ra';
       switch (error.code) {
         case 'auth/invalid-email':
           errorMessage = 'Email không hợp lệ';
@@ -240,145 +240,189 @@ function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-950 dark:from-gray-950 dark:to-gray-100 px-4 sm:px-6 lg:px-8 pt-[65px]">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl transition duration-300">
-        <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
-          {isForgotPassword ? 'Quên mật khẩu' : (isLogin ? 'Đăng nhập' : 'Đăng ký')}
-        </h2>
-
-        <form className="space-y-5" onSubmit={isForgotPassword ? handleForgotPassword : handleAuth}>
-          <div className="space-y-3">
-            <InputField
-              placeholder="Email"
-              type="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="py-2"
-            />
-
-            {!isForgotPassword && (
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Mật khẩu"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+    <div className="min-h-screen flex bg-gradient-to-r from-blue-500 via-blue-300 to-blue-500 pt-[65px]">
+      <div className="max-w-6xl mx-auto flex flex-1">
+        {/* Left Side - Image Section */}
+        <div className="hidden lg:flex lg:w-2/3 relative overflow-hidden">
+          {/* Fashion Images Grid */}
+          <div className="relative z-10 flex flex-col justify-center items-center px-8 w-full">
+            <div className="grid grid-cols-2 gap-4 w-full max-w-xl">
+              <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500&h=500&fit=crop"
+                  alt="Fashion 1"
+                  className="w-full h-full object-cover"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  {showPassword ? <HiEye className="w-5 h-5 text-gray-500 mt-1" /> : <HiEyeOff className="w-5 h-5 text-gray-500 mt-1" />}
-                </button>
               </div>
-            )}
+              <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&h=500&fit=crop"
+                  alt="Fashion 2"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=500&h=500&fit=crop"
+                  alt="Fashion 3"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=500&fit=crop"
+                  alt="Fashion 4"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
-            {!isLogin && !isForgotPassword && (
-              <>
+        {/* Right Side - Auth Form */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md w-full space-y-5">
+            <div>
+              <h2 className="text-center text-4xl font-bold text-gray-900">
+                {isForgotPassword ? 'Quên mật khẩu' : (isLogin ? 'Đăng nhập' : 'Đăng ký')}
+              </h2>
+              <p className="mt-3 text-center text-sm text-gray-700">
+                {isLogin ? 'Chào mừng bạn trở lại!' : 'Tạo tài khoản mới'}
+              </p>
+            </div>
+
+            <form className="space-y-5" onSubmit={isForgotPassword ? handleForgotPassword : handleAuth}>
+              <div className="space-y-3">
                 <InputField
-                  placeholder="Họ và tên"
-                  type="text"
-                  name="fullName"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Email"
+                  type="email"
+                  name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="py-2"
                 />
-                <div className="flex gap-3">
-                  <InputField
-                    placeholder="Số điện thoại"
-                    type="tel"
-                    name="phoneNumber"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                  />
-                  <InputField
-                    placeholder="Ngày sinh"
-                    type="date"
-                    name="dateOfBirth"
-                    value={dateOfBirth}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                    className="pr-3"
-                  />
-                </div>
-                <AddressAutocomplete
-                  placeholder="Địa chỉ"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </>
-            )}
-          </div>
 
-          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+                {!isForgotPassword && (
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Mật khẩu"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    >
+                      {showPassword ? <HiEye className="w-5 h-5 text-gray-500 mt-1" /> : <HiEyeOff className="w-5 h-5 text-gray-500 mt-1" />}
+                    </button>
+                  </div>
+                )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition disabled:opacity-50"
-          >
-            {loading ? 'Đang xử lý...' : (isForgotPassword ? 'Gửi email đặt lại mật khẩu' : (isLogin ? 'Đăng nhập' : 'Đăng ký'))}
-          </button>
-
-          {isLogin && (
-            <>
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 dark:bg-gray-900 text-gray-500 dark:text-gray-400">
-                    Hoặc đăng nhập với
-                  </span>
-                </div>
+                {!isLogin && !isForgotPassword && (
+                  <>
+                    <InputField
+                      placeholder="Họ và tên"
+                      type="text"
+                      name="fullName"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                    />
+                    <div className="flex gap-3">
+                      <InputField
+                        placeholder="Số điện thoại"
+                        type="tel"
+                        name="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                      />
+                      <InputField
+                        placeholder="Ngày sinh"
+                        type="date"
+                        name="dateOfBirth"
+                        value={dateOfBirth}
+                        onChange={(e) => setDateOfBirth(e.target.value)}
+                      />
+                    </div>
+                    <AddressAutocomplete
+                      placeholder="Địa chỉ"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                    />
+                  </>
+                )}
               </div>
 
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={handleFacebookLogin}
-                  disabled={loading}
-                  className="w-1/2 flex items-center justify-center gap-2 py-2 px-4 bg-[#1877F2] hover:bg-[#0C63D4] text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2 disabled:opacity-50 transition-colors"
-                >
-                  <FaFacebook className="w-7 h-7" />
-                  Facebook
-                </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition disabled:opacity-50"
+              >
+                {loading ? 'Đang xử lý...' : (isForgotPassword ? 'Gửi email đặt lại mật khẩu' : (isLogin ? 'Đăng nhập' : 'Đăng ký'))}
+              </button>
 
-                <button
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  disabled={loading}
-                  className="w-1/2 flex items-center justify-center gap-2 py-2 px-4 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
-                >
-                  <FcGoogle className="w-7 h-7" />
-                  Google
-                </button>
+              {isLogin && (
+                <>
+                  <div className="relative">
+                    {/* <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                    </div> */}
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-transparent text-gray-600">
+                        Hoặc đăng nhập với
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      onClick={handleFacebookLogin}
+                      disabled={loading}
+                      className="w-1/2 flex items-center justify-center gap-2 py-2 px-4 bg-[#1877F2] hover:bg-[#0C63D4] text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                    >
+                      <FaFacebook className="w-7 h-7" />
+                      Facebook
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleGoogleLogin}
+                      disabled={loading}
+                      className="w-1/2 flex items-center justify-center gap-2 py-2 px-4 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                    >
+                      <FcGoogle className="w-7 h-7" />
+                      Google
+                    </button>
+                  </div>
+                </>
+              )}
+
+              <div className="flex flex-col items-center space-y-2 text-sm text-gray-700">
+                {!isForgotPassword && (
+                  <button onClick={() => setIsLogin(!isLogin)} type="button" className="hover:underline">
+                    {isLogin ? 'Chưa có tài khoản? Đăng ký' : 'Đã có tài khoản? Đăng nhập'}
+                  </button>
+                )}
+                {isLogin && !isForgotPassword && (
+                  <button onClick={() => setIsForgotPassword(true)} type="button" className="hover:underline">
+                    Quên mật khẩu?
+                  </button>
+                )}
+                {isForgotPassword && (
+                  <button onClick={() => setIsForgotPassword(false)} type="button" className="hover:underline">
+                    Quay lại đăng nhập
+                  </button>
+                )}
               </div>
-            </>
-          )}
-
-          <div className="flex flex-col items-center space-y-2 text-sm text-gray-600 dark:text-gray-300">
-            {!isForgotPassword && (
-              <button onClick={() => setIsLogin(!isLogin)} type="button" className="hover:underline">
-                {isLogin ? 'Chưa có tài khoản? Đăng ký' : 'Đã có tài khoản? Đăng nhập'}
-              </button>
-            )}
-            {isLogin && !isForgotPassword && (
-              <button onClick={() => setIsForgotPassword(true)} type="button" className="hover:underline">
-                Quên mật khẩu?
-              </button>
-            )}
-            {isForgotPassword && (
-              <button onClick={() => setIsForgotPassword(false)} type="button" className="hover:underline">
-                Quay lại đăng nhập
-              </button>
-            )}
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

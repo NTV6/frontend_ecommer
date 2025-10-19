@@ -38,9 +38,9 @@ function Home() {
         <SwiperSlide>
           <div className="relative w-full h-full bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80')]">
             {/* Overlay đen mờ */}
-            <div className="absolute inset-0 bg-black bg-opacity-20 z-0" />
+            <div className="absolute inset-0 bg-black bg-opacity-30 z-0" />
             <div className="relative container mx-auto px-4 h-full flex items-center z-10">
-              <div className="max-w-xl">
+              <div className="max-w-2xl">
                 <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">Bộ sưu tập mới 2024</h2>
                 <p className="text-white text-lg mb-8">Khám phá những xu hướng thời trang mới nhất</p>
                 <button className="bg-white text-gray-900 px-8 py-3 rounded-full hover:bg-gray-100">
@@ -54,9 +54,9 @@ function Home() {
         <SwiperSlide>
           <div className="relative w-full h-full bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80')]">
             {/* Overlay đen mờ */}
-            <div className="absolute inset-0 bg-black bg-opacity-20 z-0" />
+            <div className="absolute inset-0 bg-black bg-opacity-30 z-0" />
             <div className="relative container mx-auto px-4 h-full flex items-center z-10">
-              <div className="max-w-xl">
+              <div className="max-w-2xl">
                 <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">Phong cách thanh lịch</h2>
                 <p className="text-white text-lg mb-8">Tôn vinh vẻ đẹp của phái nữ</p>
                 <button className="bg-white text-gray-900 px-8 py-3 rounded-full hover:bg-gray-100">
@@ -69,7 +69,7 @@ function Home() {
       </Swiper>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-r from-white to-cyan-50 dark:from-gray-950 dark:to-cyan-950 text-gray-900 dark:text-white">
+      <section className="py-20 bg-gray-50 dark:bg-black">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
@@ -139,7 +139,7 @@ function Home() {
             {[...products].reverse().slice(0, 8).map((product) => (
               <div
                 key={product.id}
-                className="transform hover:scale-105 transition-all duration-300"
+                className="transform hover:scale-[1.01] transition-all duration-300"
               >
                 <ProductCard
                   key={product.id}
@@ -159,7 +159,7 @@ function Home() {
       </section >
 
       {/* Newsletter Section */}
-      <section className="py-20 bg-gradient-to-r from-gray-50 to-cyan-50 dark:from-gray-900 dark:to-cyan-950 text-gray-900 dark:text-white">
+      <section className="py-20">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-4xl font-bold mb-4">
@@ -175,7 +175,7 @@ function Home() {
                 placeholder="Nhập email của bạn"
                 className="flex-1 px-6 py-4 rounded-full border border-blue-600 bg-transparent"
               />
-              <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-800 hover:to-blue-600 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-lg">
+              <button className="px-8 text-white py-4 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-800 hover:to-blue-600 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-lg">
                 Đăng ký
               </button>
             </div>

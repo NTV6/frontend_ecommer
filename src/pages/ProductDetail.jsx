@@ -109,7 +109,7 @@ function ProductDetail() {
           p.category_id === productData.category_id &&
           p.id !== productData.id
         )
-        .slice(0, 8); // Limit to 4 products
+        .slice(0, 4); // Limit to 4 products
       setRelatedProducts(related);
     }
   }, [productData, products]);

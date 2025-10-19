@@ -168,7 +168,7 @@ function ProductLayout({
                                     {products.map((product, index) => (
                                         <div
                                             key={product.id}
-                                            className="transform hover:scale-105 transition-all duration-300"
+                                            className="transform hover:scale-[1.01] transition-all duration-300"
                                             style={{
                                                 animation: `fadeInUp 0.6s ease-out forwards ${index * 100}ms`
                                             }}
